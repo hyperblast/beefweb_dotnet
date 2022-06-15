@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <AssemblyName>Beefweb.Client</AssemblyName>
+        <RootNamespace>Beefweb.Client</RootNamespace>
+    </PropertyGroup>
+
+</Project>
