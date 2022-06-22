@@ -10,20 +10,24 @@ namespace Beefweb.Client
     public sealed class PlayerClient : IPlayerClient
     {
         private readonly IRequestHandler _handler;
+        private IDisposable? _lifetime;
 
         public PlayerClient(Uri baseUri)
             : this(baseUri, new HttpClient())
         {
         }
 
-        public PlayerClient(Uri baseUri, HttpClient client)
-            : this(new RequestHandler(baseUri, client, new LineReaderFactory(new GrowableBufferFactory())))
+        public PlayerClient(Uri baseUri, HttpClient client, bool disposeClient = true)
+            : this(
+                new RequestHandler(baseUri, client, new LineReaderFactory(new GrowableBufferFactory())),
+                disposeClient ? client : null)
         {
         }
 
-        public PlayerClient(IRequestHandler handler)
+        public PlayerClient(IRequestHandler handler, IDisposable? lifetime = null)
         {
             _handler = handler;
+            _lifetime = lifetime;
         }
 
         // Player API
@@ -256,5 +260,7 @@ namespace Beefweb.Client
         // Query API
 
         public IPlayerQuery CreateQuery() => new PlayerQuery(_handler);
+
+        public void Dispose() => Interlocked.Exchange(ref _lifetime, null)?.Dispose();
     }
 }

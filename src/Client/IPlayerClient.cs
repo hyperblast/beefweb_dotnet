@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Beefweb.Client
 {
-    public interface IPlayerClient
+    public interface IPlayerClient : IDisposable
     {
         // Player API
 
