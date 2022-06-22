@@ -59,10 +59,10 @@ namespace Beefweb.Client
             await _handler.Post("api/player/previous", null, cancellationToken);
         }
 
-        public async ValueTask Play(PlaylistRef playlist, int item, CancellationToken cancellationToken = default)
+        public async ValueTask Play(PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default)
         {
             await _handler.Post(
-                FormattableString.Invariant($"api/player/play/{playlist}/{item}"), null, cancellationToken);
+                FormattableString.Invariant($"api/player/play/{playlist}/{itemIndex}"), null, cancellationToken);
         }
 
         public async ValueTask Stop(CancellationToken cancellationToken = default)
@@ -244,6 +244,13 @@ namespace Beefweb.Client
         {
             var queryParams = new QueryParameterCollection { ["path"] = path };
             return await _handler.Get<FileSystemEntriesResult>("api/browser/entries", queryParams, cancellationToken);
+        }
+
+        public async ValueTask<IStreamedResult> GetArtwork(
+            PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default)
+        {
+            return await _handler.GetStream(
+                FormattableString.Invariant($"api/artwork/{playlist}/{itemIndex}"), null, cancellationToken);
         }
 
         // Query API

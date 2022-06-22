@@ -70,6 +70,27 @@ namespace Beefweb.Client.Infrastructure
                 responseStream, returnType, SerializerOptions, cancellationToken: cancellationToken);
         }
 
+        public async ValueTask<IStreamedResult> GetStream(string url, QueryParameterCollection? queryParams = null,
+            CancellationToken cancellationToken = default)
+        {
+            var requestUri = UriFormatter.Format(_baseUri, url, queryParams);
+            using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+
+            var response = await _client.SendAsync(
+                request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+
+            try
+            {
+                response.EnsureSuccessStatusCode();
+                return new HttpStreamedResult(response);
+            }
+            catch
+            {
+                response.Dispose();
+                throw;
+            }
+        }
+
         public async IAsyncEnumerable<object> GetEvents(
             Type itemType,
             string url,

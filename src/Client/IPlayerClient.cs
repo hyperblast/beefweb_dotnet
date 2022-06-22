@@ -20,7 +20,7 @@ namespace Beefweb.Client
 
         ValueTask PlayPrevious(CancellationToken cancellationToken = default);
 
-        ValueTask Play(PlaylistRef playlist, int item, CancellationToken cancellationToken = default);
+        ValueTask Play(PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default);
 
         ValueTask Stop(CancellationToken cancellationToken = default);
         
@@ -103,6 +103,11 @@ namespace Beefweb.Client
 
         ValueTask<FileSystemEntriesResult> GetFileSystemEntries(
             string path, CancellationToken cancellationToken = default);
+
+        // Artwork API
+
+        ValueTask<IStreamedResult> GetArtwork(
+            PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default);
 
         // Query API
 

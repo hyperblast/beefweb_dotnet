@@ -13,6 +13,11 @@ namespace Beefweb.Client.Infrastructure
             QueryParameterCollection? queryParams = null,
             CancellationToken cancellationToken = default);
 
+        ValueTask<IStreamedResult> GetStream(
+            string url,
+            QueryParameterCollection? queryParams = null,
+            CancellationToken cancellationToken = default);
+
         IAsyncEnumerable<object> GetEvents(
             Type itemType,
             string url,
