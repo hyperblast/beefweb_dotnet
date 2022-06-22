@@ -1,6 +1,7 @@
 <Project>
 
     <PropertyGroup>
+        <SolutionRoot>$(MSBuildThisFileDirectory)</SolutionRoot>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <LangVersion>8</LangVersion>
         <Nullable>enable</Nullable>

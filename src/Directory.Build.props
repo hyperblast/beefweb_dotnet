@@ -1,0 +1,10 @@
+<Project>
+
+    <Import Project="..\Directory.Build.props" />
+
+    <PropertyGroup>
+        <OutputPath>$(SolutionRoot)artifacts\bin</OutputPath>
+        <BaseIntermediateOutputPath>$(SolutionRoot)artifacts\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    </PropertyGroup>
+
+</Project>
