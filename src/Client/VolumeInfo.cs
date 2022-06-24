@@ -7,9 +7,9 @@ namespace Beefweb.Client
         public decimal Min { get; set; }
 
         public decimal Max { get; set; }
-        
+
         public decimal Value { get; set; }
-        
+
         public bool IsMuted { get; set; }
     }
 }

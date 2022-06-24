@@ -11,7 +11,7 @@ namespace Beefweb.Client
 
         ValueTask<PlayerState> GetPlayerState(
             IReadOnlyList<string>? activeItemColumns = null, CancellationToken cancellationToken = default);
-        
+
         ValueTask PlayCurrent(CancellationToken cancellationToken = default);
 
         ValueTask PlayRandom(CancellationToken cancellationToken = default);
@@ -23,7 +23,7 @@ namespace Beefweb.Client
         ValueTask Play(PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default);
 
         ValueTask Stop(CancellationToken cancellationToken = default);
-        
+
         ValueTask Pause(CancellationToken cancellationToken = default);
 
         ValueTask TogglePause(CancellationToken cancellationToken = default);
@@ -37,9 +37,9 @@ namespace Beefweb.Client
         ValueTask SeekAbsolute(TimeSpan offset, CancellationToken cancellationToken = default);
 
         ValueTask SeekRelative(TimeSpan offset, CancellationToken cancellationToken = default);
-        
+
         // Playlists API
-        
+
         ValueTask<IList<PlaylistInfo>> GetPlaylists(CancellationToken cancellationToken = default);
 
         ValueTask<PlaylistItemsResult> GetPlaylistItems(

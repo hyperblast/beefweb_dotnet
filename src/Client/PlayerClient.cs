@@ -181,7 +181,7 @@ namespace Beefweb.Client
                 play = NormalizeBool(options?.PlayAddedItems),
                 replace = NormalizeBool(options?.ReplaceExistingItems),
             };
-                
+
             await _handler.Post($"api/playlists/{playlist}/items/add", body, cancellationToken);
         }
 
