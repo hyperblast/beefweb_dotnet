@@ -4,6 +4,6 @@ namespace Beefweb.Client
 {
     public sealed class PlaylistItemInfo
     {
-        public IList<string> Columns { get; set; } = new List<string>();
+        public IList<string> Columns { get; set; } = null!;
     }
 }

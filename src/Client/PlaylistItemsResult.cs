@@ -8,6 +8,6 @@ namespace Beefweb.Client
 
         public int TotalCount { get; set; }
 
-        public IList<PlaylistItemInfo> Items { get; set; } = new List<PlaylistItemInfo>();
+        public IList<PlaylistItemInfo> Items { get; set; } = null!;
     }
 }
