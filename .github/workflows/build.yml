@@ -1,0 +1,48 @@
+name: build
+
+on:
+
+  push:
+    branches:
+    - master
+
+  pull_request:
+    branches:
+    - master
+
+jobs:
+
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '3.1.x'
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: Build debug
+      run: dotnet build -c Debug --no-restore
+
+    - name: Test
+      run: dotnet test -c Debug --no-restore --no-build --verbosity normal
+
+    - name: Build release
+      run: dotnet build -c Release --no-restore
+
+    - name: Pack
+      run: dotnet pack -c Release --no-restore --no-build
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: beefweb_dotnet
+        if-no-files-found: error
+        path: artifacts/bin/*.nupkg
