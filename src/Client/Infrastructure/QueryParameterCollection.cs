@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Web;
 
 namespace Beefweb.Client.Infrastructure
 {
@@ -14,22 +15,21 @@ namespace Beefweb.Client.Infrastructure
         private static string Format(IEnumerable<KeyValuePair<string, object?>> parameters)
         {
             var result = new StringBuilder();
+
             foreach (var (key, value) in parameters)
             {
                 if (value == null)
                     continue;
 
-                result.Append(WebUtility.UrlEncode(key));
+                result.Append(Uri.EscapeDataString(key));
                 result.Append('=');
-                result.Append(WebUtility.UrlEncode(FormatValue(value, key)));
+                result.Append(Uri.EscapeDataString(FormatValue(value, key)));
                 result.Append('&');
             }
 
-            if (result.Length == 0)
-                return string.Empty;
-
-            result.Length -= 1;
-            return result.ToString();
+            return result.Length == 0
+                ? string.Empty
+                : result.ToString(0, result.Length - 1);
         }
 
         private static string FormatValue(object value, string propertyName)
