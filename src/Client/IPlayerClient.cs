@@ -50,6 +50,24 @@ namespace Beefweb.Client
         ValueTask PlayPrevious(CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Plays next item in the active playlist,
+        /// searching for an item which <paramref name="expression"/> value differs from the value of the active track.
+        /// </summary>
+        /// <param name="expression">Expression to search item by.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Request task.</returns>
+        ValueTask PlayNextBy(string expression, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Plays previous item in the active playlist,
+        /// searching for an item which <paramref name="expression"/> value differs from the value of the active track.
+        /// </summary>
+        /// <param name="expression">Expression to search item by.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Request task.</returns>
+        ValueTask PlayPreviousBy(string expression, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Plays specified item.
         /// </summary>
         /// <param name="playlist">Playlist to play item from.</param>

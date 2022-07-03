@@ -82,6 +82,18 @@ namespace Beefweb.Client
         }
 
         /// <inheritdoc />
+        public async ValueTask PlayNextBy(string expression, CancellationToken cancellationToken = default)
+        {
+            await _handler.Post("api/player/next", new { by = expression }, cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public async ValueTask PlayPreviousBy(string expression, CancellationToken cancellationToken = default)
+        {
+            await _handler.Post("api/player/previous", new { by = expression }, cancellationToken);
+        }
+
+        /// <inheritdoc />
         public async ValueTask Play(PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default)
         {
             await _handler.Post(
