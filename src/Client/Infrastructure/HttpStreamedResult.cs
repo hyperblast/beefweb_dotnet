@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Beefweb.Client.Infrastructure
 {
-    public sealed class HttpStreamedResult : IStreamedResult
+    internal sealed class HttpStreamedResult : IStreamedResult
     {
         private readonly HttpResponseMessage _message;
 

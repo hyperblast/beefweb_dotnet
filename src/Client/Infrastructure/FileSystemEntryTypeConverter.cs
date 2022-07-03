@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Beefweb.Client.Infrastructure
 {
-    public sealed class FileSystemEntryTypeConverter : JsonConverter<FileSystemEntryType>
+    internal sealed class FileSystemEntryTypeConverter : JsonConverter<FileSystemEntryType>
     {
         private const string FileString = "F";
         private const string DirectoryString = "D";

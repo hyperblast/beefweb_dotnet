@@ -6,7 +6,7 @@ using Beefweb.Client.Infrastructure;
 
 namespace Beefweb.Client
 {
-    public sealed class PlayerQuery : IPlayerQuery
+    internal sealed class PlayerQuery : IPlayerQuery
     {
         private readonly IRequestHandler _handler;
 

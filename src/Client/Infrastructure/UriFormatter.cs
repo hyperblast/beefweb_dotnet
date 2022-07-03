@@ -2,7 +2,7 @@ using System;
 
 namespace Beefweb.Client.Infrastructure
 {
-    public static class UriFormatter
+    internal static class UriFormatter
     {
         public static Uri AddTrailingSlash(Uri uri)
         {

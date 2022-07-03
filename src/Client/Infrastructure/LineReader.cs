@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Beefweb.Client.Infrastructure
 {
-    public sealed class LineReader : ILineReader
+    internal sealed class LineReader : ILineReader
     {
         private const byte CR = (byte)'\r';
         private const byte LF = (byte)'\n';

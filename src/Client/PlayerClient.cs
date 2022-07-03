@@ -24,7 +24,7 @@ namespace Beefweb.Client
         {
         }
 
-        public PlayerClient(IRequestHandler handler, IDisposable? lifetime = null)
+        internal PlayerClient(IRequestHandler handler, IDisposable? lifetime = null)
         {
             _handler = handler;
             _lifetime = lifetime;

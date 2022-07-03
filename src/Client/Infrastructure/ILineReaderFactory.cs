@@ -2,7 +2,7 @@ using System.IO;
 
 namespace Beefweb.Client.Infrastructure
 {
-    public interface ILineReaderFactory
+    internal interface ILineReaderFactory
     {
         ILineReader CreateReader(Stream source);
     }

@@ -1,3 +1,4 @@
+using Beefweb.Client.Infrastructure;
 using FluentAssertions;
 using Xunit;
 

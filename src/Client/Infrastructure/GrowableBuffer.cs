@@ -3,7 +3,7 @@ using System.Buffers;
 
 namespace Beefweb.Client.Infrastructure
 {
-    public sealed class GrowableBuffer : IGrowableBuffer
+    internal sealed class GrowableBuffer : IGrowableBuffer
     {
         private const int DefaultInitialSize = 2048;
         private const int DefaultMaxSize = 1024 * 1024;

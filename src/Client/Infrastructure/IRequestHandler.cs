@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Beefweb.Client.Infrastructure
 {
-    public interface IRequestHandler
+    internal interface IRequestHandler
     {
         ValueTask<object> Get(
             Type returnType,

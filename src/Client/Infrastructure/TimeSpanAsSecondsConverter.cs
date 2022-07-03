@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Beefweb.Client.Infrastructure
 {
-    public sealed class TimeSpanAsSecondsConverter : JsonConverter<TimeSpan>
+    internal sealed class TimeSpanAsSecondsConverter : JsonConverter<TimeSpan>
     {
         public override TimeSpan Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

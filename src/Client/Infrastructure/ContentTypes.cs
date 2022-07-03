@@ -1,6 +1,6 @@
 namespace Beefweb.Client.Infrastructure
 {
-    public static class ContentTypes
+    internal static class ContentTypes
     {
         public const string Json = "application/json";
         public const string Text = "text/plain";

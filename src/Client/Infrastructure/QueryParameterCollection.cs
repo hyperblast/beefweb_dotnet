@@ -8,7 +8,7 @@ using System.Web;
 
 namespace Beefweb.Client.Infrastructure
 {
-    public sealed class QueryParameterCollection : Dictionary<string, object?>
+    internal sealed class QueryParameterCollection : Dictionary<string, object?>
     {
         public override string ToString() => Format(this);
 

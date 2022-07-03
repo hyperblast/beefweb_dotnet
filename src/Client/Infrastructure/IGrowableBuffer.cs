@@ -2,7 +2,7 @@ using System;
 
 namespace Beefweb.Client.Infrastructure
 {
-    public interface IGrowableBuffer : IDisposable
+    internal interface IGrowableBuffer : IDisposable
     {
         byte[] Data { get; }
 

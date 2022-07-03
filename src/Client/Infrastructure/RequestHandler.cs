@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Beefweb.Client.Infrastructure
 {
-    public sealed class RequestHandler : IRequestHandler
+    internal sealed class RequestHandler : IRequestHandler
     {
         private static readonly byte[] EventPrefix =
         {

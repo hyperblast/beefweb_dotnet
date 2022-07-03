@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Beefweb.Client.Infrastructure
 {
-    public sealed class UnixTimestampConverter : JsonConverter<DateTime>
+    internal sealed class UnixTimestampConverter : JsonConverter<DateTime>
     {
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
 
