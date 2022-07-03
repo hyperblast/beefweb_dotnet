@@ -37,7 +37,7 @@ namespace Beefweb.Client
         }
 
         public IPlayerQuery IncludePlaylistItems(
-            PlaylistRef playlist, PlaylistItemRange itemRange, IReadOnlyList<string>? itemColumns = null)
+            PlaylistRef playlist, PlaylistItemRange itemRange, IReadOnlyList<string> itemColumns)
         {
             _includePlaylistItems = true;
             _playlist = playlist;

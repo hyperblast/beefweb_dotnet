@@ -3,6 +3,7 @@
     <PropertyGroup>
         <AssemblyName>Beefweb.Client</AssemblyName>
         <RootNamespace>Beefweb.Client</RootNamespace>
+        <DocumentationFile>$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
     </PropertyGroup>
 
 </Project>
