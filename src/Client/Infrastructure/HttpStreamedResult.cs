@@ -9,7 +9,7 @@ namespace Beefweb.Client.Infrastructure
     {
         private readonly HttpResponseMessage _message;
 
-        public string ContentType => _message.Content.Headers.ContentType.MediaType;
+        public string ContentType => _message.Content.Headers.ContentType?.MediaType ?? ContentTypes.Binary;
 
         public long? Size => _message.Content.Headers.ContentLength;
 
@@ -18,7 +18,7 @@ namespace Beefweb.Client.Infrastructure
         public async ValueTask<Stream> GetStream(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return await _message.Content.ReadAsStreamAsync();
+            return await _message.Content.ReadAsStreamAsync(cancellationToken);
         }
 
         public void Dispose() => _message.Dispose();
