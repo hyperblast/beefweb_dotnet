@@ -36,7 +36,7 @@ namespace Beefweb.Client.Infrastructure
 
             return new JsonSerializerOptions
             {
-                IgnoreNullValues = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                 PropertyNamingPolicy = namingPolicy,
                 Converters =
                 {
@@ -65,9 +65,15 @@ namespace Beefweb.Client.Infrastructure
 
             response.EnsureSuccessStatusCode();
 
-            await using var responseStream = await response.Content.ReadAsStreamAsync();
-            return await JsonSerializer.DeserializeAsync(
+            await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+            var result = await JsonSerializer.DeserializeAsync(
                 responseStream, returnType, SerializerOptions, cancellationToken: cancellationToken);
+            return result ?? throw InvalidResponse();
+        }
+
+        private static InvalidOperationException InvalidResponse()
+        {
+            return new InvalidOperationException("Invalid response: expected JSON value.");
         }
 
         public async ValueTask<IStreamedResult> GetStream(string url, QueryParameterCollection? queryParams = null,
@@ -117,8 +123,9 @@ namespace Beefweb.Client.Infrastructure
 
                 if (lineData.Span.StartsWith(EventPrefix))
                 {
-                    yield return JsonSerializer.Deserialize(
+                    var eventValue = JsonSerializer.Deserialize(
                         lineData.Span[EventPrefix.Length..], itemType, SerializerOptions);
+                    yield return eventValue ?? throw InvalidResponse();
                 }
             }
         }
