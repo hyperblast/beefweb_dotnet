@@ -17,7 +17,7 @@ namespace Beefweb.Client.Infrastructure
             (byte)'d', (byte)'a', (byte)'t', (byte)'a', (byte)':'
         };
 
-        private static readonly JsonSerializerOptions SerializerOptions = CreateSerializerOptions();
+        internal static readonly JsonSerializerOptions SerializerOptions = CreateSerializerOptions();
 
         private readonly HttpClient _client;
         private readonly ILineReaderFactory _readerFactory;
@@ -30,7 +30,7 @@ namespace Beefweb.Client.Infrastructure
             _readerFactory = readerFactory;
         }
 
-        public static JsonSerializerOptions CreateSerializerOptions()
+        private static JsonSerializerOptions CreateSerializerOptions()
         {
             var namingPolicy = JsonNamingPolicy.CamelCase;
 

@@ -1,11 +1,13 @@
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using Beefweb.Client.Infrastructure;
 
 namespace Beefweb.Client
 {
     /// <summary>
     /// Configurable player option.
     /// </summary>
-    public class PlayerOption
+    public sealed class PlayerOption
     {
         /// <summary>
         /// Option identifier.
@@ -24,8 +26,10 @@ namespace Beefweb.Client
 
         /// <summary>
         /// Current option value.
-        /// Depending on <see cref="Type"/> this value is either <see cref="bool"/> or <see cref="int"/>.
+        /// Depending on <see cref="Type"/>
+        /// this value is either <see cref="bool"/> or <see cref="int"/>.
         /// </summary>
+        [JsonConverter(typeof(PlayerOptionValueConverter))]
         public object Value { get; set; } = null!;
 
         /// <summary>
