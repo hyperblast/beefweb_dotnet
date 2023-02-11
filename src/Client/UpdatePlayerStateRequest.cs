@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Beefweb.Client
 {
@@ -31,6 +32,12 @@ namespace Beefweb.Client
         /// <summary>
         /// Playback mode. Value should be index of item in <see cref="PlayerState.PlaybackModes"/> collection.
         /// </summary>
+        [Obsolete("Use Options")]
         public int? PlaybackMode { get; set; }
+
+        /// <summary>
+        /// Requests to set option values.
+        /// </summary>
+        public IList<SetOptionRequest>? Options { get; set; }
     }
 }
