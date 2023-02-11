@@ -26,7 +26,7 @@ namespace Beefweb.Client
         /// Current option value.
         /// Depending on <see cref="Type"/> this value is either <see cref="bool"/> or <see cref="int"/>.
         /// </summary>
-        public object Value { get; set; } = null;
+        public object Value { get; set; } = null!;
 
         /// <summary>
         /// List of enum option names.
