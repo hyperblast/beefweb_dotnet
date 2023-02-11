@@ -36,5 +36,16 @@ namespace Beefweb.Client
             Id = id;
             Value = value;
         }
+
+        /// <summary>
+        /// Creates request for bool option.
+        /// </summary>
+        /// <param name="id">Option id.</param>
+        /// <param name="value">New option value.</param>
+        public SetOptionRequest(string id, BoolSwitch value)
+        {
+            Id = id;
+            Value = value;
+        }
     }
 }

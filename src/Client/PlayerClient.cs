@@ -142,6 +142,12 @@ namespace Beefweb.Client
         }
 
         /// <inheritdoc />
+        public async ValueTask SetOption(SetOptionRequest request, CancellationToken cancellationToken = default)
+        {
+            await UpdatePlayerState(new UpdatePlayerStateRequest { Options = new[] { request } }, cancellationToken);
+        }
+
+        /// <inheritdoc />
         public async ValueTask SeekAbsolute(TimeSpan offset, CancellationToken cancellationToken = default)
         {
             await UpdatePlayerState(new UpdatePlayerStateRequest { Position = offset }, cancellationToken);

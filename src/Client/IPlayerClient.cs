@@ -122,6 +122,14 @@ namespace Beefweb.Client
         ValueTask SetMuted(BoolSwitch isMuted, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Sets player option.
+        /// </summary>
+        /// <param name="request">Set option request.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Request task.</returns>
+        ValueTask SetOption(SetOptionRequest request, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Sets new playback position from the beginning of the track.
         /// </summary>
         /// <param name="offset">New playback position.</param>
