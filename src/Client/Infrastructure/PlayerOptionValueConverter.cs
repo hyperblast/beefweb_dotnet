@@ -11,8 +11,8 @@ namespace Beefweb.Client.Infrastructure
             return reader.TokenType switch
             {
                 JsonTokenType.Number => reader.GetInt32(),
-                JsonTokenType.True => true,
-                JsonTokenType.False => false,
+                JsonTokenType.True => reader.GetBoolean(),
+                JsonTokenType.False => reader.GetBoolean(),
                 _ => throw new JsonException()
             };
         }
