@@ -103,7 +103,7 @@ namespace Beefweb.Client
         /// <param name="request">Update request</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Request task.</returns>
-        ValueTask UpdatePlayerState(UpdatePlayerStateRequest request, CancellationToken cancellationToken = default);
+        ValueTask SetPlayerState(SetPlayerStateRequest request, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sets mute state.

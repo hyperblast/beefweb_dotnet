@@ -119,8 +119,8 @@ namespace Beefweb.Client
         }
 
         /// <inheritdoc />
-        public async ValueTask UpdatePlayerState(
-            UpdatePlayerStateRequest request, CancellationToken cancellationToken = default)
+        public async ValueTask SetPlayerState(
+            SetPlayerStateRequest request, CancellationToken cancellationToken = default)
         {
             await _handler.Post("api/player", request, cancellationToken);
         }
@@ -138,25 +138,25 @@ namespace Beefweb.Client
         /// <inheritdoc />
         public async ValueTask SetMuted(BoolSwitch isMuted, CancellationToken cancellationToken = default)
         {
-            await UpdatePlayerState(new UpdatePlayerStateRequest { IsMuted = isMuted }, cancellationToken);
+            await SetPlayerState(new SetPlayerStateRequest { IsMuted = isMuted }, cancellationToken);
         }
 
         /// <inheritdoc />
         public async ValueTask SetOption(SetOptionRequest request, CancellationToken cancellationToken = default)
         {
-            await UpdatePlayerState(new UpdatePlayerStateRequest { Options = new[] { request } }, cancellationToken);
+            await SetPlayerState(new SetPlayerStateRequest { Options = new[] { request } }, cancellationToken);
         }
 
         /// <inheritdoc />
         public async ValueTask SeekAbsolute(TimeSpan offset, CancellationToken cancellationToken = default)
         {
-            await UpdatePlayerState(new UpdatePlayerStateRequest { Position = offset }, cancellationToken);
+            await SetPlayerState(new SetPlayerStateRequest { Position = offset }, cancellationToken);
         }
 
         /// <inheritdoc />
         public async ValueTask SeekRelative(TimeSpan offset, CancellationToken cancellationToken = default)
         {
-            await UpdatePlayerState(new UpdatePlayerStateRequest { RelativePosition = offset }, cancellationToken);
+            await SetPlayerState(new SetPlayerStateRequest { RelativePosition = offset }, cancellationToken);
         }
 
         // Playlists API

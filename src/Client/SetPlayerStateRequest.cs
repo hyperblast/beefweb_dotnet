@@ -4,10 +4,10 @@ using System.Collections.Generic;
 namespace Beefweb.Client
 {
     /// <summary>
-    /// Request to update player state.
+    /// Request to modify player state.
     /// Any null value means "don't change this property".
     /// </summary>
-    public sealed class UpdatePlayerStateRequest
+    public sealed class SetPlayerStateRequest
     {
         /// <summary>
         /// New volume.
