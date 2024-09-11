@@ -12,10 +12,7 @@ namespace Beefweb.Client.Infrastructure;
 
 internal sealed class RequestHandler : IRequestHandler
 {
-    private static readonly byte[] EventPrefix =
-    {
-        (byte)'d', (byte)'a', (byte)'t', (byte)'a', (byte)':'
-    };
+    private static readonly byte[] EventPrefix = "data:"u8.ToArray();
 
     internal static readonly JsonSerializerOptions SerializerOptions = CreateSerializerOptions();
 
@@ -114,7 +111,7 @@ internal sealed class RequestHandler : IRequestHandler
 
         response.EnsureSuccessStatusCode();
 
-        await using var responseStream = await response.Content.ReadAsStreamAsync();
+        await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
 
         await foreach (var lineData in _readerFactory.CreateReader(responseStream))
         {
@@ -132,20 +129,22 @@ internal sealed class RequestHandler : IRequestHandler
 
     public async ValueTask Post(string url, object? body = null, CancellationToken cancellationToken = default)
     {
-        static ByteArrayContent CreateContent(string type, byte[] data) =>
-            new ByteArrayContent(data) { Headers = { ContentType = new MediaTypeHeaderValue(type) } };
-
         var requestUri = UriFormatter.Format(_baseUri, url);
+
         using var request = new HttpRequestMessage(HttpMethod.Post, requestUri)
         {
             Content = body != null
                 ? CreateContent(ContentTypes.Json, JsonSerializer.SerializeToUtf8Bytes(body, SerializerOptions))
-                : CreateContent(ContentTypes.Text, Array.Empty<byte>())
+                : CreateContent(ContentTypes.Text, [])
         };
 
         using var response =
             await _client.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken);
 
         response.EnsureSuccessStatusCode();
+        return;
+
+        static ByteArrayContent CreateContent(string type, byte[] data) =>
+            new(data) { Headers = { ContentType = new MediaTypeHeaderValue(type) } };
     }
 }

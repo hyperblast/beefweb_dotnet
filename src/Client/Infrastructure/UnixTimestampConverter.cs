@@ -6,7 +6,7 @@ namespace Beefweb.Client.Infrastructure;
 
 internal sealed class UnixTimestampConverter : JsonConverter<DateTime>
 {
-    private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
+    private static readonly DateTime Epoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
 
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {

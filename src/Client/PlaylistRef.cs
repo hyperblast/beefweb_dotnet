@@ -55,14 +55,14 @@ public readonly struct PlaylistRef : IEquatable<PlaylistRef>
     /// </summary>
     /// <param name="index">Playlist index.</param>
     /// <returns>Created playlist reference.</returns>
-    public static implicit operator PlaylistRef(int index) => new PlaylistRef(index);
+    public static implicit operator PlaylistRef(int index) => new(index);
 
     /// <summary>
     /// Implicitly converts <paramref name="id"/> to <see cref="PlaylistRef"/>.
     /// </summary>
     /// <param name="id">Playlist identifier.</param>
     /// <returns>Created playlist reference.</returns>
-    public static implicit operator PlaylistRef(string id) => new PlaylistRef(id);
+    public static implicit operator PlaylistRef(string id) => new(id);
 
     /// <inheritdoc />
     public override string ToString()
