@@ -42,15 +42,13 @@ namespace Beefweb.Client
         /// <summary>
         /// Reads updates of player information specified by this query.
         /// </summary>
-        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Player updates stream.</returns>
-        IAsyncEnumerable<PlayerQueryResult> ReadUpdates(CancellationToken cancellationToken = default);
+        IAsyncEnumerable<PlayerQueryResult> ReadUpdates();
 
         /// <summary>
         /// Reads player events specified by this query.
         /// </summary>
-        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Player events stream.</returns>
-        IAsyncEnumerable<PlayerEvent> ReadEvents(CancellationToken cancellationToken = default);
+        IAsyncEnumerable<PlayerEvent> ReadEvents();
     }
 }

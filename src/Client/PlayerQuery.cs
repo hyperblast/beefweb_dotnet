@@ -51,14 +51,14 @@ namespace Beefweb.Client
             return _handler.Get<PlayerQueryResult>("api/query", BuildQuery(), cancellationToken);
         }
 
-        public IAsyncEnumerable<PlayerEvent> ReadEvents(CancellationToken cancellationToken)
+        public IAsyncEnumerable<PlayerEvent> ReadEvents()
         {
-            return _handler.GetEvents<PlayerEvent>("api/query/events", BuildQuery(), cancellationToken);
+            return _handler.GetEvents<PlayerEvent>("api/query/events", BuildQuery());
         }
 
-        public IAsyncEnumerable<PlayerQueryResult> ReadUpdates(CancellationToken cancellationToken = default)
+        public IAsyncEnumerable<PlayerQueryResult> ReadUpdates()
         {
-            return _handler.GetEvents<PlayerQueryResult>("api/query/updates", BuildQuery(), cancellationToken);
+            return _handler.GetEvents<PlayerQueryResult>("api/query/updates", BuildQuery());
         }
 
         private QueryParameterCollection BuildQuery()
