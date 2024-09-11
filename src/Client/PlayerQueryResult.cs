@@ -1,25 +1,24 @@
 using System.Collections.Generic;
 
-namespace Beefweb.Client
+namespace Beefweb.Client;
+
+/// <summary>
+/// Result of player query.
+/// </summary>
+public sealed class PlayerQueryResult
 {
     /// <summary>
-    /// Result of player query.
+    /// Current player state.
     /// </summary>
-    public sealed class PlayerQueryResult
-    {
-        /// <summary>
-        /// Current player state.
-        /// </summary>
-        public PlayerState? Player { get; set; }
+    public PlayerState? Player { get; set; }
 
-        /// <summary>
-        /// All playlists.
-        /// </summary>
-        public IList<PlaylistInfo>? Playlists { get; set; }
+    /// <summary>
+    /// All playlists.
+    /// </summary>
+    public IList<PlaylistInfo>? Playlists { get; set; }
 
-        /// <summary>
-        /// Requested playlist items.
-        /// </summary>
-        public PlaylistItemsResult? PlaylistItems { get; set; }
-    }
+    /// <summary>
+    /// Requested playlist items.
+    /// </summary>
+    public PlaylistItemsResult? PlaylistItems { get; set; }
 }

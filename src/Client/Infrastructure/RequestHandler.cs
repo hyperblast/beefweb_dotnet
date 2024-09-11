@@ -8,145 +8,144 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Beefweb.Client.Infrastructure
+namespace Beefweb.Client.Infrastructure;
+
+internal sealed class RequestHandler : IRequestHandler
 {
-    internal sealed class RequestHandler : IRequestHandler
+    private static readonly byte[] EventPrefix =
     {
-        private static readonly byte[] EventPrefix =
+        (byte)'d', (byte)'a', (byte)'t', (byte)'a', (byte)':'
+    };
+
+    internal static readonly JsonSerializerOptions SerializerOptions = CreateSerializerOptions();
+
+    private readonly HttpClient _client;
+    private readonly ILineReaderFactory _readerFactory;
+    private readonly Uri _baseUri;
+
+    public RequestHandler(Uri baseUri, HttpClient client, ILineReaderFactory readerFactory)
+    {
+        _baseUri = UriFormatter.AddTrailingSlash(baseUri);
+        _client = client;
+        _readerFactory = readerFactory;
+    }
+
+    private static JsonSerializerOptions CreateSerializerOptions()
+    {
+        var namingPolicy = JsonNamingPolicy.CamelCase;
+
+        return new JsonSerializerOptions
         {
-            (byte)'d', (byte)'a', (byte)'t', (byte)'a', (byte)':'
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            PropertyNamingPolicy = namingPolicy,
+            Converters =
+            {
+                new UnixTimestampConverter(),
+                new TimeSpanAsSecondsConverter(),
+                new FileSystemEntryTypeConverter(),
+                new JsonStringEnumConverter(namingPolicy)
+            },
+        };
+    }
+
+    public async ValueTask<object> Get(
+        Type returnType,
+        string url,
+        QueryParameterCollection? queryParams = null,
+        CancellationToken cancellationToken = default)
+    {
+        var requestUri = UriFormatter.Format(_baseUri, url, queryParams);
+        using var request = new HttpRequestMessage(HttpMethod.Get, requestUri)
+        {
+            Headers = { Accept = { new MediaTypeWithQualityHeaderValue(ContentTypes.Json) } },
         };
 
-        internal static readonly JsonSerializerOptions SerializerOptions = CreateSerializerOptions();
+        using var response = await _client.SendAsync(
+            request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
-        private readonly HttpClient _client;
-        private readonly ILineReaderFactory _readerFactory;
-        private readonly Uri _baseUri;
+        response.EnsureSuccessStatusCode();
 
-        public RequestHandler(Uri baseUri, HttpClient client, ILineReaderFactory readerFactory)
+        await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        var result = await JsonSerializer.DeserializeAsync(
+            responseStream, returnType, SerializerOptions, cancellationToken: cancellationToken);
+        return result ?? throw InvalidResponse();
+    }
+
+    private static InvalidOperationException InvalidResponse()
+    {
+        return new InvalidOperationException("Invalid response: expected JSON value.");
+    }
+
+    public async ValueTask<IStreamedResult> GetStream(string url, QueryParameterCollection? queryParams = null,
+        CancellationToken cancellationToken = default)
+    {
+        var requestUri = UriFormatter.Format(_baseUri, url, queryParams);
+        using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+
+        var response = await _client.SendAsync(
+            request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+
+        try
         {
-            _baseUri = UriFormatter.AddTrailingSlash(baseUri);
-            _client = client;
-            _readerFactory = readerFactory;
-        }
-
-        private static JsonSerializerOptions CreateSerializerOptions()
-        {
-            var namingPolicy = JsonNamingPolicy.CamelCase;
-
-            return new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                PropertyNamingPolicy = namingPolicy,
-                Converters =
-                {
-                    new UnixTimestampConverter(),
-                    new TimeSpanAsSecondsConverter(),
-                    new FileSystemEntryTypeConverter(),
-                    new JsonStringEnumConverter(namingPolicy)
-                },
-            };
-        }
-
-        public async ValueTask<object> Get(
-            Type returnType,
-            string url,
-            QueryParameterCollection? queryParams = null,
-            CancellationToken cancellationToken = default)
-        {
-            var requestUri = UriFormatter.Format(_baseUri, url, queryParams);
-            using var request = new HttpRequestMessage(HttpMethod.Get, requestUri)
-            {
-                Headers = { Accept = { new MediaTypeWithQualityHeaderValue(ContentTypes.Json) } },
-            };
-
-            using var response = await _client.SendAsync(
-                request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-
             response.EnsureSuccessStatusCode();
-
-            await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
-            var result = await JsonSerializer.DeserializeAsync(
-                responseStream, returnType, SerializerOptions, cancellationToken: cancellationToken);
-            return result ?? throw InvalidResponse();
+            return new HttpStreamedResult(response);
         }
-
-        private static InvalidOperationException InvalidResponse()
+        catch
         {
-            return new InvalidOperationException("Invalid response: expected JSON value.");
+            response.Dispose();
+            throw;
         }
+    }
 
-        public async ValueTask<IStreamedResult> GetStream(string url, QueryParameterCollection? queryParams = null,
-            CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<object> GetEvents(
+        Type itemType,
+        string url,
+        QueryParameterCollection? queryParams = null,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var requestUri = UriFormatter.Format(_baseUri, url, queryParams);
+        using var request = new HttpRequestMessage(HttpMethod.Get, requestUri)
         {
-            var requestUri = UriFormatter.Format(_baseUri, url, queryParams);
-            using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+            Headers = { Accept = { new MediaTypeWithQualityHeaderValue(ContentTypes.EventStream) } }
+        };
 
-            var response = await _client.SendAsync(
-                request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        using var response = await _client.SendAsync(
+            request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
-            try
+        response.EnsureSuccessStatusCode();
+
+        await using var responseStream = await response.Content.ReadAsStreamAsync();
+
+        await foreach (var lineData in _readerFactory.CreateReader(responseStream))
+        {
+            // Note: this does not support multi-line events, see spec:
+            // https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation
+
+            if (lineData.Span.StartsWith(EventPrefix))
             {
-                response.EnsureSuccessStatusCode();
-                return new HttpStreamedResult(response);
-            }
-            catch
-            {
-                response.Dispose();
-                throw;
+                var eventValue = JsonSerializer.Deserialize(
+                    lineData.Span[EventPrefix.Length..], itemType, SerializerOptions);
+                yield return eventValue ?? throw InvalidResponse();
             }
         }
+    }
 
-        public async IAsyncEnumerable<object> GetEvents(
-            Type itemType,
-            string url,
-            QueryParameterCollection? queryParams = null,
-            [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async ValueTask Post(string url, object? body = null, CancellationToken cancellationToken = default)
+    {
+        static ByteArrayContent CreateContent(string type, byte[] data) =>
+            new ByteArrayContent(data) { Headers = { ContentType = new MediaTypeHeaderValue(type) } };
+
+        var requestUri = UriFormatter.Format(_baseUri, url);
+        using var request = new HttpRequestMessage(HttpMethod.Post, requestUri)
         {
-            var requestUri = UriFormatter.Format(_baseUri, url, queryParams);
-            using var request = new HttpRequestMessage(HttpMethod.Get, requestUri)
-            {
-                Headers = { Accept = { new MediaTypeWithQualityHeaderValue(ContentTypes.EventStream) } }
-            };
+            Content = body != null
+                ? CreateContent(ContentTypes.Json, JsonSerializer.SerializeToUtf8Bytes(body, SerializerOptions))
+                : CreateContent(ContentTypes.Text, Array.Empty<byte>())
+        };
 
-            using var response = await _client.SendAsync(
-                request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        using var response =
+            await _client.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken);
 
-            response.EnsureSuccessStatusCode();
-
-            await using var responseStream = await response.Content.ReadAsStreamAsync();
-
-            await foreach (var lineData in _readerFactory.CreateReader(responseStream))
-            {
-                // Note: this does not support multi-line events, see spec:
-                // https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation
-
-                if (lineData.Span.StartsWith(EventPrefix))
-                {
-                    var eventValue = JsonSerializer.Deserialize(
-                        lineData.Span[EventPrefix.Length..], itemType, SerializerOptions);
-                    yield return eventValue ?? throw InvalidResponse();
-                }
-            }
-        }
-
-        public async ValueTask Post(string url, object? body = null, CancellationToken cancellationToken = default)
-        {
-            static ByteArrayContent CreateContent(string type, byte[] data) =>
-                new ByteArrayContent(data) { Headers = { ContentType = new MediaTypeHeaderValue(type) } };
-
-            var requestUri = UriFormatter.Format(_baseUri, url);
-            using var request = new HttpRequestMessage(HttpMethod.Post, requestUri)
-            {
-                Content = body != null
-                    ? CreateContent(ContentTypes.Json, JsonSerializer.SerializeToUtf8Bytes(body, SerializerOptions))
-                    : CreateContent(ContentTypes.Text, Array.Empty<byte>())
-            };
-
-            using var response =
-                await _client.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken);
-
-            response.EnsureSuccessStatusCode();
-        }
+        response.EnsureSuccessStatusCode();
     }
 }

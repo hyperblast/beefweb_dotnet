@@ -1,7 +1,6 @@
-namespace Beefweb.Client.Infrastructure
+namespace Beefweb.Client.Infrastructure;
+
+internal sealed class GrowableBufferFactory : IGrowableBufferFactory
 {
-    internal sealed class GrowableBufferFactory : IGrowableBufferFactory
-    {
-        public IGrowableBuffer CreateBuffer() => new GrowableBuffer();
-    }
+    public IGrowableBuffer CreateBuffer() => new GrowableBuffer();
 }

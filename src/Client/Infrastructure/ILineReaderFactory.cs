@@ -1,9 +1,8 @@
 using System.IO;
 
-namespace Beefweb.Client.Infrastructure
+namespace Beefweb.Client.Infrastructure;
+
+internal interface ILineReaderFactory
 {
-    internal interface ILineReaderFactory
-    {
-        ILineReader CreateReader(Stream source);
-    }
+    ILineReader CreateReader(Stream source);
 }

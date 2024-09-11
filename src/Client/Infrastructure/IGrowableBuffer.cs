@@ -1,11 +1,10 @@
 using System;
 
-namespace Beefweb.Client.Infrastructure
-{
-    internal interface IGrowableBuffer : IDisposable
-    {
-        byte[] Data { get; }
+namespace Beefweb.Client.Infrastructure;
 
-        void Grow();
-    }
+internal interface IGrowableBuffer : IDisposable
+{
+    byte[] Data { get; }
+
+    void Grow();
 }

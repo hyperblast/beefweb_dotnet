@@ -1,7 +1,6 @@
-namespace Beefweb.Client.Infrastructure
+namespace Beefweb.Client.Infrastructure;
+
+internal interface IGrowableBufferFactory
 {
-    internal interface IGrowableBufferFactory
-    {
-        IGrowableBuffer CreateBuffer();
-    }
+    IGrowableBuffer CreateBuffer();
 }

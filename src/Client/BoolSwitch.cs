@@ -1,24 +1,23 @@
-namespace Beefweb.Client
+namespace Beefweb.Client;
+
+/// <summary>
+/// Toggleable boolean value.
+/// </summary>
+public enum BoolSwitch
 {
     /// <summary>
-    /// Toggleable boolean value.
+    /// Request setting to transition to false value.
     /// </summary>
-    public enum BoolSwitch
-    {
-        /// <summary>
-        /// Request setting to transition to false value.
-        /// </summary>
-        False,
+    False,
 
-        /// <summary>
-        /// Requests setting to transition to true value.
-        /// </summary>
-        True,
+    /// <summary>
+    /// Requests setting to transition to true value.
+    /// </summary>
+    True,
 
-        /// <summary>
-        /// Requests setting to toggle current value.
-        /// False becomes true and vice versa.
-        /// </summary>
-        Toggle,
-    }
+    /// <summary>
+    /// Requests setting to toggle current value.
+    /// False becomes true and vice versa.
+    /// </summary>
+    Toggle,
 }

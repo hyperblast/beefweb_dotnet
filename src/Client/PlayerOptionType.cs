@@ -1,23 +1,22 @@
-namespace Beefweb.Client
+namespace Beefweb.Client;
+
+/// <summary>
+/// Type of <see cref="PlayerOption"/>
+/// </summary>
+public enum PlayerOptionType
 {
     /// <summary>
-    /// Type of <see cref="PlayerOption"/>
+    /// Invalid option type.
     /// </summary>
-    public enum PlayerOptionType
-    {
-        /// <summary>
-        /// Invalid option type.
-        /// </summary>
-        Invalid,
+    Invalid,
 
-        /// <summary>
-        /// Player option is a enumeration.
-        /// </summary>
-        Enum,
+    /// <summary>
+    /// Player option is a enumeration.
+    /// </summary>
+    Enum,
 
-        /// <summary>
-        /// Player option is a switch.
-        /// </summary>
-        Bool,
-    }
+    /// <summary>
+    /// Player option is a switch.
+    /// </summary>
+    Bool,
 }

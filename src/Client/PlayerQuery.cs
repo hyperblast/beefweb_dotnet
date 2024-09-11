@@ -4,97 +4,96 @@ using System.Threading;
 using System.Threading.Tasks;
 using Beefweb.Client.Infrastructure;
 
-namespace Beefweb.Client
+namespace Beefweb.Client;
+
+internal sealed class PlayerQuery : IPlayerQuery
 {
-    internal sealed class PlayerQuery : IPlayerQuery
+    private readonly IRequestHandler _handler;
+
+    private bool _includePlayer;
+    private bool _includePlaylists;
+    private bool _includePlaylistItems;
+    private IReadOnlyList<string>? _activeItemColumns;
+    private IReadOnlyList<string>? _playlistItemColumns;
+    private PlaylistRef _playlist;
+    private PlaylistItemRange _playlistItemRange;
+
+    public PlayerQuery(IRequestHandler handler)
     {
-        private readonly IRequestHandler _handler;
+        _handler = handler;
+    }
 
-        private bool _includePlayer;
-        private bool _includePlaylists;
-        private bool _includePlaylistItems;
-        private IReadOnlyList<string>? _activeItemColumns;
-        private IReadOnlyList<string>? _playlistItemColumns;
-        private PlaylistRef _playlist;
-        private PlaylistItemRange _playlistItemRange;
+    public IPlayerQuery IncludePlayer(IReadOnlyList<string>? activeItemColumns = null)
+    {
+        _includePlayer = true;
+        _activeItemColumns = activeItemColumns;
+        return this;
+    }
 
-        public PlayerQuery(IRequestHandler handler)
+    public IPlayerQuery IncludePlaylists()
+    {
+        _includePlaylists = true;
+        return this;
+    }
+
+    public IPlayerQuery IncludePlaylistItems(
+        PlaylistRef playlist, PlaylistItemRange itemRange, IReadOnlyList<string> itemColumns)
+    {
+        _includePlaylistItems = true;
+        _playlist = playlist;
+        _playlistItemRange = itemRange;
+        _playlistItemColumns = itemColumns;
+        return this;
+    }
+
+    public ValueTask<PlayerQueryResult> Execute(CancellationToken cancellationToken = default)
+    {
+        return _handler.Get<PlayerQueryResult>("api/query", BuildQuery(), cancellationToken);
+    }
+
+    public IAsyncEnumerable<PlayerEvent> ReadEvents()
+    {
+        return _handler.GetEvents<PlayerEvent>("api/query/events", BuildQuery());
+    }
+
+    public IAsyncEnumerable<PlayerQueryResult> ReadUpdates()
+    {
+        return _handler.GetEvents<PlayerQueryResult>("api/query/updates", BuildQuery());
+    }
+
+    private QueryParameterCollection BuildQuery()
+    {
+        var query = new QueryParameterCollection();
+
+        if (_includePlayer)
         {
-            _handler = handler;
+            query["player"] = true;
+
+            if (_activeItemColumns?.Count > 0)
+                query["trcolumns"] = _activeItemColumns;
         }
 
-        public IPlayerQuery IncludePlayer(IReadOnlyList<string>? activeItemColumns = null)
+        if (_includePlaylists)
         {
-            _includePlayer = true;
-            _activeItemColumns = activeItemColumns;
-            return this;
+            query["playlists"] = true;
         }
 
-        public IPlayerQuery IncludePlaylists()
+        if (_includePlaylistItems)
         {
-            _includePlaylists = true;
-            return this;
+            query["playlistItems"] = true;
+            query["plref"] = _playlist;
+            query["plrange"] = _playlistItemRange;
+
+            if (_playlistItemColumns?.Count > 0)
+                query["plcolumns"] = _playlistItemColumns;
         }
 
-        public IPlayerQuery IncludePlaylistItems(
-            PlaylistRef playlist, PlaylistItemRange itemRange, IReadOnlyList<string> itemColumns)
+        if (query.Count == 0)
         {
-            _includePlaylistItems = true;
-            _playlist = playlist;
-            _playlistItemRange = itemRange;
-            _playlistItemColumns = itemColumns;
-            return this;
+            throw new InvalidOperationException(
+                "Query is empty, call at least one IncludeXxx() method before executing the query.");
         }
 
-        public ValueTask<PlayerQueryResult> Execute(CancellationToken cancellationToken = default)
-        {
-            return _handler.Get<PlayerQueryResult>("api/query", BuildQuery(), cancellationToken);
-        }
-
-        public IAsyncEnumerable<PlayerEvent> ReadEvents()
-        {
-            return _handler.GetEvents<PlayerEvent>("api/query/events", BuildQuery());
-        }
-
-        public IAsyncEnumerable<PlayerQueryResult> ReadUpdates()
-        {
-            return _handler.GetEvents<PlayerQueryResult>("api/query/updates", BuildQuery());
-        }
-
-        private QueryParameterCollection BuildQuery()
-        {
-            var query = new QueryParameterCollection();
-
-            if (_includePlayer)
-            {
-                query["player"] = true;
-
-                if (_activeItemColumns?.Count > 0)
-                    query["trcolumns"] = _activeItemColumns;
-            }
-
-            if (_includePlaylists)
-            {
-                query["playlists"] = true;
-            }
-
-            if (_includePlaylistItems)
-            {
-                query["playlistItems"] = true;
-                query["plref"] = _playlist;
-                query["plrange"] = _playlistItemRange;
-
-                if (_playlistItemColumns?.Count > 0)
-                    query["plcolumns"] = _playlistItemColumns;
-            }
-
-            if (query.Count == 0)
-            {
-                throw new InvalidOperationException(
-                    "Query is empty, call at least one IncludeXxx() method before executing the query.");
-            }
-
-            return query;
-        }
+        return query;
     }
 }

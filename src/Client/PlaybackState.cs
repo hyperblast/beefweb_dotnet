@@ -1,23 +1,22 @@
-namespace Beefweb.Client
+namespace Beefweb.Client;
+
+/// <summary>
+/// Playback state.
+/// </summary>
+public enum PlaybackState
 {
     /// <summary>
-    /// Playback state.
+    /// Player is stopped.
     /// </summary>
-    public enum PlaybackState
-    {
-        /// <summary>
-        /// Player is stopped.
-        /// </summary>
-        Stopped,
+    Stopped,
 
-        /// <summary>
-        /// Player is currently playing something.
-        /// </summary>
-        Playing,
+    /// <summary>
+    /// Player is currently playing something.
+    /// </summary>
+    Playing,
 
-        /// <summary>
-        /// Player is paused.
-        /// </summary>
-        Paused
-    }
+    /// <summary>
+    /// Player is paused.
+    /// </summary>
+    Paused
 }

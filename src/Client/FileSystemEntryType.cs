@@ -1,23 +1,22 @@
-namespace Beefweb.Client
+namespace Beefweb.Client;
+
+/// <summary>
+/// File system entry type.
+/// </summary>
+public enum FileSystemEntryType
 {
     /// <summary>
-    /// File system entry type.
+    /// Entry type is unknown.
     /// </summary>
-    public enum FileSystemEntryType
-    {
-        /// <summary>
-        /// Entry type is unknown.
-        /// </summary>
-        Unknown,
+    Unknown,
 
-        /// <summary>
-        /// Entry is a regular file.
-        /// </summary>
-        File,
+    /// <summary>
+    /// Entry is a regular file.
+    /// </summary>
+    File,
 
-        /// <summary>
-        /// Entry is a directory.
-        /// </summary>
-        Directory
-    }
+    /// <summary>
+    /// Entry is a directory.
+    /// </summary>
+    Directory
 }
