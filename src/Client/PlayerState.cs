@@ -56,17 +56,15 @@ public sealed class PlayerState
     /// <exception cref="KeyNotFoundException">No option with <paramref name="id"/> was found.</exception>
     public PlayerOption GetOption(string id)
     {
-        PlayerOption? result = null;
-
-        foreach (var option in Options)
+        for (var i = 0; i < Options.Count; i++)
         {
+            var option = Options[i];
             if (string.Equals(option.Id, id, StringComparison.OrdinalIgnoreCase))
             {
-                result = option;
-                break;
+                return option;
             }
         }
 
-        return result ?? throw new KeyNotFoundException($"Option with id '{id}' is not found.");
+        throw new KeyNotFoundException($"Option with id '{id}' is not found.");
     }
 }
