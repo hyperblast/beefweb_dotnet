@@ -10,7 +10,7 @@ namespace Beefweb.Client;
 /// <summary>
 /// Player client.
 /// </summary>
-public sealed class PlayerClient : IPlayerClient
+public sealed class PlayerClient : IPlayerClient, IDisposable
 {
     private readonly IRequestHandler _handler;
     private IDisposable? _lifetime;

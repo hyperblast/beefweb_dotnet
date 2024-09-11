@@ -8,7 +8,7 @@ namespace Beefweb.Client;
 /// <summary>
 /// Player client contract.
 /// </summary>
-public interface IPlayerClient : IDisposable
+public interface IPlayerClient
 {
     // Player API
 
