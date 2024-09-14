@@ -48,8 +48,7 @@ public readonly struct PlaylistRef : IEquatable<PlaylistRef>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is negative.</exception>
     public PlaylistRef(int index)
     {
-        if (index < 0)
-            throw new ArgumentOutOfRangeException(nameof(index));
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
 
         Id = null;
         Index = index;

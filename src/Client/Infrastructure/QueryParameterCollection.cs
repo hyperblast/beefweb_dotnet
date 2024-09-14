@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net;
 using System.Text;
-using System.Web;
 
 namespace Beefweb.Client.Infrastructure;
 
@@ -48,5 +46,5 @@ internal sealed class QueryParameterCollection : Dictionary<string, object?>
         };
     }
 
-    private static string EscapeArrayItem(string s) => s.Replace(@"\", @"\\").Replace(@",", @"\,");
+    private static string EscapeArrayItem(string s) => s.Replace(@"\", @"\\").Replace(",", @"\,");
 }

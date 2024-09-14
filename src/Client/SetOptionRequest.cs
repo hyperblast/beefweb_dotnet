@@ -22,9 +22,9 @@ public class SetOptionRequest
     /// <param name="value">New option value.</param>
     public SetOptionRequest(string id, int value)
     {
-            Id = id;
-            Value = value;
-        }
+        Id = id;
+        Value = value;
+    }
 
     /// <summary>
     /// Creates request for bool option.
@@ -33,9 +33,9 @@ public class SetOptionRequest
     /// <param name="value">New option value.</param>
     public SetOptionRequest(string id, bool value)
     {
-            Id = id;
-            Value = value;
-        }
+        Id = id;
+        Value = value;
+    }
 
     /// <summary>
     /// Creates request for bool option.
@@ -44,7 +44,7 @@ public class SetOptionRequest
     /// <param name="value">New option value.</param>
     public SetOptionRequest(string id, BoolSwitch value)
     {
-            Id = id;
-            Value = value;
-        }
+        Id = id;
+        Value = value;
+    }
 }

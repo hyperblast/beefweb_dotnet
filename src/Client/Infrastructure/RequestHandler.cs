@@ -124,7 +124,7 @@ internal sealed class RequestHandler : IRequestHandler
         var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
         await using var responseStreamScope = responseStream.ConfigureAwait(false);
 
-        await foreach (var lineData in _readerFactory.CreateReader(responseStream))
+        await foreach (var lineData in _readerFactory.CreateReader(responseStream).ConfigureAwait(false))
         {
             // Note: this does not support multi-line events, see spec:
             // https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation

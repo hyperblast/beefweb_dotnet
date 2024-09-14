@@ -16,10 +16,8 @@ public readonly struct PlaylistItemRange : IEquatable<PlaylistItemRange>
     /// <paramref name="offset"/> is negative or <paramref name="count"/> is negative.</exception>
     public PlaylistItemRange(int offset, int count)
     {
-        if (offset < 0)
-            throw new ArgumentOutOfRangeException(nameof(offset));
-        if (count < 0)
-            throw new ArgumentOutOfRangeException(nameof(count));
+        ArgumentOutOfRangeException.ThrowIfNegative(offset);
+        ArgumentOutOfRangeException.ThrowIfNegative(count);
 
         Offset = offset;
         Count = count;

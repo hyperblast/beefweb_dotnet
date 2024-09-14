@@ -30,7 +30,7 @@ public sealed class SetPlayerStateRequest
     public TimeSpan? RelativePosition { get; set; }
 
     /// <summary>
-    /// Playback mode. Value should be index of item in <see cref="PlayerState.PlaybackModes"/> collection.
+    /// Playback mode. Value should be an index of item in <see cref="PlayerState.PlaybackModes"/> collection.
     /// </summary>
     [Obsolete("Use Options")]
     public int? PlaybackMode { get; set; }

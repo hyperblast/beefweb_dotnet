@@ -8,10 +8,10 @@ namespace Beefweb.Client;
 public sealed class FileSystemEntriesResult
 {
     /// <summary>
-    /// File system separator. Typically '/' or '\'.
+    /// File system separator. Typically, '/' or '\'.
     /// This value is the same as <see cref="FileSystemRootsResult.PathSeparator"/>.
     /// </summary>
-    public string PathSeparator { get; set; } = null!;
+    public char PathSeparator { get; set; }
 
     /// <summary>
     /// List of file system entries.

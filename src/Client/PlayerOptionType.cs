@@ -11,7 +11,7 @@ public enum PlayerOptionType
     Invalid,
 
     /// <summary>
-    /// Player option is a enumeration.
+    /// Player option is an enumeration.
     /// </summary>
     Enum,
 

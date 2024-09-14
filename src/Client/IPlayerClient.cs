@@ -331,7 +331,7 @@ public interface IPlayerClient
     /// <param name="playlist">Playlist to use.</param>
     /// <param name="itemIndex">Playlist item index.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>Artwork query result.</returns>
+    /// <returns>Artwork query result. Null, if artwork does not exist.</returns>
     ValueTask<IStreamedResult?> GetArtwork(
         PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default);
 
