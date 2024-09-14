@@ -55,7 +55,8 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
             ? new QueryParameterCollection { ["columns"] = activeItemColumns }
             : null;
 
-        var result = await _handler.Get<PlayerQueryResult>("api/player", queryParams, cancellationToken)
+        var result = await _handler
+            .Get<PlayerQueryResult>("api/player", queryParams, cancellationToken)
             .ConfigureAwait(false);
 
         return result.Player ?? throw PropertyIsNull("player");
@@ -100,8 +101,8 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     /// <inheritdoc />
     public async ValueTask Play(PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default)
     {
-        await _handler.Post(
-                FormattableString.Invariant($"api/player/play/{playlist}/{itemIndex}"), null, cancellationToken)
+        await _handler
+            .Post(FormattableString.Invariant($"api/player/play/{playlist}/{itemIndex}"), null, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -172,7 +173,8 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     /// <inheritdoc />
     public async ValueTask<IList<PlaylistInfo>> GetPlaylists(CancellationToken cancellationToken = default)
     {
-        var result = await _handler.Get<PlayerQueryResult>("api/playlists", null, cancellationToken)
+        var result = await _handler
+            .Get<PlayerQueryResult>("api/playlists", null, cancellationToken)
             .ConfigureAwait(false);
 
         return result.Playlists ?? throw PropertyIsNull("playlists");
@@ -186,8 +188,8 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
         CancellationToken cancellationToken = default)
     {
         var queryParams = new QueryParameterCollection { ["columns"] = columns };
-        var result = await _handler.Get<PlayerQueryResult>(
-                $"api/playlists/{playlist}/items/{range}", queryParams, cancellationToken)
+        var result = await _handler
+            .Get<PlayerQueryResult>($"api/playlists/{playlist}/items/{range}", queryParams, cancellationToken)
             .ConfigureAwait(false);
 
         return result.PlaylistItems ?? throw PropertyIsNull("playlistItems");
@@ -196,7 +198,8 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     /// <inheritdoc />
     public async ValueTask SetCurrentPlaylist(PlaylistRef playlist, CancellationToken cancellationToken = default)
     {
-        await _handler.Post("api/playlists", new { current = playlist.ToString() }, cancellationToken)
+        await _handler
+            .Post("api/playlists", new { current = playlist.ToString() }, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -204,7 +207,8 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     public async ValueTask AddPlaylist(
         string? title = null, int? position = null, CancellationToken cancellationToken = default)
     {
-        await _handler.Post("api/playlists/add", new { title, index = position }, cancellationToken)
+        await _handler
+            .Post("api/playlists/add", new { title, index = position }, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -212,8 +216,8 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     public async ValueTask MovePlaylist(
         PlaylistRef playlist, int newPosition, CancellationToken cancellationToken = default)
     {
-        await _handler.Post(
-                FormattableString.Invariant($"api/playlists/move/{playlist}/{newPosition}"), null, cancellationToken)
+        await _handler
+            .Post(FormattableString.Invariant($"api/playlists/move/{playlist}/{newPosition}"), null, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -227,7 +231,8 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     public async ValueTask SetPlaylistTitle(
         PlaylistRef playlist, string newTitle, CancellationToken cancellationToken = default)
     {
-        await _handler.Post($"api/playlists/{playlist}", new { title = newTitle }, cancellationToken)
+        await _handler
+            .Post($"api/playlists/{playlist}", new { title = newTitle }, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -292,9 +297,9 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     public async ValueTask RemovePlaylistItems(PlaylistRef playlist, IReadOnlyList<int> itemIndices,
         CancellationToken cancellationToken = default)
     {
-        await
-            _handler.Post($"api/playlists/{playlist}/items/remove", new { items = itemIndices }, cancellationToken)
-                .ConfigureAwait(false);
+        await _handler
+            .Post($"api/playlists/{playlist}/items/remove", new { items = itemIndices }, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -319,7 +324,8 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     /// <inheritdoc />
     public async ValueTask<FileSystemRootsResult> GetFileSystemRoots(CancellationToken cancellationToken = default)
     {
-        return await _handler.Get<FileSystemRootsResult>("api/browser/roots", null, cancellationToken)
+        return await _handler
+            .Get<FileSystemRootsResult>("api/browser/roots", null, cancellationToken)
             .ConfigureAwait(false);
     }
 
