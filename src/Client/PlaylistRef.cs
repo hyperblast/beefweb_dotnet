@@ -11,6 +11,11 @@ namespace Beefweb.Client;
 public readonly struct PlaylistRef : IEquatable<PlaylistRef>
 {
     /// <summary>
+    /// <see cref="PlaylistRef"/> referencing currently selected playlist.
+    /// </summary>
+    public static PlaylistRef CurrentPlaylist { get; } = new("current");
+
+    /// <summary>
     /// Playlist identifier.
     /// If <see cref="Index"/> is zero or greater this value is null.
     /// </summary>
