@@ -29,7 +29,7 @@ internal sealed class LineReader : ILineReader
         while (true)
         {
             var block = buffer.Data.AsMemory(headSize, buffer.Data.Length - headSize);
-            var blockSize = await _source.ReadAsync(block, cancellationToken);
+            var blockSize = await _source.ReadAsync(block, cancellationToken).ConfigureAwait(false);
             if (blockSize == 0)
                 yield break;
 

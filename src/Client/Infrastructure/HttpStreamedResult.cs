@@ -18,7 +18,7 @@ internal sealed class HttpStreamedResult : IStreamedResult
     public async ValueTask<Stream> GetStream(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        return await _message.Content.ReadAsStreamAsync(cancellationToken);
+        return await _message.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public void Dispose() => _message.Dispose();

@@ -53,76 +53,80 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
         var queryParams = activeItemColumns?.Count > 0
             ? new QueryParameterCollection { ["columns"] = activeItemColumns }
             : null;
-        var result = await _handler.Get<PlayerQueryResult>("api/player", queryParams, cancellationToken);
+
+        var result = await _handler.Get<PlayerQueryResult>("api/player", queryParams, cancellationToken)
+            .ConfigureAwait(false);
+
         return result.Player!;
     }
 
     /// <inheritdoc />
     public async ValueTask PlayCurrent(CancellationToken cancellationToken = default)
     {
-        await _handler.Post("api/player/play", null, cancellationToken);
+        await _handler.Post("api/player/play", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask PlayRandom(CancellationToken cancellationToken = default)
     {
-        await _handler.Post("api/player/play/random", null, cancellationToken);
+        await _handler.Post("api/player/play/random", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask PlayNext(CancellationToken cancellationToken = default)
     {
-        await _handler.Post("api/player/next", null, cancellationToken);
+        await _handler.Post("api/player/next", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask PlayPrevious(CancellationToken cancellationToken = default)
     {
-        await _handler.Post("api/player/previous", null, cancellationToken);
+        await _handler.Post("api/player/previous", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask PlayNextBy(string expression, CancellationToken cancellationToken = default)
     {
-        await _handler.Post("api/player/next", new { by = expression }, cancellationToken);
+        await _handler.Post("api/player/next", new { by = expression }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask PlayPreviousBy(string expression, CancellationToken cancellationToken = default)
     {
-        await _handler.Post("api/player/previous", new { by = expression }, cancellationToken);
+        await _handler.Post("api/player/previous", new { by = expression }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask Play(PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default)
     {
         await _handler.Post(
-            FormattableString.Invariant($"api/player/play/{playlist}/{itemIndex}"), null, cancellationToken);
+                FormattableString.Invariant($"api/player/play/{playlist}/{itemIndex}"), null, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask Stop(CancellationToken cancellationToken = default)
     {
-        await _handler.Post("api/player/stop", null, cancellationToken);
+        await _handler.Post("api/player/stop", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask Pause(CancellationToken cancellationToken = default)
     {
-        await _handler.Post("api/player/pause", null, cancellationToken);
+        await _handler.Post("api/player/pause", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask TogglePause(CancellationToken cancellationToken = default)
     {
-        await _handler.Post("api/player/pause/toggle", null, cancellationToken);
+        await _handler.Post("api/player/pause/toggle", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask SetPlayerState(
         SetPlayerStateRequest request, CancellationToken cancellationToken = default)
     {
-        await _handler.Post("api/player", request, cancellationToken);
+        await _handler.Post("api/player", request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -132,31 +136,34 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     /// <param name="cancellationToken"></param>
     public async ValueTask SetMuted(bool isMuted, CancellationToken cancellationToken = default)
     {
-        await SetMuted(isMuted ? BoolSwitch.True : BoolSwitch.False, cancellationToken);
+        await SetMuted(isMuted ? BoolSwitch.True : BoolSwitch.False, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask SetMuted(BoolSwitch isMuted, CancellationToken cancellationToken = default)
     {
-        await SetPlayerState(new SetPlayerStateRequest { IsMuted = isMuted }, cancellationToken);
+        await SetPlayerState(new SetPlayerStateRequest { IsMuted = isMuted }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask SetOption(SetOptionRequest request, CancellationToken cancellationToken = default)
     {
-        await SetPlayerState(new SetPlayerStateRequest { Options = new[] { request } }, cancellationToken);
+        await SetPlayerState(new SetPlayerStateRequest { Options = new[] { request } }, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask SeekAbsolute(TimeSpan offset, CancellationToken cancellationToken = default)
     {
-        await SetPlayerState(new SetPlayerStateRequest { Position = offset }, cancellationToken);
+        await SetPlayerState(new SetPlayerStateRequest { Position = offset }, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask SeekRelative(TimeSpan offset, CancellationToken cancellationToken = default)
     {
-        await SetPlayerState(new SetPlayerStateRequest { RelativePosition = offset }, cancellationToken);
+        await SetPlayerState(new SetPlayerStateRequest { RelativePosition = offset }, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     // Playlists API
@@ -164,7 +171,9 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     /// <inheritdoc />
     public async ValueTask<IList<PlaylistInfo>> GetPlaylists(CancellationToken cancellationToken = default)
     {
-        var result = await _handler.Get<PlayerQueryResult>("api/playlists", null, cancellationToken);
+        var result = await _handler.Get<PlayerQueryResult>("api/playlists", null, cancellationToken)
+            .ConfigureAwait(false);
+
         return result.Playlists!;
     }
 
@@ -177,7 +186,8 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     {
         var queryParams = new QueryParameterCollection { ["columns"] = columns };
         var result = await _handler.Get<PlayerQueryResult>(
-            $"api/playlists/{playlist}/items/{range}", queryParams, cancellationToken);
+                $"api/playlists/{playlist}/items/{range}", queryParams, cancellationToken)
+            .ConfigureAwait(false);
 
         return result.PlaylistItems!;
     }
@@ -185,14 +195,16 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     /// <inheritdoc />
     public async ValueTask SetCurrentPlaylist(PlaylistRef playlist, CancellationToken cancellationToken = default)
     {
-        await _handler.Post("api/playlists", new { current = playlist.ToString() }, cancellationToken);
+        await _handler.Post("api/playlists", new { current = playlist.ToString() }, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask AddPlaylist(
         string? title = null, int? position = null, CancellationToken cancellationToken = default)
     {
-        await _handler.Post("api/playlists/add", new { title, index = position }, cancellationToken);
+        await _handler.Post("api/playlists/add", new { title, index = position }, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -200,26 +212,28 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
         PlaylistRef playlist, int newPosition, CancellationToken cancellationToken = default)
     {
         await _handler.Post(
-            FormattableString.Invariant($"api/playlists/move/{playlist}/{newPosition}"), null, cancellationToken);
+                FormattableString.Invariant($"api/playlists/move/{playlist}/{newPosition}"), null, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask RemovePlaylist(PlaylistRef playlist, CancellationToken cancellationToken = default)
     {
-        await _handler.Post($"api/playlists/remove/{playlist}", null, cancellationToken);
+        await _handler.Post($"api/playlists/remove/{playlist}", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask SetPlaylistTitle(
         PlaylistRef playlist, string newTitle, CancellationToken cancellationToken = default)
     {
-        await _handler.Post($"api/playlists/{playlist}", new { title = newTitle }, cancellationToken);
+        await _handler.Post($"api/playlists/{playlist}", new { title = newTitle }, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask ClearPlaylist(PlaylistRef playlist, CancellationToken cancellationToken = default)
     {
-        await _handler.Post($"api/playlists/{playlist}/clear", null, cancellationToken);
+        await _handler.Post($"api/playlists/{playlist}/clear", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -240,7 +254,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
             replace = NormalizeBool(options?.ReplaceExistingItems),
         };
 
-        await _handler.Post($"api/playlists/{playlist}/items/add", body, cancellationToken);
+        await _handler.Post($"api/playlists/{playlist}/items/add", body, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -255,7 +269,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
             ? $"api/playlists/{source}/items/copy"
             : $"api/playlists/{source}/{target}/items/copy";
 
-        await _handler.Post(url, new { items = itemIndices, targetIndex }, cancellationToken);
+        await _handler.Post(url, new { items = itemIndices, targetIndex }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -270,33 +284,33 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
             ? $"api/playlists/{source}/items/move"
             : $"api/playlists/{source}/{target}/items/move";
 
-        await _handler.Post(url, new { items = itemIndices, targetIndex }, cancellationToken);
+        await _handler.Post(url, new { items = itemIndices, targetIndex }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask RemovePlaylistItems(PlaylistRef playlist, IReadOnlyList<int> itemIndices,
         CancellationToken cancellationToken = default)
     {
-        await _handler.Post(
-            $"api/playlists/{playlist}/items/remove",
-            new { items = itemIndices },
-            cancellationToken);
+        await
+            _handler.Post($"api/playlists/{playlist}/items/remove", new { items = itemIndices }, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask SortPlaylist(PlaylistRef playlist, string expression, bool descending = false,
         CancellationToken cancellationToken = default)
     {
-        await _handler.Post(
-            $"api/playlists/{playlist}/items/sort",
-            new { by = expression, desc = descending },
-            cancellationToken);
+        await _handler
+            .Post($"api/playlists/{playlist}/items/sort", new { by = expression, desc = descending }, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask SortPlaylistRandomly(PlaylistRef playlist, CancellationToken cancellationToken = default)
     {
-        await _handler.Post($"api/playlists/{playlist}/sort", new { random = true }, cancellationToken);
+        await _handler
+            .Post($"api/playlists/{playlist}/sort", new { random = true }, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     // File browser API
@@ -304,7 +318,8 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     /// <inheritdoc />
     public async ValueTask<FileSystemRootsResult> GetFileSystemRoots(CancellationToken cancellationToken = default)
     {
-        return await _handler.Get<FileSystemRootsResult>("api/browser/roots", null, cancellationToken);
+        return await _handler.Get<FileSystemRootsResult>("api/browser/roots", null, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -312,15 +327,18 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
         CancellationToken cancellationToken = default)
     {
         var queryParams = new QueryParameterCollection { ["path"] = path };
-        return await _handler.Get<FileSystemEntriesResult>("api/browser/entries", queryParams, cancellationToken);
+        return await _handler
+            .Get<FileSystemEntriesResult>("api/browser/entries", queryParams, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask<IStreamedResult> GetArtwork(
         PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default)
     {
-        return await _handler.GetStream(
-            FormattableString.Invariant($"api/artwork/{playlist}/{itemIndex}"), null, cancellationToken);
+        return await _handler
+            .GetStream(FormattableString.Invariant($"api/artwork/{playlist}/{itemIndex}"), null, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     // Query API

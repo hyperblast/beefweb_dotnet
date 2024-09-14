@@ -57,14 +57,19 @@ internal sealed class RequestHandler : IRequestHandler
             Headers = { Accept = { new MediaTypeWithQualityHeaderValue(ContentTypes.Json) } },
         };
 
-        using var response = await _client.SendAsync(
-            request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        using var response = await _client
+            .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
+            .ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
 
-        await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
-        var result = await JsonSerializer.DeserializeAsync(
-            responseStream, returnType, SerializerOptions, cancellationToken: cancellationToken);
+        var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+        await using var responseStreamScope = responseStream.ConfigureAwait(false);
+
+        var result = await JsonSerializer
+            .DeserializeAsync(responseStream, returnType, SerializerOptions, cancellationToken)
+            .ConfigureAwait(false);
+
         return result ?? throw InvalidResponse();
     }
 
@@ -79,8 +84,9 @@ internal sealed class RequestHandler : IRequestHandler
         var requestUri = UriFormatter.Format(_baseUri, url, queryParams);
         using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
 
-        var response = await _client.SendAsync(
-            request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        var response = await _client
+            .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
+            .ConfigureAwait(false);
 
         try
         {
@@ -106,12 +112,14 @@ internal sealed class RequestHandler : IRequestHandler
             Headers = { Accept = { new MediaTypeWithQualityHeaderValue(ContentTypes.EventStream) } }
         };
 
-        using var response = await _client.SendAsync(
-            request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        using var response = await _client
+            .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
+            .ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
 
-        await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+        await using var responseStreamScope = responseStream.ConfigureAwait(false);
 
         await foreach (var lineData in _readerFactory.CreateReader(responseStream))
         {
@@ -138,8 +146,9 @@ internal sealed class RequestHandler : IRequestHandler
                 : CreateContent(ContentTypes.Text, [])
         };
 
-        using var response =
-            await _client.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken);
+        using var response = await _client
+            .SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken)
+            .ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
         return;

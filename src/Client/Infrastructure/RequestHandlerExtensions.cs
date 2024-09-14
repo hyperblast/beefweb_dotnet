@@ -13,7 +13,7 @@ internal static class RequestHandlerExtensions
         QueryParameterCollection? queryParams = null,
         CancellationToken cancellationToken = default)
     {
-        return (T)await handler.Get(typeof(T), url, queryParams, cancellationToken);
+        return (T)await handler.Get(typeof(T), url, queryParams, cancellationToken).ConfigureAwait(false);
     }
 
     public static async IAsyncEnumerable<T> GetEvents<T>(
@@ -22,7 +22,11 @@ internal static class RequestHandlerExtensions
         QueryParameterCollection? queryParams = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        await foreach (var item in requestHandler.GetEvents(typeof(T), url, queryParams, cancellationToken))
+        await foreach (var item in requestHandler
+                           .GetEvents(typeof(T), url, queryParams, cancellationToken)
+                           .ConfigureAwait(false))
+        {
             yield return (T)item;
+        }
     }
 }
