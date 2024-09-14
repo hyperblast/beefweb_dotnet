@@ -52,13 +52,11 @@ internal sealed class RequestHandler : IRequestHandler
         CancellationToken cancellationToken = default)
     {
         var requestUri = UriFormatter.Format(_baseUri, url, queryParams);
-        using var request = new HttpRequestMessage(HttpMethod.Get, requestUri)
-        {
-            Headers = { Accept = { new MediaTypeWithQualityHeaderValue(ContentTypes.Json) } },
-        };
+        using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(ContentTypes.Json));
 
         using var response = await _client
-            .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
+            .SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken)
             .ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
@@ -107,10 +105,8 @@ internal sealed class RequestHandler : IRequestHandler
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var requestUri = UriFormatter.Format(_baseUri, url, queryParams);
-        using var request = new HttpRequestMessage(HttpMethod.Get, requestUri)
-        {
-            Headers = { Accept = { new MediaTypeWithQualityHeaderValue(ContentTypes.EventStream) } }
-        };
+        using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(ContentTypes.EventStream));
 
         using var response = await _client
             .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
@@ -138,13 +134,11 @@ internal sealed class RequestHandler : IRequestHandler
     public async ValueTask Post(string url, object? body = null, CancellationToken cancellationToken = default)
     {
         var requestUri = UriFormatter.Format(_baseUri, url);
+        using var request = new HttpRequestMessage(HttpMethod.Post, requestUri);
 
-        using var request = new HttpRequestMessage(HttpMethod.Post, requestUri)
-        {
-            Content = body != null
-                ? CreateContent(ContentTypes.Json, JsonSerializer.SerializeToUtf8Bytes(body, SerializerOptions))
-                : CreateContent(ContentTypes.Text, [])
-        };
+        request.Content = body != null
+            ? CreateContent(ContentTypes.Json, JsonSerializer.SerializeToUtf8Bytes(body, SerializerOptions))
+            : CreateContent(ContentTypes.Text, []);
 
         using var response = await _client
             .SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken)
