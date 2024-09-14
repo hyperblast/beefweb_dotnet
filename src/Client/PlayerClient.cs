@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,7 +58,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
         var result = await _handler.Get<PlayerQueryResult>("api/player", queryParams, cancellationToken)
             .ConfigureAwait(false);
 
-        return result.Player!;
+        return result.Player ?? throw PropertyIsNull("player");
     }
 
     /// <inheritdoc />
@@ -174,7 +175,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
         var result = await _handler.Get<PlayerQueryResult>("api/playlists", null, cancellationToken)
             .ConfigureAwait(false);
 
-        return result.Playlists!;
+        return result.Playlists ?? throw PropertyIsNull("playlists");
     }
 
     /// <inheritdoc />
@@ -189,7 +190,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
                 $"api/playlists/{playlist}/items/{range}", queryParams, cancellationToken)
             .ConfigureAwait(false);
 
-        return result.PlaylistItems!;
+        return result.PlaylistItems ?? throw PropertyIsNull("playlistItems");
     }
 
     /// <inheritdoc />
@@ -293,7 +294,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     {
         await
             _handler.Post($"api/playlists/{playlist}/items/remove", new { items = itemIndices }, cancellationToken)
-            .ConfigureAwait(false);
+                .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -348,4 +349,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
 
     /// <inheritdoc />
     public void Dispose() => Interlocked.Exchange(ref _lifetime, null)?.Dispose();
+
+    private static InvalidDataException PropertyIsNull(string name) =>
+        new($"Expected response property '{name}' to be not null.");
 }
