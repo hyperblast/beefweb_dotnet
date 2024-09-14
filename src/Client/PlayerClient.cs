@@ -340,7 +340,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     }
 
     /// <inheritdoc />
-    public async ValueTask<IStreamedResult> GetArtwork(
+    public async ValueTask<IStreamedResult?> GetArtwork(
         PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default)
     {
         return await _handler

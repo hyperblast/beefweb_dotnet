@@ -5,21 +5,17 @@ using System.Threading.Tasks;
 
 namespace Beefweb.Client.Infrastructure;
 
-internal sealed class HttpStreamedResult : IStreamedResult
+internal sealed class HttpStreamedResult(HttpResponseMessage message) : IStreamedResult
 {
-    private readonly HttpResponseMessage _message;
+    public string ContentType => message.Content.Headers.ContentType?.MediaType ?? ContentTypes.Binary;
 
-    public string ContentType => _message.Content.Headers.ContentType?.MediaType ?? ContentTypes.Binary;
-
-    public long? Size => _message.Content.Headers.ContentLength;
-
-    public HttpStreamedResult(HttpResponseMessage message) => _message = message;
+    public long? Size => message.Content.Headers.ContentLength;
 
     public async ValueTask<Stream> GetStream(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        return await _message.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+        return await message.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public void Dispose() => _message.Dispose();
+    public void Dispose() => message.Dispose();
 }

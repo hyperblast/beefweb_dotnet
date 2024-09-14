@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
@@ -76,7 +77,7 @@ internal sealed class RequestHandler : IRequestHandler
         return new InvalidOperationException("Invalid response: expected JSON value.");
     }
 
-    public async ValueTask<IStreamedResult> GetStream(string url, QueryParameterCollection? queryParams = null,
+    public async ValueTask<IStreamedResult?> GetStream(string url, QueryParameterCollection? queryParams = null,
         CancellationToken cancellationToken = default)
     {
         var requestUri = UriFormatter.Format(_baseUri, url, queryParams);
@@ -85,6 +86,12 @@ internal sealed class RequestHandler : IRequestHandler
         var response = await _client
             .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
             .ConfigureAwait(false);
+
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            response.Dispose();
+            return null;
+        }
 
         try
         {

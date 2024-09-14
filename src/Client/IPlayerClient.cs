@@ -332,7 +332,7 @@ public interface IPlayerClient
     /// <param name="itemIndex">Playlist item index.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Artwork query result.</returns>
-    ValueTask<IStreamedResult> GetArtwork(
+    ValueTask<IStreamedResult?> GetArtwork(
         PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default);
 
     // Query API

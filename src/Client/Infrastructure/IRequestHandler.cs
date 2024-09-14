@@ -13,7 +13,7 @@ internal interface IRequestHandler
         QueryParameterCollection? queryParams = null,
         CancellationToken cancellationToken = default);
 
-    ValueTask<IStreamedResult> GetStream(
+    ValueTask<IStreamedResult?> GetStream(
         string url,
         QueryParameterCollection? queryParams = null,
         CancellationToken cancellationToken = default);
