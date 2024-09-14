@@ -24,7 +24,7 @@ public sealed class AddPlaylistItemsOptions
 
     /// <summary>
     /// Insert items at the specified position in the playlist.
-    /// By default items are added to the end of the playlist.
+    /// By default, items are added to the end of the playlist.
     /// </summary>
     public int? TargetPosition { get; set; }
 }

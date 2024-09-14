@@ -5,31 +5,22 @@ using System.Threading;
 
 namespace Beefweb.Client.Infrastructure;
 
-internal sealed class LineReader : ILineReader
+internal sealed class LineReader(Stream source, IGrowableBufferFactory bufferFactory) : ILineReader
 {
     private const byte CR = (byte)'\r';
     private const byte LF = (byte)'\n';
 
-    private readonly Stream _source;
-    private readonly IGrowableBufferFactory _bufferFactory;
-
-    public LineReader(Stream source, IGrowableBufferFactory bufferFactory)
-    {
-        _source = source ?? throw new ArgumentNullException(nameof(source));
-        _bufferFactory = bufferFactory;
-    }
-
     public async IAsyncEnumerator<ReadOnlyMemory<byte>> GetAsyncEnumerator(
         CancellationToken cancellationToken = default)
     {
-        using var buffer = _bufferFactory.CreateBuffer();
+        using var buffer = bufferFactory.CreateBuffer();
         var headSize = 0;
         var prevSeparator = (byte)0;
 
         while (true)
         {
             var block = buffer.Data.AsMemory(headSize, buffer.Data.Length - headSize);
-            var blockSize = await _source.ReadAsync(block, cancellationToken).ConfigureAwait(false);
+            var blockSize = await source.ReadAsync(block, cancellationToken).ConfigureAwait(false);
             if (blockSize == 0)
                 yield break;
 

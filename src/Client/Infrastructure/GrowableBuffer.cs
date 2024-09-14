@@ -18,10 +18,8 @@ internal sealed class GrowableBuffer : IGrowableBuffer
         int maxSize = DefaultMaxSize,
         ArrayPool<byte>? pool = null)
     {
-        if (initialSize <= 0)
-            throw new ArgumentOutOfRangeException(nameof(initialSize));
-        if (maxSize <= 0)
-            throw new ArgumentOutOfRangeException(nameof(maxSize));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(initialSize);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxSize);
 
         _pool = pool ?? ArrayPool<byte>.Shared;
         _maxSize = maxSize;

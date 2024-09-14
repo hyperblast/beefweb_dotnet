@@ -2,11 +2,7 @@ using System.IO;
 
 namespace Beefweb.Client.Infrastructure;
 
-internal sealed class LineReaderFactory : ILineReaderFactory
+internal sealed class LineReaderFactory(IGrowableBufferFactory bufferFactory) : ILineReaderFactory
 {
-    private readonly IGrowableBufferFactory _bufferFactory;
-
-    public LineReaderFactory(IGrowableBufferFactory bufferFactory) => _bufferFactory = bufferFactory;
-
-    public ILineReader CreateReader(Stream source) => new LineReader(source, _bufferFactory);
+    public ILineReader CreateReader(Stream source) => new LineReader(source, bufferFactory);
 }
