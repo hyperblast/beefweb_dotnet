@@ -13,7 +13,7 @@ public readonly struct PlaylistRef : IEquatable<PlaylistRef>
     /// <summary>
     /// <see cref="PlaylistRef"/> referencing currently selected playlist.
     /// </summary>
-    public static PlaylistRef CurrentPlaylist { get; } = new("current");
+    public static PlaylistRef Current { get; } = new("current");
 
     /// <summary>
     /// Playlist identifier.
