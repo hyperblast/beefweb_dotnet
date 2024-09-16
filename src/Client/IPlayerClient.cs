@@ -326,12 +326,19 @@ public interface IPlayerClient
     // Artwork API
 
     /// <summary>
-    /// Get artwork image for the specified playlist item.
+    /// Gets album art image for currently playing item.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Artwork image stream, or null, if no artwork is found or no item is playing currently.</returns>
+    ValueTask<IStreamedResult?> GetCurrentArtwork(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets album art image for the specified playlist item.
     /// </summary>
     /// <param name="playlist">Playlist to use.</param>
     /// <param name="itemIndex">Playlist item index.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>Artwork query result. Null, if artwork does not exist.</returns>
+    /// <returns>Artwork image stream, or null, if no artwork is found for specified item.</returns>
     ValueTask<IStreamedResult?> GetArtwork(
         PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default);
 

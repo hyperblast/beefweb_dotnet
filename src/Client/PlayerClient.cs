@@ -340,6 +340,12 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     }
 
     /// <inheritdoc />
+    public async ValueTask<IStreamedResult?> GetCurrentArtwork(CancellationToken cancellationToken = default)
+    {
+        return await _handler.GetStream("api/artwork/current", null, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
     public async ValueTask<IStreamedResult?> GetArtwork(
         PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default)
     {
