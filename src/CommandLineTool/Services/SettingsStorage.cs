@@ -54,6 +54,7 @@ public sealed class SettingsStorage : ISettingsStorage
         return Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             Constants.ProjectName,
-            Constants.AppName + ".config.json");
+            Constants.AppName,
+            "config.json");
     }
 }
