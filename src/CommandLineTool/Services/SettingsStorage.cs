@@ -34,11 +34,15 @@ public sealed class SettingsStorage : ISettingsStorage
 
     public void Save()
     {
-        var settings = Settings;
+        if (_settings == null)
+        {
+            return;
+        }
+
         var settingsFile = GetSettingsFile();
         var settingsDirectory = Path.GetDirectoryName(settingsFile);
         var tempFile = settingsFile + ".tmp";
-        var settingsData = JsonSerializer.SerializeToUtf8Bytes(settings, _serializerOptions);
+        var settingsData = JsonSerializer.SerializeToUtf8Bytes(_settings, _serializerOptions);
 
         Directory.CreateDirectory(settingsDirectory!);
         File.WriteAllBytes(tempFile, settingsData);

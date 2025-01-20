@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace Beefweb.CommandLineTool.Commands;
 [Command("set-default", Description = "Set default server")]
 public class SetDefaultServerCommand(ISettingsStorage storage) : CommandBase
 {
-    [Argument(0)]
+    [Argument(0, Description = "Server name or 'null' to unset default server")]
     [Required]
     public string Name { get; set; } = null!;
 
@@ -17,12 +18,20 @@ public class SetDefaultServerCommand(ISettingsStorage storage) : CommandBase
     {
         var settings = storage.Settings;
 
-        if (!settings.PredefinedServers.ContainsKey(Name))
+        if (!string.Equals(Name, "null", StringComparison.OrdinalIgnoreCase))
         {
-            throw new InvalidRequestException($"Unknown server '{Name}'.");
+            if (!settings.PredefinedServers.ContainsKey(Name))
+            {
+                throw new InvalidRequestException($"Unknown server '{Name}'.");
+            }
+
+            settings.DefaultServer = Name;
+        }
+        else
+        {
+            settings.DefaultServer = null;
         }
 
-        settings.DefaultServer = Name;
         storage.Save();
         return Task.CompletedTask;
     }

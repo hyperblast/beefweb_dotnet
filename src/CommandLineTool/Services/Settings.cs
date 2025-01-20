@@ -1,3 +1,5 @@
+using System;
+
 namespace Beefweb.CommandLineTool.Services;
 
 public sealed class Settings
@@ -8,6 +10,13 @@ public sealed class Settings
 
     public static Settings CreateDefault()
     {
-        return new Settings { DefaultServer = Constants.LocalServerName };
+        return new Settings
+        {
+            DefaultServer = Constants.LocalServerName,
+            PredefinedServers =
+            {
+                { Constants.LocalServerName, new Uri(Constants.LocalServerUrl) }
+            }
+        };
     }
 }

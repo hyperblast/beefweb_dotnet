@@ -31,16 +31,15 @@ public sealed class ClientProvider(ISettingsStorage settingsStorage) : IClientPr
         }
 
         var settings = settingsStorage.Settings;
-        var serverName = ServerName ?? settings.DefaultServer ?? Constants.LocalServerName;
+        var serverName = ServerName ?? settings.DefaultServer ??
+            throw new InvalidRequestException("No server is specified and no default server is configured.");
 
         if (settings.PredefinedServers.TryGetValue(serverName, out var predefinedUri))
         {
             return predefinedUri;
         }
 
-        return string.Equals(serverName, Constants.LocalServerName, StringComparison.OrdinalIgnoreCase)
-            ? new Uri(Constants.LocalServerUrl)
-            : throw new InvalidRequestException($"Unknown predefined server '{serverName}'.");
+        throw new InvalidRequestException($"Unknown predefined server '{serverName}'.");
     }
 
     public static bool IsHttpScheme(Uri uri)
