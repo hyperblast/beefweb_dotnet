@@ -22,6 +22,9 @@ public class AddServerCommand(ISettingsStorage storage) : CommandBase
     [Option("-f|--force", Description = "Force overwriting existing entry")]
     public bool Force { get; set; }
 
+    [Option("--set-default", Description = "Set added server as default")]
+    public bool SetDefault { get; set; }
+
     public override Task OnExecuteAsync(CancellationToken ct)
     {
         var settings = storage.Settings;
@@ -32,6 +35,11 @@ public class AddServerCommand(ISettingsStorage storage) : CommandBase
         }
 
         settings.PredefinedServers[Name] = Uri;
+
+        if (SetDefault || settings.PredefinedServers.Count == 1)
+        {
+            settings.DefaultServer = Name;
+        }
 
         storage.Save();
         return Task.CompletedTask;
