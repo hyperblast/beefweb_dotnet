@@ -23,7 +23,7 @@ public class DeleteServerCommand(ISettingsStorage storage) : CommandBase
 
         if (string.Equals(settings.DefaultServer, Name, StringComparison.OrdinalIgnoreCase))
         {
-            settings.DefaultServer = settings.PredefinedServers.Keys.Order().FirstOrDefault();
+            settings.DefaultServer = null;
         }
 
         storage.Save();

@@ -36,7 +36,7 @@ public class AddServerCommand(ISettingsStorage storage) : CommandBase
 
         settings.PredefinedServers[Name] = Uri;
 
-        if (SetDefault || settings.PredefinedServers.Count == 1)
+        if (SetDefault)
         {
             settings.DefaultServer = Name;
         }
