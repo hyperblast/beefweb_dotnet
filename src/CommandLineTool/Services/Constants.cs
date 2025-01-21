@@ -6,5 +6,5 @@ public static class Constants
     public const string LocalServerUrl = "http://localhost:8880";
 
     public const string ProjectName = "beefweb";
-    public const string AppName = "playerctl";
+    public const string AppName = "beefctl";
 }

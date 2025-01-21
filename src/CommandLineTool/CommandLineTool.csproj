@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName>playerctl</AssemblyName>
+        <AssemblyName>beefctl</AssemblyName>
         <RootNamespace>Beefweb.CommandLineTool</RootNamespace>
         <OutputType>Exe</OutputType>
         <NoWarn>1701;1702;CA2007</NoWarn>
