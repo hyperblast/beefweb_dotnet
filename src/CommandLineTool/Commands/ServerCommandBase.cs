@@ -1,14 +1,17 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Beefweb.Client;
 using Beefweb.CommandLineTool.Services;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-public class ServerCommandBase(IClientProvider clientProvider) : CommandBase
+public abstract class ServerCommandBase(IClientProvider clientProvider) : CommandBase
 {
     [Option("-s|--server", Description = "Server to use. Could be a server URL or name of the predefined server.")]
     public string? Server { get; set; }
+
+    protected IPlayerClient Client => clientProvider.Client;
 
     public override Task OnExecuteAsync(CancellationToken ct)
     {
