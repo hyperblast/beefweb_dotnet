@@ -10,7 +10,7 @@ namespace Beefweb.CommandLineTool.Commands;
 [Command("set-default", Description = "Set default server")]
 public class SetDefaultServerCommand(ISettingsStorage storage) : CommandBase
 {
-    [Argument(0, Description = "Server name or 'null' to unset default server")]
+    [Argument(0, Description = "Server name or 'none' to unset default server")]
     [Required]
     public string Name { get; set; } = null!;
 
@@ -18,7 +18,7 @@ public class SetDefaultServerCommand(ISettingsStorage storage) : CommandBase
     {
         var settings = storage.Settings;
 
-        if (!string.Equals(Name, "null", StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(Name, "none", StringComparison.OrdinalIgnoreCase))
         {
             if (!settings.PredefinedServers.ContainsKey(Name))
             {
