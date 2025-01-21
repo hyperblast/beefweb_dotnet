@@ -6,15 +6,18 @@ namespace Beefweb.CommandLineTool.Services;
 
 public sealed class ServiceProvider : IServiceProvider, IDisposable
 {
-    private readonly Dictionary<Type, object> _services = new();
+    private readonly Dictionary<Type, object> _services;
 
     public ServiceProvider()
     {
         var settingsStorage = new SettingsStorage();
         var clientProvider = new ClientProvider(settingsStorage);
 
-        _services.Add(typeof(ISettingsStorage), settingsStorage);
-        _services.Add(typeof(IClientProvider), clientProvider);
+        _services = new Dictionary<Type, object>
+        {
+            { typeof(ISettingsStorage), settingsStorage },
+            { typeof(IClientProvider), clientProvider }
+        };
     }
 
     public object? GetService(Type serviceType) => _services.GetValueOrDefault(serviceType);
