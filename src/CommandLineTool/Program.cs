@@ -1,3 +1,5 @@
+using System;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Beefweb.CommandLineTool.Commands;
@@ -25,7 +27,24 @@ public sealed class Program(CommandLineApplication application) : CommandBase
             .UseDefaultConventions()
             .UseConstructorInjection(serviceProvider);
 
-        return await app.ExecuteAsync(args);
+        try
+        {
+            return await app.ExecuteAsync(args);
+        }
+        catch (HttpRequestException exception)
+        {
+            return WriteError(exception);
+        }
+        catch (InvalidRequestException exception)
+        {
+            return WriteError(exception);
+        }
+    }
+
+    private static int WriteError(Exception exception)
+    {
+        Console.Error.WriteLine(exception.Message);
+        return 1;
     }
 
     public override Task OnExecuteAsync(CancellationToken ct)
