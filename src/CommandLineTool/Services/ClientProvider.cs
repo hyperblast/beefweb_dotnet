@@ -22,7 +22,7 @@ public sealed class ClientProvider(ISettingsStorage settingsStorage) : IClientPr
     {
         if (Uri.TryCreate(ServerName, UriKind.Absolute, out var customUri))
         {
-            if (IsHttpScheme(customUri))
+            if (UriValidator.HasHttpScheme(customUri))
             {
                 throw new InvalidRequestException(Messages.HttpUrlRequired);
             }
@@ -40,11 +40,6 @@ public sealed class ClientProvider(ISettingsStorage settingsStorage) : IClientPr
         }
 
         throw new InvalidRequestException($"Unknown predefined server '{serverName}'.");
-    }
-
-    public static bool IsHttpScheme(Uri uri)
-    {
-        return uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps;
     }
 
     public void Dispose() => _client?.Dispose();

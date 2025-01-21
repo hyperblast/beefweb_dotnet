@@ -26,7 +26,7 @@ public sealed class HttpUriAttribute : ValidationAttribute
 
     private static ValidationResult? ValidateUri(Uri uri)
     {
-        return ClientProvider.IsHttpScheme(uri)
+        return UriValidator.HasHttpScheme(uri)
             ? ValidationResult.Success
             : new ValidationResult(Messages.HttpUrlRequired);
     }
