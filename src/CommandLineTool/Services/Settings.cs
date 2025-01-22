@@ -8,6 +8,8 @@ public sealed class Settings
 
     public string? DefaultServer { get; set; }
 
+    public bool IsDefaultServer(string name) => string.Equals(name, DefaultServer, StringComparison.OrdinalIgnoreCase);
+
     public static Settings CreateDefault()
     {
         return new Settings

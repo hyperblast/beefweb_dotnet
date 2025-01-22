@@ -21,7 +21,7 @@ public class DeleteServerCommand(ISettingsStorage storage) : CommandBase
 
         settings.PredefinedServers.Remove(Name);
 
-        if (string.Equals(settings.DefaultServer, Name, StringComparison.OrdinalIgnoreCase))
+        if (settings.IsDefaultServer(Name))
         {
             settings.DefaultServer = null;
         }

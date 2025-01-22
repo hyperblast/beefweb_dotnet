@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Services;
 
@@ -10,13 +11,16 @@ public sealed class ServiceProvider : IServiceProvider, IDisposable
 
     public ServiceProvider()
     {
+        var console = PhysicalConsole.Singleton;
         var settingsStorage = new SettingsStorage();
         var clientProvider = new ClientProvider(settingsStorage);
+        var tabularWriter = new TabularWriter(console);
 
         _services = new Dictionary<Type, object>
         {
             { typeof(ISettingsStorage), settingsStorage },
-            { typeof(IClientProvider), clientProvider }
+            { typeof(IClientProvider), clientProvider },
+            { typeof(ITabularWriter), tabularWriter }
         };
     }
 
