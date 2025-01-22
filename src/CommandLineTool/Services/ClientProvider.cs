@@ -22,7 +22,7 @@ public sealed class ClientProvider(ISettingsStorage settingsStorage) : IClientPr
     {
         if (Uri.TryCreate(ServerName, UriKind.Absolute, out var customUri))
         {
-            if (UriValidator.HasHttpScheme(customUri))
+            if (!UriValidator.HasHttpScheme(customUri))
             {
                 throw new InvalidRequestException(Messages.HttpUrlRequired);
             }
