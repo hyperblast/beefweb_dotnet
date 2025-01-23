@@ -7,12 +7,32 @@ namespace Beefweb.CommandLineTool.Services;
 public interface ITabularWriter
 {
     void WriteTable(IReadOnlyCollection<string[]> rows);
+
+    void WriteRow(IReadOnlyCollection<string> values);
 }
 
 public sealed class TabularWriter(IConsole console) : ITabularWriter
 {
     private const int MaxColumnWidth = 99;
     private static readonly string PaddingData = new(' ', MaxColumnWidth + 1);
+
+    public void WriteRow(IReadOnlyCollection<string> values)
+    {
+        var i = 0;
+        foreach (var value in values)
+        {
+            if (i == values.Count - 1)
+            {
+                console.WriteLine(value);
+            }
+            else
+            {
+                console.Write(value);
+            }
+
+            i++;
+        }
+    }
 
     public void WriteTable(IReadOnlyCollection<string[]> rows)
     {

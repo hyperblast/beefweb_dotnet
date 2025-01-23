@@ -1,20 +1,20 @@
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Beefweb.Client;
 using Beefweb.CommandLineTool.Services;
 using McMaster.Extensions.CommandLineUtils;
+using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("status", Description = "Display current status")]
+[Command("status", Description = "Display player status")]
 public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer)
     : ServerCommandBase(clientProvider)
 {
-    [Option("-t|--tf", Description = "Format current track using specified title formatting expressions")]
-    public string[]? TitleFormats { get; set; }
+    [Option(T.TrackColumns, Description = D.TrackColumnsCurrent)]
+    public string[]? TrackColumns { get; set; }
 
     [Option("-v|--volume", Description = "Display volume information")]
     public bool Volume { get; set; }
@@ -36,9 +36,9 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
         IEnumerable<string> activeItemColumns;
         ActiveItemInfo activeItem;
 
-        if (TitleFormats is { Length: > 0 })
+        if (TrackColumns is { Length: > 0 })
         {
-            state = await Client.GetPlayerState(TitleFormats, ct);
+            state = await Client.GetPlayerState(TrackColumns, ct);
             activeItem = state.ActiveItem;
             activeItemColumns = state.ActiveItem.Columns;
         }
@@ -46,7 +46,9 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
         {
             state = await Client.GetPlayerState(["%artist% - %title%"], ct);
             activeItem = state.ActiveItem;
-            activeItemColumns = [activeItem.Columns[0], activeItem.FormatProgress()];
+            activeItemColumns = state.PlaybackState != PlaybackState.Stopped
+                ? [activeItem.Columns[0], activeItem.FormatProgress()]
+                : [];
         }
 
         var properties = new List<string[]>();

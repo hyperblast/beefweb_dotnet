@@ -20,6 +20,7 @@ namespace Beefweb.CommandLineTool;
 [Subcommand(typeof(SetVolumeCommand))]
 [Subcommand(typeof(ListPlaylistsCommand))]
 [Subcommand(typeof(StatusCommand))]
+[Subcommand(typeof(NowPlayingCommand))]
 public sealed class Program(CommandLineApplication application) : CommandBase
 {
     private static async Task<int> Main(string[] args)
