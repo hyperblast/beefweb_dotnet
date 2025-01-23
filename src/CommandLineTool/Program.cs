@@ -12,6 +12,7 @@ namespace Beefweb.CommandLineTool;
 [Command(Constants.AppName, Description = "Control music players in command line")]
 [Subcommand(typeof(PlayCommand))]
 [Subcommand(typeof(StopCommand))]
+[Subcommand(typeof(PauseCommand))]
 [Subcommand(typeof(AddServerCommand))]
 [Subcommand(typeof(DeleteServerCommand))]
 [Subcommand(typeof(ListServersCommand))]
@@ -24,9 +25,12 @@ public sealed class Program(CommandLineApplication application) : CommandBase
         using var serviceProvider = new ServiceProvider();
 
         var app = new CommandLineApplication<Program>();
+
         app.Conventions
             .UseDefaultConventions()
             .UseConstructorInjection(serviceProvider);
+
+        app.ValueParsers.Add(new PlaylistRefParser());
 
         try
         {
