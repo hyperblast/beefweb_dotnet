@@ -10,7 +10,7 @@ public static class CommonOptions
 
     public static class D
     {
-        public const string Playlist = "Playlist to use (0-based index or id)";
+        public const string Playlist = "Playlist to use (0-based index, id or current)";
         public const string Index = "Playlist item index (0-based)";
     }
 }
