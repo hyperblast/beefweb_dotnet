@@ -11,6 +11,8 @@ namespace Beefweb.CommandLineTool.Commands;
 [Command("set-volume", Description = "Set volume")]
 public class SetVolumeCommand(IClientProvider clientProvider) : ServerCommandBase(clientProvider)
 {
+    private const string DbSuffix = "db";
+
     [Argument(0, Description = "New volume (dB or linear in range [0..100])")]
     [Required]
     public string Volume { get; set; } = null!;
@@ -30,9 +32,9 @@ public class SetVolumeCommand(IClientProvider clientProvider) : ServerCommandBas
         var volumeInfo = (await Client.GetPlayerState(null, ct)).Volume;
         double newVolume;
 
-        if (Volume.EndsWith("db", StringComparison.OrdinalIgnoreCase))
+        if (Volume.EndsWith(DbSuffix, StringComparison.OrdinalIgnoreCase))
         {
-            var value = MinusFactor * ParseDouble(Volume.AsSpan(..^2));
+            var value = MinusFactor * ParseDouble(Volume.AsSpan(..^DbSuffix.Length));
 
             newVolume = Relative
                 ? VolumeCalc.NormalizeDb(value + volumeInfo.Value, volumeInfo)
