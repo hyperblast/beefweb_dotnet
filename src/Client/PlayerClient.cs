@@ -156,7 +156,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     /// <inheritdoc />
     public async ValueTask SetOption(SetOptionRequest request, CancellationToken cancellationToken = default)
     {
-        await SetPlayerState(new SetPlayerStateRequest { Options = new[] { request } }, cancellationToken)
+        await SetPlayerState(new SetPlayerStateRequest { Options = [request] }, cancellationToken)
             .ConfigureAwait(false);
     }
 

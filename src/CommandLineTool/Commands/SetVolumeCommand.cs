@@ -21,7 +21,7 @@ public class SetVolumeCommand(IClientProvider clientProvider) : ServerCommandBas
     [Option("-m|--minus", Description = "Interpret specified volume as negative")]
     public bool Minus { get; set; }
 
-    public int MinusFactor => Minus ? -1 : 1;
+    private int MinusFactor => Minus ? -1 : 1;
 
     public override async Task OnExecuteAsync(CancellationToken ct)
     {
@@ -52,6 +52,11 @@ public class SetVolumeCommand(IClientProvider clientProvider) : ServerCommandBas
 
     private static double ParseDouble(ReadOnlySpan<char> valueString)
     {
-        return double.Parse(valueString, NumberStyles.Number, CultureInfo.InvariantCulture);
+        if (double.TryParse(valueString, NumberStyles.Number, CultureInfo.InvariantCulture, out var value))
+        {
+            return value;
+        }
+
+        throw new InvalidRequestException($"Invalid numeric value: {valueString}");
     }
 }
