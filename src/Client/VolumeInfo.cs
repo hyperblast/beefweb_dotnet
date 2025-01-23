@@ -13,17 +13,17 @@ public sealed class VolumeInfo
     /// <summary>
     /// Minimal volume value.
     /// </summary>
-    public decimal Min { get; set; }
+    public double Min { get; set; }
 
     /// <summary>
     /// Maximal volume value.
     /// </summary>
-    public decimal Max { get; set; }
+    public double Max { get; set; }
 
     /// <summary>
     /// Current volume value.
     /// </summary>
-    public decimal Value { get; set; }
+    public double Value { get; set; }
 
     /// <summary>
     /// Is volume muted currently.

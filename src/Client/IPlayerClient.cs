@@ -122,6 +122,14 @@ public interface IPlayerClient
     ValueTask SetMuted(BoolSwitch isMuted, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Sets volume.
+    /// </summary>
+    /// <param name="volume">New volume value.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request task.</returns>
+    ValueTask SetVolume(double volume, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Sets player option.
     /// </summary>
     /// <param name="request">Set option request.</param>

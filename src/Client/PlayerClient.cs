@@ -148,6 +148,12 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     }
 
     /// <inheritdoc />
+    public async ValueTask SetVolume(double volume, CancellationToken cancellationToken = default)
+    {
+        await SetPlayerState(new SetPlayerStateRequest { Volume = volume }, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
     public async ValueTask SetOption(SetOptionRequest request, CancellationToken cancellationToken = default)
     {
         await SetPlayerState(new SetPlayerStateRequest { Options = new[] { request } }, cancellationToken)

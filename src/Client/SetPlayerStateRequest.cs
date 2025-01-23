@@ -12,7 +12,7 @@ public sealed class SetPlayerStateRequest
     /// <summary>
     /// New volume.
     /// </summary>
-    public decimal? Volume { get; set; }
+    public double? Volume { get; set; }
 
     /// <summary>
     /// New mute state.
