@@ -15,7 +15,7 @@ namespace Beefweb.CommandLineTool;
 [Subcommand(typeof(PauseCommand))]
 [Subcommand(typeof(ServersCommand))]
 [Subcommand(typeof(SetVolumeCommand))]
-[Subcommand(typeof(ListPlaylistsCommand))]
+[Subcommand(typeof(PlaylistsCommand))]
 [Subcommand(typeof(StatusCommand))]
 [Subcommand(typeof(NowPlayingCommand))]
 public sealed class Program(CommandLineApplication application) : CommandBase

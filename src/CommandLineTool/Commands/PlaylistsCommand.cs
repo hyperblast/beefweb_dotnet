@@ -6,8 +6,10 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("list-playlists", Description = "List playlists")]
-public class ListPlaylistsCommand(IClientProvider clientProvider, ITabularWriter writer)
+[Command("playlists", Description = "List playlists")]
+[Subcommand(typeof(PlaylistsAddCommand))]
+[Subcommand(typeof(PlaylistsDeleteCommand))]
+public class PlaylistsCommand(IClientProvider clientProvider, ITabularWriter writer)
     : ServerCommandBase(clientProvider)
 {
     public override async Task OnExecuteAsync(CancellationToken ct)
