@@ -7,8 +7,8 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("add-server", Description = "Add predefined server")]
-public class AddServerCommand(ISettingsStorage storage) : CommandBase
+[Command("add", Description = "Add predefined server")]
+public class ServersAddCommand(ISettingsStorage storage) : CommandBase
 {
     [Argument(0, Description = "Server name")]
     [Required]

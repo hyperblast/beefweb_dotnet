@@ -1,6 +1,4 @@
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Beefweb.CommandLineTool.Services;
@@ -8,8 +6,8 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("delete-server", Description = "Delete predefined server")]
-public class DeleteServerCommand(ISettingsStorage storage) : CommandBase
+[Command("delete", Description = "Delete predefined server")]
+public class ServersDeleteCommand(ISettingsStorage storage) : CommandBase
 {
     [Argument(0, Description = "Server name")]
     [Required]

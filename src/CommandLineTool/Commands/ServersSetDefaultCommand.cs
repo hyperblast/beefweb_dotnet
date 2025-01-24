@@ -8,7 +8,7 @@ using McMaster.Extensions.CommandLineUtils;
 namespace Beefweb.CommandLineTool.Commands;
 
 [Command("set-default", Description = "Set default server")]
-public class SetDefaultServerCommand(ISettingsStorage storage) : CommandBase
+public class ServersSetDefaultCommand(ISettingsStorage storage) : CommandBase
 {
     [Argument(0, Description = "Server name or 'none' to unset default server")]
     [Required]

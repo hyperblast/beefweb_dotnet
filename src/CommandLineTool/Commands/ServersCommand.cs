@@ -6,8 +6,11 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("list-servers", Description = "List predefined servers")]
-public class ListServersCommand(ISettingsStorage storage, ITabularWriter writer) : CommandBase
+[Command("servers", Description = "List predefined servers")]
+[Subcommand(typeof(ServersAddCommand))]
+[Subcommand(typeof(ServersDeleteCommand))]
+[Subcommand(typeof(ServersSetDefaultCommand))]
+public class ServersCommand(ISettingsStorage storage, ITabularWriter writer) : CommandBase
 {
     public override Task OnExecuteAsync(CancellationToken ct)
     {
