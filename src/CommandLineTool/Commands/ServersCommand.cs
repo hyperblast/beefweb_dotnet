@@ -6,7 +6,7 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("servers", Description = "List predefined servers")]
+[Command("servers", Description = "List or modify predefined servers")]
 [Subcommand(typeof(ServersAddCommand))]
 [Subcommand(typeof(ServersDeleteCommand))]
 [Subcommand(typeof(ServersSetDefaultCommand))]

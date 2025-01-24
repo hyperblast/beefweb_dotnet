@@ -6,7 +6,7 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("playlists", Description = "List playlists")]
+[Command("playlists", Description = "List or modify playlists")]
 [Subcommand(typeof(PlaylistsAddCommand))]
 [Subcommand(typeof(PlaylistsDeleteCommand))]
 public class PlaylistsCommand(IClientProvider clientProvider, ITabularWriter writer)
