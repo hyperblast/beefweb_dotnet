@@ -10,7 +10,7 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 namespace Beefweb.CommandLineTool.Commands;
 
 [Command("status", Description = "Display player status")]
-public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer)
+public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer, ISettingsStorage storage)
     : ServerCommandBase(clientProvider)
 {
     [Option(T.TrackColumns, Description = D.TrackColumnsCurrent)]
@@ -32,24 +32,13 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
     {
         await base.OnExecuteAsync(ct);
 
-        PlayerState state;
-        IEnumerable<string> activeItemColumns;
-        ActiveItemInfo activeItem;
+        var formatExpressions = TrackColumns is { Length: > 0 }
+            ? (IReadOnlyList<string>?)TrackColumns
+            : storage.Settings.StatusFormat;
 
-        if (TrackColumns is { Length: > 0 })
-        {
-            state = await Client.GetPlayerState(TrackColumns, ct);
-            activeItem = state.ActiveItem;
-            activeItemColumns = state.ActiveItem.Columns;
-        }
-        else
-        {
-            state = await Client.GetPlayerState(["%artist% - %title%"], ct);
-            activeItem = state.ActiveItem;
-            activeItemColumns = state.PlaybackState != PlaybackState.Stopped
-                ? [activeItem.Columns[0], activeItem.FormatProgress()]
-                : [];
-        }
+        var state = await Client.GetPlayerState(formatExpressions, ct);
+        var activeItem = state.ActiveItem;
+        var activeItemColumns = state.ActiveItem.Columns;
 
         var properties = new List<string[]>();
 

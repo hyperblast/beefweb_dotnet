@@ -19,6 +19,7 @@ namespace Beefweb.CommandLineTool;
 [Subcommand(typeof(PlaylistsCommand))]
 [Subcommand(typeof(StatusCommand))]
 [Subcommand(typeof(NowPlayingCommand))]
+[Subcommand(typeof(ConfigCommand))]
 public sealed class Program(CommandLineApplication application) : CommandBase
 {
     private static async Task<int> Main(string[] args)

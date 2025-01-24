@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using Beefweb.Client;
@@ -11,6 +12,7 @@ namespace Beefweb.CommandLineTool.Commands;
 public class PlaylistsDeleteCommand(IClientProvider clientProvider) : ServerCommandBase(clientProvider)
 {
     [Argument(0, Description = D.Playlist)]
+    [Required]
     public PlaylistRef Playlist { get; set; }
 
     public override async Task OnExecuteAsync(CancellationToken ct)

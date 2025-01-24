@@ -13,12 +13,14 @@ public sealed class ServiceProvider : IServiceProvider, IDisposable
     {
         var console = PhysicalConsole.Singleton;
         var settingsStorage = new SettingsStorage();
+        var settingsAccessor = new SettingsAccessor(settingsStorage);
         var clientProvider = new ClientProvider(settingsStorage);
         var tabularWriter = new TabularWriter(console);
 
         _services = new Dictionary<Type, object>
         {
             { typeof(ISettingsStorage), settingsStorage },
+            { typeof(ISettingsAccessor), settingsAccessor },
             { typeof(IClientProvider), clientProvider },
             { typeof(ITabularWriter), tabularWriter }
         };
