@@ -17,7 +17,8 @@ public static class DisplayFormatter
 
     public static string[] Format(this PlayerOption option)
     {
-        return [option.Id.CapitalizeFirstChar(), option.FormatValue()];
+        var valueSuffix = option.Type == PlayerOptionType.Enum ? " (" + option.Value + ")" : "";
+        return [option.Id.CapitalizeFirstChar(), option.FormatValue() + valueSuffix];
     }
 
     public static string FormatValue(this PlayerOption option)
@@ -43,10 +44,5 @@ public static class DisplayFormatter
             > TimeSpan.TicksPerHour => time.ToString(@"hh\:mm\:ss"),
             _ => time.ToString(@"mm\:ss")
         };
-    }
-
-    public static string FormatProgress(this ActiveItemInfo item)
-    {
-        return "[" + item.Position.FormatAsTrackTime() + " / " + item.Duration.FormatAsTrackTime() + "]";
     }
 }
