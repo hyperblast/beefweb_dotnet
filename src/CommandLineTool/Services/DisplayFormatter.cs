@@ -23,7 +23,9 @@ public static class DisplayFormatter
 
     public static string FormatValue(this PlayerOption option)
     {
-        return option.Value is int intValue ? option.EnumNames![intValue] : option.Value.ToString()!;
+        return option.Type == PlayerOptionType.Enum
+            ? option.EnumNames![(int)option.Value]
+            : option.Value.ToString()!;
     }
 
     public static string Format(this VolumeInfo volumeInfo)

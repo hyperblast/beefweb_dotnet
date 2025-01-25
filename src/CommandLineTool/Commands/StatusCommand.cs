@@ -55,7 +55,7 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
         if (Playlist || All)
         {
             properties.Add(["Playlist", activeItem.PlaylistId ?? ""]);
-            properties.Add(["Index", activeItem.Index.ToString(CultureInfo.CurrentCulture)]);
+            properties.Add(["Index", activeItem.Index.ToString(CultureInfo.InvariantCulture)]);
         }
 
         if (Volume || All)
