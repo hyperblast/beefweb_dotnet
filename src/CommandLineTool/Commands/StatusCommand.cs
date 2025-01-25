@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Beefweb.Client;
@@ -65,11 +66,7 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
 
         if (Options || All)
         {
-            foreach (var option in state.Options)
-            {
-                var value = option.Value is int intValue ? option.EnumNames![intValue] : option.Value.ToString();
-                properties.Add([option.Name, value!]);
-            }
+            properties.AddRange(state.Options.Select(o => o.Format()));
         }
 
         writer.WriteTable(properties);

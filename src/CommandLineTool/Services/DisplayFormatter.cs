@@ -5,6 +5,26 @@ namespace Beefweb.CommandLineTool.Services;
 
 public static class DisplayFormatter
 {
+    private static string CapitalizeFirstChar(this string str)
+    {
+        if (str.Length == 0)
+        {
+            return str;
+        }
+
+        return char.ToUpperInvariant(str[0]) + str[1..];
+    }
+
+    public static string[] Format(this PlayerOption option)
+    {
+        return [option.Id.CapitalizeFirstChar(), option.FormatValue()];
+    }
+
+    public static string FormatValue(this PlayerOption option)
+    {
+        return option.Value is int intValue ? option.EnumNames![intValue] : option.Value.ToString()!;
+    }
+
     public static string Format(this VolumeInfo volumeInfo)
     {
         return volumeInfo.Type switch

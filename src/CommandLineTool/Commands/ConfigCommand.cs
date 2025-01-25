@@ -6,14 +6,14 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("config", Description = "Get or set configuration option")]
+[Command("config", Description = "Get or set configuration setting")]
 public class ConfigCommand(ITabularWriter writer, ISettingsAccessor accessor, ISettingsStorage storage) : CommandBase
 {
-    [Argument(0, Description = "Option name")]
+    [Argument(0, Description = "Setting name")]
     [Required]
     public string Name { get; set; } = null!;
 
-    [Option("-v|--value", Description = "New option value")]
+    [Option("-v|--value", Description = "New setting value")]
     public string[]? Values { get; set; }
 
     public override Task OnExecuteAsync(CancellationToken ct)
