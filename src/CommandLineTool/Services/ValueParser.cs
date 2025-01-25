@@ -9,6 +9,8 @@ public static class ValueParser
     private static readonly string[] FalseNames = ["false", "off"];
     private static readonly string[] TrueNames = ["true", "on"];
     private static readonly string[] ToggleNames = ["toggle"];
+    private static readonly string[] DirectoryNames = ["d", "dir", "directory"];
+    private static readonly string[] FileNames = ["f", "file"];
 
     public static int ParseEnumName(PlayerOption option, string value)
     {
@@ -38,22 +40,39 @@ public static class ValueParser
 
     public static BoolSwitch ParseSwitch(string value)
     {
-        return MatchesName(FalseNames, value, BoolSwitch.False) ??
-               MatchesName(TrueNames, value, BoolSwitch.True) ??
-               MatchesName(ToggleNames, value, BoolSwitch.Toggle) ??
-               throw new InvalidRequestException($"Invalid bool value '{value}'.");
+        if (MatchesName(value, FalseNames))
+            return BoolSwitch.False;
+
+        if (MatchesName(value, TrueNames))
+            return BoolSwitch.True;
+
+        if (MatchesName(value, ToggleNames))
+            return BoolSwitch.Toggle;
+
+        throw new InvalidRequestException($"Invalid bool value '{value}'.");
     }
 
-    private static BoolSwitch? MatchesName(string[] names, string value, BoolSwitch result)
+    public static FileSystemEntryType ParseFileSystemEntryType(string value)
+    {
+        if (MatchesName(value, DirectoryNames))
+            return FileSystemEntryType.Directory;
+
+        if (MatchesName(value, FileNames))
+            return FileSystemEntryType.File;
+
+        throw new InvalidRequestException($"Invalid file system entry type '{value}'.");
+    }
+
+    private static bool MatchesName(string value, string[] names)
     {
         foreach (var name in names)
         {
             if (string.Equals(name, value, StringComparison.OrdinalIgnoreCase))
             {
-                return result;
+                return true;
             }
         }
 
-        return null;
+        return false;
     }
 }

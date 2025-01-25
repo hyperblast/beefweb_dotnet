@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using Beefweb.Client;
 
 namespace Beefweb.CommandLineTool.Services;
@@ -13,6 +14,21 @@ public static class DisplayFormatter
         }
 
         return char.ToUpperInvariant(str[0]) + str[1..];
+    }
+
+    public static string FormatFileSize(this long value)
+    {
+        const long kb = 1024;
+        const long mb = kb * 1024;
+        const long gb = mb * 1024;
+
+        return value switch
+        {
+            > gb => (value / gb).ToString(CultureInfo.InvariantCulture) + "G",
+            > mb => (value / mb).ToString(CultureInfo.InvariantCulture) + "M",
+            > kb => (value / kb).ToString(CultureInfo.InvariantCulture) + "K",
+            _ => value.ToString(CultureInfo.InvariantCulture) + "b",
+        };
     }
 
     public static string[] Format(this PlayerOption option)
@@ -32,7 +48,7 @@ public static class DisplayFormatter
     {
         return volumeInfo.Type switch
         {
-            VolumeType.Db => volumeInfo.Value.ToString("0.0") + " dB",
+            VolumeType.Db => volumeInfo.Value.ToString("0.0", CultureInfo.InvariantCulture) + " dB",
             VolumeType.Linear => volumeInfo.Value.ToString("0"),
             _ => throw new ArgumentException($"Unknown volume type '{volumeInfo.Type}'."),
         };

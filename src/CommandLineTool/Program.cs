@@ -21,6 +21,7 @@ namespace Beefweb.CommandLineTool;
 [Subcommand(typeof(NowPlayingCommand))]
 [Subcommand(typeof(ConfigCommand))]
 [Subcommand(typeof(OptionsCommand))]
+[Subcommand(typeof(ListFileSystemCommand))]
 public sealed class Program(CommandLineApplication application) : CommandBase
 {
     private static async Task<int> Main(string[] args)

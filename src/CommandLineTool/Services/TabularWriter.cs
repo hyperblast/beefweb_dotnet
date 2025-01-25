@@ -6,9 +6,9 @@ namespace Beefweb.CommandLineTool.Services;
 
 public interface ITabularWriter
 {
-    void WriteTable(IReadOnlyCollection<string[]> rows);
+    void WriteTable(IReadOnlyCollection<string[]> rows, bool[]? rightAlign = null);
 
-    void WriteRow(IReadOnlyCollection<string> values);
+    void WriteRow(IEnumerable<string> values);
 }
 
 public sealed class TabularWriter(IConsole console) : ITabularWriter
@@ -16,27 +16,20 @@ public sealed class TabularWriter(IConsole console) : ITabularWriter
     private const int MaxColumnWidth = 99;
     private static readonly string PaddingData = new(' ', MaxColumnWidth + 1);
 
-    public void WriteRow(IReadOnlyCollection<string> values)
+    public void WriteRow(IEnumerable<string> values)
     {
-        var i = 0;
         foreach (var value in values)
         {
-            if (i == values.Count - 1)
-            {
-                console.WriteLine(value);
-            }
-            else
-            {
-                console.Write(value);
-            }
-
-            i++;
+            console.Write(value);
         }
+
+        console.WriteLine();
     }
 
-    public void WriteTable(IReadOnlyCollection<string[]> rows)
+    public void WriteTable(IReadOnlyCollection<string[]> rows, bool[]? rightAlign = null)
     {
         var widths = new List<int>();
+        rightAlign ??= [];
 
         foreach (var row in rows)
         {
@@ -63,8 +56,22 @@ public sealed class TabularWriter(IConsole console) : ITabularWriter
             var i = 0;
             foreach (var value in row)
             {
+                var padding = widths[i] - value.Length;
+                var isRightAlign = i < rightAlign.Length && rightAlign[i];
+
+                if (isRightAlign && padding > 0)
+                {
+                    console.Out.Write(PaddingData.AsSpan(0, padding));
+                }
+
                 console.Out.Write(value);
-                console.Out.Write(PaddingData.AsSpan(0, widths[i] - value.Length + 1));
+
+                if (!isRightAlign && padding > 0)
+                {
+                    console.Out.Write(PaddingData.AsSpan(0, padding));
+                }
+
+                console.Out.Write(' ');
                 i++;
             }
 
