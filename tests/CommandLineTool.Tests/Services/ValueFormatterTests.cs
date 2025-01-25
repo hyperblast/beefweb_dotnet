@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Beefweb.CommandLineTool.Services;
 
-public class DisplayFormatterTests
+public class ValueFormatterTests
 {
     [Fact]
     public void FormatsTrackTime()

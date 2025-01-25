@@ -4,7 +4,7 @@ using Beefweb.Client;
 
 namespace Beefweb.CommandLineTool.Services;
 
-public static class DisplayFormatter
+public static class ValueFormatter
 {
     private static string CapitalizeFirstChar(this string str)
     {
