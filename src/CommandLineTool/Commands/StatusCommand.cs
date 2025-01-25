@@ -39,7 +39,6 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
 
         var state = await Client.GetPlayerState(formatExpressions, ct);
         var activeItem = state.ActiveItem;
-        var activeItemColumns = state.ActiveItem.Columns;
 
         var properties = new List<string[]>();
 
@@ -49,7 +48,7 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
         }
         else
         {
-            properties.Add([state.PlaybackState.ToString(), ..activeItemColumns]);
+            properties.Add([state.PlaybackState.ToString(), ..activeItem.Columns]);
         }
 
         if (Playlist || All)
