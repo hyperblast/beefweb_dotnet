@@ -8,14 +8,13 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("set-volume", Description = "Set volume")]
-public class SetVolumeCommand(IClientProvider clientProvider) : ServerCommandBase(clientProvider)
+[Command("volume", Description = "Get or set volume")]
+public class VolumeCommand(IClientProvider clientProvider, IConsole console) : ServerCommandBase(clientProvider)
 {
     private const string DbSuffix = "db";
 
-    [Argument(0, Description = "New volume (dB or linear in range [0..100])")]
-    [Required]
-    public string Volume { get; set; } = null!;
+    [Option("-v|--value", Description = "New volume (dB or linear in range [0..100])")]
+    public string? Value { get; set; } = null!;
 
     [Option("-r|--relative", Description = "Adjust volume relative to current value")]
     public bool Relative { get; set; }
@@ -30,11 +29,18 @@ public class SetVolumeCommand(IClientProvider clientProvider) : ServerCommandBas
         await base.OnExecuteAsync(ct);
 
         var volumeInfo = (await Client.GetPlayerState(null, ct)).Volume;
+
+        if (Value == null)
+        {
+            console.WriteLine(volumeInfo.Format());
+            return;
+        }
+
         double newVolume;
 
-        if (Volume.EndsWith(DbSuffix, StringComparison.OrdinalIgnoreCase))
+        if (Value.EndsWith(DbSuffix, StringComparison.OrdinalIgnoreCase))
         {
-            var value = MinusFactor * ParseDouble(Volume.AsSpan(..^DbSuffix.Length));
+            var value = MinusFactor * ParseDouble(Value.AsSpan(..^DbSuffix.Length));
 
             newVolume = Relative
                 ? VolumeCalc.NormalizeDb(value + volumeInfo.Value, volumeInfo)
@@ -42,7 +48,7 @@ public class SetVolumeCommand(IClientProvider clientProvider) : ServerCommandBas
         }
         else
         {
-            var value = MinusFactor * ParseDouble(Volume);
+            var value = MinusFactor * ParseDouble(Value);
 
             newVolume = Relative
                 ? VolumeCalc.LinearChange(volumeInfo.Value, value, volumeInfo)
