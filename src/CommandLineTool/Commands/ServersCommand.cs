@@ -9,7 +9,7 @@ namespace Beefweb.CommandLineTool.Commands;
 [Command("servers", Description = "List or modify predefined servers")]
 [Subcommand(typeof(ServersAddCommand))]
 [Subcommand(typeof(ServersDeleteCommand))]
-[Subcommand(typeof(ServersSetDefaultCommand))]
+[Subcommand(typeof(ServersDefaultCommand))]
 public class ServersCommand(ISettingsStorage storage, ITabularWriter writer) : CommandBase
 {
     public override Task OnExecuteAsync(CancellationToken ct)
