@@ -75,6 +75,15 @@ public readonly struct PlaylistRef : IEquatable<PlaylistRef>
     }
 
     /// <summary>
+    /// Gets raw value (either <see cref="string"/> or <see cref="int"/>).
+    /// </summary>
+    /// <returns></returns>
+    public object GetValue()
+    {
+        return Id ?? (object)Index;
+    }
+
+    /// <summary>
     /// Creates <see cref="PlaylistRef"/> from string representation.
     /// </summary>
     /// <param name="value">String representation of playlist reference.</param>

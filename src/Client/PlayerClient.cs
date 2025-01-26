@@ -205,7 +205,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     public async ValueTask SetCurrentPlaylist(PlaylistRef playlist, CancellationToken cancellationToken = default)
     {
         await _handler
-            .Post("api/playlists", new { current = playlist.ToString() }, cancellationToken)
+            .Post("api/playlists", new { current = playlist.GetValue() }, cancellationToken)
             .ConfigureAwait(false);
     }
 
