@@ -7,6 +7,8 @@ using Beefweb.Client;
 using Beefweb.CommandLineTool.Services;
 using McMaster.Extensions.CommandLineUtils;
 
+using static Beefweb.CommandLineTool.Commands.CommonOptions;
+
 namespace Beefweb.CommandLineTool.Commands;
 
 [Command("options", Description = "List player options, get or set player option")]
@@ -16,7 +18,7 @@ public class OptionsCommand(IClientProvider clientProvider, IConsole console, IT
     [Argument(0, Description = "Option name")]
     public string? Name { get; set; } = null!;
 
-    [Option("-v|--value", Description = "New option value")]
+    [Option(T.Value, Description = "New option value")]
     public string? Value { get; set; }
 
     [Option("-t|--short", Description = "Display only current enum value (not all possible values)")]

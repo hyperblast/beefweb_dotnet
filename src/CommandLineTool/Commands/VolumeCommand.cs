@@ -1,10 +1,11 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Beefweb.CommandLineTool.Services;
 using McMaster.Extensions.CommandLineUtils;
+
+using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
@@ -13,8 +14,8 @@ public class VolumeCommand(IClientProvider clientProvider, IConsole console) : S
 {
     private const string DbSuffix = "db";
 
-    [Option("-v|--value", Description = "New volume (dB or linear in range [0..100])")]
-    public string? Value { get; set; } = null!;
+    [Option(T.Value, Description = "New volume value (dB or linear in range [0..100])")]
+    public string? Value { get; set; }
 
     [Option("-r|--relative", Description = "Adjust volume relative to current value")]
     public bool Relative { get; set; }

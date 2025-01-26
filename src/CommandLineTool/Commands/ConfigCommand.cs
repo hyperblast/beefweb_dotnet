@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Beefweb.CommandLineTool.Services;
 using McMaster.Extensions.CommandLineUtils;
 
+using static Beefweb.CommandLineTool.Commands.CommonOptions;
+
 namespace Beefweb.CommandLineTool.Commands;
 
 [Command("config", Description = "Get or set configuration setting")]
@@ -13,7 +15,7 @@ public class ConfigCommand(ITabularWriter writer, ISettingsAccessor accessor, IS
     [Required]
     public string Name { get; set; } = null!;
 
-    [Option("-v|--value", Description = "New setting value")]
+    [Option(T.Value, Description = "New setting value")]
     public string[]? Values { get; set; }
 
     public override Task OnExecuteAsync(CancellationToken ct)
