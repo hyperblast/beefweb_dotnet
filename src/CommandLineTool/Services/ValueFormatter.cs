@@ -33,7 +33,7 @@ public static class ValueFormatter
 
     public static string[] Format(this PlayerOption option)
     {
-        var valueSuffix = option.Type == PlayerOptionType.Enum ? " (" + option.Value + ")" : "";
+        var valueSuffix = option.Type == PlayerOptionType.Enum ? " [" + option.Value + "]" : "";
         return [option.Id.CapitalizeFirstChar(), option.FormatValue() + valueSuffix];
     }
 
