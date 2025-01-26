@@ -12,6 +12,16 @@ public static class ValueParser
     private static readonly string[] DirectoryNames = ["d", "dir", "directory"];
     private static readonly string[] FileNames = ["f", "file"];
 
+    public static double ParseDouble(ReadOnlySpan<char> valueString)
+    {
+        if (double.TryParse(valueString, NumberStyles.Number, CultureInfo.InvariantCulture, out var value))
+        {
+            return value;
+        }
+
+        throw new InvalidRequestException($"Invalid numeric value: {valueString}");
+    }
+
     public static int ParseEnumName(PlayerOption option, string value)
     {
         if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var index))
