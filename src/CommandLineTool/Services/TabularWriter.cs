@@ -8,7 +8,7 @@ public interface ITabularWriter
 {
     void WriteTable(IReadOnlyCollection<string[]> rows, bool[]? rightAlign = null);
 
-    void WriteRow(IEnumerable<string> values);
+    void WriteRow(IReadOnlyCollection<string> values);
 }
 
 public sealed class TabularWriter(IConsole console) : ITabularWriter
@@ -16,14 +16,23 @@ public sealed class TabularWriter(IConsole console) : ITabularWriter
     private const int MaxColumnWidth = 99;
     private static readonly string PaddingData = new(' ', MaxColumnWidth + 1);
 
-    public void WriteRow(IEnumerable<string> values)
+    public void WriteRow(IReadOnlyCollection<string> values)
     {
+        var i = 0;
         foreach (var value in values)
         {
-            console.Write(value);
-        }
+            if (i == values.Count - 1)
+            {
+                console.WriteLine(value);
+            }
+            else
+            {
+                console.Write(value);
+                console.Write(' ');
+            }
 
-        console.WriteLine();
+            i++;
+        }
     }
 
     public void WriteTable(IReadOnlyCollection<string[]> rows, bool[]? rightAlign = null)

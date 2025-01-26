@@ -10,6 +10,8 @@ namespace Beefweb.CommandLineTool.Services;
 
 public interface ISettingsAccessor
 {
+    IEnumerable<KeyValuePair<string, List<string>>> GetAllValues();
+
     List<string> GetValues(string name);
 
     void SetValues(string name, IEnumerable<string> values);
@@ -18,6 +20,12 @@ public interface ISettingsAccessor
 public class SettingsAccessor(ISettingsStorage storage) : ISettingsAccessor
 {
     private static readonly FrozenDictionary<string, AccessorPair> Accessors;
+
+    public IEnumerable<KeyValuePair<string, List<string>>> GetAllValues()
+    {
+        var settings = storage.Settings;
+        return Accessors.Select(a => KeyValuePair.Create(a.Key, a.Value.reader.Invoke(settings)));
+    }
 
     public List<string> GetValues(string name)
     {
