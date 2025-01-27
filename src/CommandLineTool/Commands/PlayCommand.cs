@@ -11,10 +11,10 @@ namespace Beefweb.CommandLineTool.Commands;
 public class PlayCommand(IClientProvider clientProvider) : ServerCommandBase(clientProvider)
 {
     [Option(T.Playlist, CommandOptionType.SingleValue, Description = D.Playlist)]
-    public PlaylistRef? Playlist { get; set; }
+    public PlaylistRef Playlist { get; set; } = PlaylistRef.Current;
 
-    [Option(T.Index, Description = D.Index)]
-    public int? Index { get; set; }
+    [Option(T.ItemIndex, Description = D.ItemIndex)]
+    public int? ItemIndex { get; set; }
 
     [Option("-n|--next", Description = "Play next item")]
     public bool Next { get; set; }
@@ -32,14 +32,9 @@ public class PlayCommand(IClientProvider clientProvider) : ServerCommandBase(cli
     {
         await base.OnExecuteAsync(ct);
 
-        if (Playlist != null)
+        if (ItemIndex != null)
         {
-            if (Index == null)
-            {
-                throw new InvalidRequestException("Item index is required if playlist is specified.");
-            }
-
-            await Client.Play(Playlist.Value, Index.Value, ct);
+            await Client.Play(Playlist, ItemIndex.Value, ct);
             return;
         }
 

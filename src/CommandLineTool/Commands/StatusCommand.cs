@@ -14,8 +14,8 @@ namespace Beefweb.CommandLineTool.Commands;
 public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer, ISettingsStorage storage)
     : ServerCommandBase(clientProvider)
 {
-    [Option(T.TrackColumns, Description = D.TrackColumnsCurrent)]
-    public string[]? TrackColumns { get; set; }
+    [Option(T.ItemColumns, Description = D.CurrentItemColumns)]
+    public string[]? ItemColumns { get; set; }
 
     [Option("-v|--volume", Description = "Display volume information")]
     public bool Volume { get; set; }
@@ -33,11 +33,8 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
     {
         await base.OnExecuteAsync(ct);
 
-        var formatExpressions = TrackColumns is { Length: > 0 }
-            ? (IReadOnlyList<string>?)TrackColumns
-            : storage.Settings.StatusFormat;
-
-        var state = await Client.GetPlayerState(formatExpressions, ct);
+        var columns = ItemColumns.GetOrDefault(storage.Settings.StatusFormat);
+        var state = await Client.GetPlayerState(columns, ct);
         var activeItem = state.ActiveItem;
 
         var properties = new List<string[]>();
