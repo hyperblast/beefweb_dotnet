@@ -22,6 +22,16 @@ public static class ValueParser
         throw new InvalidRequestException($"Invalid numeric value: {valueString}");
     }
 
+    public static int ParseIndex(ReadOnlySpan<char> valueString)
+    {
+        if (int.TryParse(valueString, NumberStyles.Number, CultureInfo.InvariantCulture, out var value) && value >= 0)
+        {
+            return value;
+        }
+
+        throw new InvalidRequestException($"Invalid index value: {valueString}");
+    }
+
     public static int ParseEnumName(PlayerOption option, string value)
     {
         if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var index))

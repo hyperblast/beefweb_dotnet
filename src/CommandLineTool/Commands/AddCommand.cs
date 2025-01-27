@@ -27,7 +27,7 @@ public class AddCommand(IClientProvider clientProvider, IConsole console) : Serv
     [Option("-r|--replace", Description = "Replace existing items in the playlist")]
     public bool Replace { get; set; }
 
-    [Option("-i|--stdin", Description = "Read items from standard input")]
+    [Option(T.Stdin, Description = D.StdinItems)]
     public bool ReadFromStdin { get; set; }
 
     public string[]? RemainingArguments { get; set; }

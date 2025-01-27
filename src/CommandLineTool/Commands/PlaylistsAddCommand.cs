@@ -13,7 +13,7 @@ public class PlaylistsAddCommand(IClientProvider clientProvider) : ServerCommand
     [Option("-t|--title", Description = "Playlist title")]
     public string? Title { get; set; }
 
-    [Option(T.Position, Description = "Position to insert playlist at")]
+    [Option(T.Position, Description = D.PositionForPlaylist)]
     public int? Position { get; set; }
 
     [Option("-c|--set-current", Description = "Select created playlist")]

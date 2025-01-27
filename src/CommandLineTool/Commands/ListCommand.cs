@@ -22,8 +22,8 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
     [Option(T.ItemIndex, Description = D.StartingItemIndex)]
     public int ItemIndex { get; set; } = 0;
 
-    [Option("-n|--limit", Description = "Limit number of displayed items")]
-    public int Limit { get; set; } = 100;
+    [Option(T.Count, Description = D.DisplayCount)]
+    public int Count { get; set; } = 100;
 
     [Option(T.ItemColumns, Description = D.PlaylistItemColumns)]
     public string[]? ItemColumns { get; set; }
@@ -36,7 +36,7 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
         await base.OnExecuteAsync(ct);
 
         var columns = ItemColumns.GetOrDefault(storage.Settings.ListFormat);
-        var result = await Client.GetPlaylistItems(Playlist, new PlaylistItemRange(ItemIndex, Limit), columns, ct);
+        var result = await Client.GetPlaylistItems(Playlist, new PlaylistItemRange(ItemIndex, Count), columns, ct);
         var rows = ShowIndices
             ? result.Items.Select((i, k) => (string[]) [k.ToString(CultureInfo.InvariantCulture), ..i.Columns])
             : result.Items.Select(i => i.Columns.ToArray());
