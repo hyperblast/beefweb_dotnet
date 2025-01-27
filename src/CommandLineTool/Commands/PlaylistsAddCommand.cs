@@ -27,6 +27,8 @@ public class PlaylistsAddCommand(IClientProvider clientProvider) : ServerCommand
 
         if (SetCurrent)
         {
+            // TODO: use Id from response
+
             var playlists = await Client.GetPlaylists(ct);
             var playlistId = Position >= 0 ? playlists[Position.Value].Id : playlists.Last().Id;
 

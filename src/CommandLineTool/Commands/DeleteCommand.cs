@@ -69,6 +69,8 @@ public class DeleteCommand(IClientProvider clientProvider, IConsole console) : S
 
     private async ValueTask<PlaylistInfo> GetPlaylist(CancellationToken ct)
     {
+        // TODO: use get single playlist API
+
         var playlists = await Client.GetPlaylists(ct);
         if (Playlist == PlaylistRef.Current)
         {
