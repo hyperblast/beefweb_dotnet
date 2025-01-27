@@ -51,7 +51,7 @@ public class DeleteCommand(IClientProvider clientProvider, IConsole console) : S
 
         if (ReadFromStdin)
         {
-            indices.AddRange(console.In.ReadIndices(ct));
+            await indices.AddRangeAsync(console.In.ReadIndicesAsync(), ct: ct);
         }
 
         if (RemainingArguments != null)

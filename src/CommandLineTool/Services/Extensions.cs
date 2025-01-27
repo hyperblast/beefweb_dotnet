@@ -1,66 +1,89 @@
+using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Beefweb.CommandLineTool.Services;
 
 public static class Extensions
 {
-    public static IEnumerable<int> ReadIndices(this TextReader reader, CancellationToken ct = default)
+    public static IAsyncEnumerable<int> ReadIndicesAsync(this TextReader reader) => ReadIndicesImplAsync(reader);
+
+    private static async IAsyncEnumerable<int> ReadIndicesImplAsync(
+        TextReader reader, [EnumeratorCancellation] CancellationToken ct = default)
     {
         var line = 0;
-        var offset = 0;
-
-        var input = reader.Read();
+        var offset = -1;
+        var ch = ' ';
         var value = -1;
+        var bufferOffset = 0;
+        var bufferRemaining = 0;
+        var buffer = ArrayPool<char>.Shared.Rent(1024);
 
-        while (input != -1)
+        try
         {
-            var ch = (char)input;
-
-            if (char.IsWhiteSpace(ch) || char.IsControl(ch))
+            while (await ReadNext())
             {
-                if (value >= 0)
+                if (char.IsWhiteSpace(ch) || char.IsControl(ch))
                 {
-                    yield return value;
-                    value = -1;
+                    if (value >= 0)
+                    {
+                        yield return value;
+                        value = -1;
+                    }
+
+                    continue;
                 }
 
-                ReadNext();
-                continue;
+                if (!char.IsAsciiDigit(ch))
+                {
+                    throw new InvalidRequestException($"Invalid input character '{ch}' at {line}:{offset}.");
+                }
+
+                var digit = ch - '0';
+                value = value >= 0 ? value * 10 + digit : digit;
+
+                if (value > 100_000_000)
+                {
+                    throw new InvalidRequestException($"Value {value} is too large at {line}:{offset}.");
+                }
             }
 
-            if (!char.IsAsciiDigit(ch))
+            if (value >= 0)
             {
-                throw new InvalidRequestException($"Invalid input character '{ch}' at {line}:{offset}.");
+                yield return value;
             }
-
-            var digit = input - '0';
-            value = value >= 0 ? value * 10 + digit : digit;
-
-            if (value > 100_000_000)
-            {
-                throw new InvalidRequestException($"Value {value} is too large at {line}:{offset}.");
-            }
-
-            ReadNext();
         }
-
-        if (value >= 0)
+        finally
         {
-            yield return value;
+            ArrayPool<char>.Shared.Return(buffer);
         }
 
         yield break;
 
-        void ReadNext()
+        async ValueTask<bool> ReadNext()
         {
             ct.ThrowIfCancellationRequested();
 
-            input = reader.Read();
+            if (bufferRemaining == 0)
+            {
+                bufferOffset = 0;
+                bufferRemaining = await reader.ReadBlockAsync(buffer, 0, buffer.Length);
 
-            if (input is '\n' or '\r')
+                if (bufferRemaining == 0)
+                {
+                    return false;
+                }
+            }
+
+            ch = buffer[bufferOffset];
+            bufferOffset++;
+            bufferRemaining--;
+
+            if (ch is '\n')
             {
                 line++;
                 offset = -1;
@@ -69,6 +92,8 @@ public static class Extensions
             {
                 offset++;
             }
+
+            return true;
         }
     }
 
@@ -89,6 +114,24 @@ public static class Extensions
     {
         foreach (var item in items)
             collection.Add(item);
+    }
+
+    public static async ValueTask AddRangeAsync<T>(
+        this ICollection<T> collection, IAsyncEnumerable<T> items, CancellationToken ct = default)
+    {
+        await foreach (var item in items.WithCancellation(ct))
+            collection.Add(item);
+    }
+
+    public static async ValueTask<List<T>> ToListAsync<T>(this IAsyncEnumerable<T> items,
+        CancellationToken ct = default)
+    {
+        var result = new List<T>();
+
+        await foreach (var item in items.WithCancellation(ct))
+            result.Add(item);
+
+        return result;
     }
 
     public static IReadOnlyList<string> GetOrDefault(
