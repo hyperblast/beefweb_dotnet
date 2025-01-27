@@ -63,7 +63,7 @@ public static class Extensions
             if (input is '\n' or '\r')
             {
                 line++;
-                offset = 0;
+                offset = -1;
             }
             else
             {

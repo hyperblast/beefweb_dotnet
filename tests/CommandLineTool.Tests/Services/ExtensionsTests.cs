@@ -17,6 +17,7 @@ public class ExtensionsTests
     [InlineData(" 2\n34", new[] { 2, 34 })]
     [InlineData("3 45 ", new[] { 3, 45 })]
     [InlineData(" 5\r67 ", new[] { 5, 67 })]
+    [InlineData("5 66 777 8888 99999", new[] { 5, 66, 777, 8888, 99999 })]
     public void ReadIndicesWorks(string input, int[] result)
     {
         var reader = new StringReader(input);
