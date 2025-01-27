@@ -40,7 +40,7 @@ public class AddCommand(IClientProvider clientProvider, IConsole console) : Serv
 
         if (RemainingArguments != null)
         {
-            items.AddRange(items);
+            items.AddRange(RemainingArguments);
         }
 
         if (ReadFromStdin)
