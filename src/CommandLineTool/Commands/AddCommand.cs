@@ -45,17 +45,13 @@ public class AddCommand(IClientProvider clientProvider, IConsole console) : Serv
 
         if (ReadFromStdin)
         {
-            var line = await console.In.ReadLineAsync(ct);
-            while (line != null)
+            await foreach (var line in console.In.ReadLinesAsync().WithCancellation(ct))
             {
-                line = line.Trim();
-
-                if (line.Length > 0 && line[0] != '#')
+                var s = line.Trim();
+                if (s.Length > 0 && s[0] != '#')
                 {
-                    items.Add(line);
+                    items.Add(s);
                 }
-
-                line = await console.In.ReadLineAsync(ct);
             }
         }
 
