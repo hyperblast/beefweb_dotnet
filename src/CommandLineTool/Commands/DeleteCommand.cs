@@ -49,14 +49,14 @@ public class DeleteCommand(IClientProvider clientProvider, IConsole console) : S
             indices.AddRange(Enumerable.Range(index, count));
         }
 
-        if (ReadFromStdin)
-        {
-            await indices.AddRangeAsync(console.In.ReadIndicesAsync(), ct: ct);
-        }
-
         if (RemainingArguments != null)
         {
             indices.AddRange(RemainingArguments.Select(a => ValueParser.ParseIndex(a)));
+        }
+
+        if (ReadFromStdin)
+        {
+            await indices.AddRangeAsync(console.In.ReadIndicesAsync(), ct: ct);
         }
 
         if (indices.Count == 0)
