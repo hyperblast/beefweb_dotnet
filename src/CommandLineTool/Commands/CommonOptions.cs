@@ -7,7 +7,7 @@ public static class CommonOptions
         public const string Playlist = "-p|--playlist";
         public const string ItemIndex = "-i|--item";
         public const string ItemColumns = "-t|--tf";
-        public const string Set = "-v|--set";
+        public const string Set = "-s|--set";
         public const string Position = "-P|--position";
         public const string Count = "-n|--count";
         public const string Stdin = "-I|--stdin";
