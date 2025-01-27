@@ -10,7 +10,7 @@ namespace Beefweb.CommandLineTool.Commands;
 [Command("play", Description = "Play current or specified track")]
 public class PlayCommand(IClientProvider clientProvider) : ServerCommandBase(clientProvider)
 {
-    [Option(T.Playlist, CommandOptionType.SingleValue, Description = D.Playlist)]
+    [Option(T.Playlist, CommandOptionType.SingleValue, Description = D.PlaylistToUse)]
     public PlaylistRef Playlist { get; set; } = PlaylistRef.Current;
 
     [Option(T.ItemIndex, Description = D.ItemIndex)]

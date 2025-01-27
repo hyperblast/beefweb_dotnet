@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Beefweb.CommandLineTool.Services;
 using McMaster.Extensions.CommandLineUtils;
+using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
@@ -12,7 +13,7 @@ public class PlaylistsAddCommand(IClientProvider clientProvider) : ServerCommand
     [Option("-t|--title", Description = "Playlist title")]
     public string? Title { get; set; }
 
-    [Option("-p|--position", Description = "Position to insert playlist at")]
+    [Option(T.Position, Description = "Position to insert playlist at")]
     public int? Position { get; set; }
 
     [Option("-c|--set-current", Description = "Select created playlist")]

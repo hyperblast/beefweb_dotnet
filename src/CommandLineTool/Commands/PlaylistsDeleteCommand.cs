@@ -11,7 +11,7 @@ namespace Beefweb.CommandLineTool.Commands;
 [Command("delete", Description = "Delete playlist")]
 public class PlaylistsDeleteCommand(IClientProvider clientProvider) : ServerCommandBase(clientProvider)
 {
-    [Argument(0, Description = D.Playlist)]
+    [Argument(0, Description = D.PlaylistToDelete)]
     [Required]
     public PlaylistRef Playlist { get; set; }
 

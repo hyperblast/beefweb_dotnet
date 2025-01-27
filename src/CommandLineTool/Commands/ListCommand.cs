@@ -13,7 +13,7 @@ namespace Beefweb.CommandLineTool.Commands;
 public class ListCommand(IClientProvider clientProvider, ISettingsStorage storage, ITabularWriter writer)
     : ServerCommandBase(clientProvider)
 {
-    [Option(T.Playlist, CommandOptionType.SingleValue, Description = D.Playlist)]
+    [Option(T.Playlist, CommandOptionType.SingleValue, Description = D.PlaylistToUse)]
     public PlaylistRef Playlist { get; set; } = PlaylistRef.Current;
 
     [Option(T.ItemIndex, Description = D.StartingItemIndex)]

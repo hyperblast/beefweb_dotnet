@@ -16,6 +16,7 @@ namespace Beefweb.CommandLineTool;
 [Subcommand(typeof(MuteCommand))]
 [Subcommand(typeof(VolumeCommand))]
 [Subcommand(typeof(ListCommand))]
+[Subcommand(typeof(AddCommand))]
 [Subcommand(typeof(ServersCommand))]
 [Subcommand(typeof(PlaylistsCommand))]
 [Subcommand(typeof(StatusCommand))]

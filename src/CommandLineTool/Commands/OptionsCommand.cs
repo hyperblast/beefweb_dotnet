@@ -18,7 +18,7 @@ public class OptionsCommand(IClientProvider clientProvider, IConsole console, IT
     [Argument(0, Description = "Option name")]
     public string? Name { get; set; } = null!;
 
-    [Option(T.Value, Description = "New option value")]
+    [Option(T.Set, Description = "New option value")]
     public string? Value { get; set; }
 
     [Option("-t|--short", Description = "Display only current enum value (not all possible values)")]

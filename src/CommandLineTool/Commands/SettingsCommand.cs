@@ -14,7 +14,7 @@ public class SettingsCommand(ITabularWriter writer, ISettingsAccessor accessor, 
     [Argument(0, Description = "Setting name")]
     public string? Name { get; set; } = null!;
 
-    [Option(T.Value, Description = "New setting value")]
+    [Option(T.Set, Description = "New setting value")]
     public string[]? Values { get; set; }
 
     public override Task OnExecuteAsync(CancellationToken ct)

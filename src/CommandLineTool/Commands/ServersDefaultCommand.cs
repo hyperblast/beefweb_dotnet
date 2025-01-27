@@ -13,7 +13,7 @@ public class ServersDefaultCommand(ISettingsStorage storage, IConsole console) :
 {
     private const string NoneServer = "none";
 
-    [Option(T.Value, Description = "New default server name or 'none' to unset default server")]
+    [Option(T.Set, Description = "New default server name or 'none' to unset default server")]
     public string? Server { get; set; } = null!;
 
     public override Task OnExecuteAsync(CancellationToken ct)
