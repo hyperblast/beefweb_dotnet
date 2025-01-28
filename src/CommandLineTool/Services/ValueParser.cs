@@ -12,6 +12,26 @@ public static class ValueParser
     private static readonly string[] DirectoryNames = ["d", "dir", "directory"];
     private static readonly string[] FileNames = ["f", "file"];
 
+    public static Range ParseRange(ReadOnlySpan<char> input)
+    {
+        if (Range.TryParse(input, out var result))
+        {
+            return result;
+        }
+
+        throw new InvalidRequestException($"Invalid item index or range '{input}'.");
+    }
+
+    public static Range ParseRange(Token input)
+    {
+        if (Range.TryParse(input.Value, out var result))
+        {
+            return result;
+        }
+
+        throw new InvalidRequestException($"Invalid item index or range '{input}' at {input.Location}.");
+    }
+
     public static double ParseDouble(ReadOnlySpan<char> valueString)
     {
         if (double.TryParse(valueString, NumberStyles.Number, CultureInfo.InvariantCulture, out var value))
@@ -20,26 +40,6 @@ public static class ValueParser
         }
 
         throw new InvalidRequestException($"Invalid numeric value: {valueString}");
-    }
-
-    public static int ParseIndex(ReadOnlySpan<char> valueString)
-    {
-        if (int.TryParse(valueString, NumberStyles.Number, CultureInfo.InvariantCulture, out var value) && value >= 0)
-        {
-            return value;
-        }
-
-        throw new InvalidRequestException($"Invalid index value '{valueString}'.");
-    }
-
-    public static int ParseIndex(Token token)
-    {
-        if (int.TryParse(token.Value, NumberStyles.Number, CultureInfo.InvariantCulture, out var value) && value >= 0)
-        {
-            return value;
-        }
-
-        throw new InvalidRequestException($"Invalid index value '{token.Value}' at {token.Location}.");
     }
 
     public static int ParseEnumName(PlayerOption option, string value)

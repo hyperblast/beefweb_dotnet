@@ -19,12 +19,6 @@ public class DeleteCommand(IClientProvider clientProvider, IConsole console) : S
     [Option(T.Playlist, CommandOptionType.SingleValue, Description = D.PlaylistToUse)]
     public PlaylistRef Playlist { get; set; } = PlaylistRef.Current;
 
-    [Option(T.ItemIndex, Description = D.StartingItemIndex)]
-    public int? ItemIndex { get; set; }
-
-    [Option(T.Count, Description = D.DeleteCount)]
-    public int? Count { get; set; }
-
     [Option(T.Stdin, Description = D.StdinIndices)]
     public bool ReadFromStdin { get; set; }
 
@@ -40,34 +34,38 @@ public class DeleteCommand(IClientProvider clientProvider, IConsole console) : S
             return;
         }
 
-        var indices = new HashSet<int>();
-
-        if (ItemIndex != null)
-        {
-            var index = ItemIndex.Value;
-            var count = Count ?? (await GetPlaylist(ct)).ItemCount - index;
-            indices.AddRange(Enumerable.Range(index, count));
-        }
+        var ranges = new List<Range>();
 
         if (RemainingArguments != null)
         {
-            indices.AddRange(RemainingArguments.Select(a => ValueParser.ParseIndex(a)));
+            ranges.AddRange(RemainingArguments.Select(a => ValueParser.ParseRange(a)));
         }
 
         if (ReadFromStdin)
         {
             await foreach (var token in console.In.ReadTokensAsync().WithCancellation(ct))
             {
-                indices.Add(ValueParser.ParseIndex(token));
+                ranges.Add(ValueParser.ParseRange(token));
             }
         }
 
-        if (indices.Count == 0)
+        if (ranges.Count == 0)
         {
             throw new InvalidRequestException("At least one item is required.");
         }
 
-        await Client.RemovePlaylistItems(Playlist, indices.ToArray(), ct);
+        var indices = new HashSet<int>();
+        var totalCount = (await GetPlaylist(ct)).ItemCount;
+
+        foreach (var range in ranges)
+        {
+            indices.AddRange(range.GetItems(totalCount));
+        }
+
+        if (indices.Count > 0)
+        {
+            await Client.RemovePlaylistItems(Playlist, indices.ToArray(), ct);
+        }
     }
 
     private async ValueTask<PlaylistInfo> GetPlaylist(CancellationToken ct)
