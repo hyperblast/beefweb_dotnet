@@ -83,7 +83,7 @@ public static class ValueParser
 
     static ValueParser()
     {
-        var boolSwitches = new Dictionary<string, BoolSwitch>
+        var boolSwitches = new Dictionary<string, BoolSwitch>(StringComparer.OrdinalIgnoreCase)
         {
             { "f", BoolSwitch.False },
             { "false", BoolSwitch.False },
@@ -94,7 +94,7 @@ public static class ValueParser
             { "toggle", BoolSwitch.Toggle },
         };
 
-        var fsEntryTypes = new Dictionary<string, FileSystemEntryType>
+        var fsEntryTypes = new Dictionary<string, FileSystemEntryType>(StringComparer.OrdinalIgnoreCase)
         {
             { "d", FileSystemEntryType.Directory },
             { "dir", FileSystemEntryType.Directory },

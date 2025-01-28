@@ -49,7 +49,7 @@ public class SettingsAccessor(ISettingsStorage storage) : ISettingsAccessor
 
     static SettingsAccessor()
     {
-        var accessors = new Dictionary<string, AccessorPair>
+        var accessors = new Dictionary<string, AccessorPair>(StringComparer.OrdinalIgnoreCase)
         {
             {
                 nameof(Settings.NowPlayingFormat),
