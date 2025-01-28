@@ -1,8 +1,8 @@
-using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,15 +10,17 @@ namespace Beefweb.CommandLineTool.Services;
 
 public static class Extensions
 {
-    public static IAsyncEnumerable<int> ReadIndicesAsync(this TextReader reader) => ReadIndicesImplAsync(reader);
+    public static IAsyncEnumerable<Token> ReadTokensAsync(this TextReader reader) => ReadTokensImplAsync(reader);
 
-    private static async IAsyncEnumerable<int> ReadIndicesImplAsync(
+    private static async IAsyncEnumerable<Token> ReadTokensImplAsync(
         TextReader reader, [EnumeratorCancellation] CancellationToken ct = default)
     {
-        var line = 0;
-        var offset = -1;
-        var ch = ' ';
-        var value = -1;
+        var currentChar = ' ';
+        var currentLine = 1;
+        var currentOffset = 0;
+        var tokenValue = new StringBuilder();
+        var tokenLine = 0;
+        var tokenOffset = 0;
         var bufferOffset = 0;
         var bufferRemaining = 0;
         var buffer = ArrayPool<char>.Shared.Rent(1024);
@@ -27,34 +29,29 @@ public static class Extensions
         {
             while (await ReadNext())
             {
-                if (char.IsWhiteSpace(ch) || char.IsControl(ch))
+                if (char.IsWhiteSpace(currentChar) || char.IsControl(currentChar))
                 {
-                    if (value >= 0)
+                    if (tokenValue.Length > 0)
                     {
-                        yield return value;
-                        value = -1;
+                        yield return new Token(tokenValue.ToString(), tokenLine, tokenOffset);
+                        tokenValue.Clear();
                     }
 
                     continue;
                 }
 
-                if (!char.IsAsciiDigit(ch))
-                {
-                    throw new InvalidRequestException($"Invalid input character '{ch}' at {line}:{offset}.");
-                }
+                tokenValue.Append(currentChar);
 
-                var digit = ch - '0';
-                value = value >= 0 ? value * 10 + digit : digit;
-
-                if (value > 100_000_000)
+                if (tokenValue.Length == 1)
                 {
-                    throw new InvalidRequestException($"Value {value} is too large at {line}:{offset}.");
+                    tokenLine = currentLine;
+                    tokenOffset = currentOffset;
                 }
             }
 
-            if (value >= 0)
+            if (tokenValue.Length > 0)
             {
-                yield return value;
+                yield return new Token(tokenValue.ToString(), tokenLine, tokenOffset);
             }
         }
         finally
@@ -79,18 +76,18 @@ public static class Extensions
                 }
             }
 
-            ch = buffer[bufferOffset];
+            currentChar = buffer[bufferOffset];
             bufferOffset++;
             bufferRemaining--;
 
-            if (ch is '\n')
+            if (currentChar is '\n')
             {
-                line++;
-                offset = -1;
+                currentLine++;
+                currentOffset = 0;
             }
             else
             {
-                offset++;
+                currentOffset++;
             }
 
             return true;

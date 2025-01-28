@@ -29,7 +29,17 @@ public static class ValueParser
             return value;
         }
 
-        throw new InvalidRequestException($"Invalid index value: {valueString}");
+        throw new InvalidRequestException($"Invalid index value '{valueString}'.");
+    }
+
+    public static int ParseIndex(Token token)
+    {
+        if (int.TryParse(token.Value, NumberStyles.Number, CultureInfo.InvariantCulture, out var value) && value >= 0)
+        {
+            return value;
+        }
+
+        throw new InvalidRequestException($"Invalid index value '{token.Value}' at {token.Location}.");
     }
 
     public static int ParseEnumName(PlayerOption option, string value)
