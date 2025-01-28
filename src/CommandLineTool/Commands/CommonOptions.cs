@@ -4,13 +4,14 @@ public static class CommonOptions
 {
     public static class T
     {
-        public const string Playlist = "-p|--playlist";
+        public const string Playlist = "-l|--playlist";
         public const string ItemIndex = "-i|--item";
         public const string ItemColumns = "-t|--tf";
         public const string Set = "-s|--set";
-        public const string Position = "-P|--position";
+        public const string Position = "-p|--position";
         public const string Count = "-n|--count";
         public const string Stdin = "-I|--stdin";
+        public const string Server = "-S|--server";
     }
 
     public static class D
@@ -28,5 +29,6 @@ public static class CommonOptions
         public const string DeleteCount = "Number of items to delete";
         public const string StdinItems = "Read items from standard input";
         public const string StdinIndices = "Read indices from standard input";
+        public const string Server = "Server to use. Could be a server URL or name of the predefined server";
     }
 }
