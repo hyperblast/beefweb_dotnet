@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Frozen;
+using System.Collections.Generic;
 using System.Globalization;
 using Beefweb.Client;
 
@@ -6,11 +8,8 @@ namespace Beefweb.CommandLineTool.Services;
 
 public static class ValueParser
 {
-    private static readonly string[] FalseNames = ["false", "off"];
-    private static readonly string[] TrueNames = ["true", "on"];
-    private static readonly string[] ToggleNames = ["toggle"];
-    private static readonly string[] DirectoryNames = ["d", "dir", "directory"];
-    private static readonly string[] FileNames = ["f", "file"];
+    private static readonly FrozenDictionary<string, BoolSwitch> BoolSwitches;
+    private static readonly FrozenDictionary<string, FileSystemEntryType> FsEntryTypes;
 
     public static Range ParseRange(ReadOnlySpan<char> input)
     {
@@ -70,39 +69,41 @@ public static class ValueParser
 
     public static BoolSwitch ParseSwitch(string value)
     {
-        if (MatchesName(value, FalseNames))
-            return BoolSwitch.False;
-
-        if (MatchesName(value, TrueNames))
-            return BoolSwitch.True;
-
-        if (MatchesName(value, ToggleNames))
-            return BoolSwitch.Toggle;
-
-        throw new InvalidRequestException($"Invalid bool value '{value}'.");
+        return BoolSwitches.TryGetValue(value, out var result)
+            ? result
+            : throw new InvalidRequestException($"Invalid bool value '{value}'.");
     }
 
     public static FileSystemEntryType ParseFileSystemEntryType(string value)
     {
-        if (MatchesName(value, DirectoryNames))
-            return FileSystemEntryType.Directory;
-
-        if (MatchesName(value, FileNames))
-            return FileSystemEntryType.File;
-
-        throw new InvalidRequestException($"Invalid file system entry type '{value}'.");
+        return FsEntryTypes.TryGetValue(value, out var result)
+            ? result
+            : throw new InvalidRequestException($"Invalid file system entry type '{value}'.");
     }
 
-    private static bool MatchesName(string value, string[] names)
+    static ValueParser()
     {
-        foreach (var name in names)
+        var boolSwitches = new Dictionary<string, BoolSwitch>
         {
-            if (string.Equals(name, value, StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-        }
+            { "f", BoolSwitch.False },
+            { "false", BoolSwitch.False },
+            { "off", BoolSwitch.False },
+            { "t", BoolSwitch.True },
+            { "true", BoolSwitch.True },
+            { "on", BoolSwitch.True },
+            { "toggle", BoolSwitch.Toggle },
+        };
 
-        return false;
+        var fsEntryTypes = new Dictionary<string, FileSystemEntryType>
+        {
+            { "d", FileSystemEntryType.Directory },
+            { "dir", FileSystemEntryType.Directory },
+            { "directory", FileSystemEntryType.Directory },
+            { "f", FileSystemEntryType.File },
+            { "file", FileSystemEntryType.File }
+        };
+
+        BoolSwitches = boolSwitches.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
+        FsEntryTypes = fsEntryTypes.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
     }
 }
