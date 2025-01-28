@@ -38,7 +38,8 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
         var columns = ItemColumns.GetOrDefault(storage.Settings.ListFormat);
         var result = await Client.GetPlaylistItems(Playlist, new PlaylistItemRange(ItemIndex, Count), columns, ct);
         var rows = ShowIndices
-            ? result.Items.Select((i, k) => (string[]) [k.ToString(CultureInfo.InvariantCulture), ..i.Columns])
+            ? result.Items.Select(
+                (i, n) => (string[]) [(n + ItemIndex).ToString(CultureInfo.InvariantCulture), ..i.Columns])
             : result.Items.Select(i => i.Columns.ToArray());
 
         writer.WriteTable(rows.ToArray(), ShowIndices ? ItemIndicesColumnAlign : null);
