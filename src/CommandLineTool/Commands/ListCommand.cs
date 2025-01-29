@@ -22,7 +22,7 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
     [Option(T.ItemColumns, Description = D.PlaylistItemColumns)]
     public string[]? ItemColumns { get; set; }
 
-    [Option("-d|--indices", Description = "Display item indices")]
+    [Option("-n|--indices", Description = "Display item indices")]
     public bool ShowIndices { get; set; }
 
     [Option(T.IndicesFrom0, Description = D.IndicesFrom0)]
