@@ -26,6 +26,9 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
     [Option(T.Playlist, Description = "Display playlist information")]
     public bool Playlist { get; set; }
 
+    [Option("-r|--version", Description = "Display version information")]
+    public bool Version { get; set; }
+
     [Option("-a|--all", Description = "Display all status information")]
     public bool All { get; set; }
 
@@ -61,7 +64,17 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
 
         if (Options || All)
         {
+            properties.Add([]);
+            properties.Add(["Options:"]);
             properties.AddRange(state.Options.Select(o => o.Format()));
+        }
+
+        if (Version || All)
+        {
+            properties.Add([]);
+            properties.Add(["Versions:"]);
+            properties.Add([state.Info.Title, state.Info.Version]);
+            properties.Add(["Plugin", state.Info.PluginVersion]);
         }
 
         writer.WriteTable(properties);
