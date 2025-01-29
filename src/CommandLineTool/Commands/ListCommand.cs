@@ -19,27 +19,37 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
     [Option(T.Playlist, CommandOptionType.SingleValue, Description = D.PlaylistToUse)]
     public PlaylistRef Playlist { get; set; } = PlaylistRef.Current;
 
-    [Option(T.ItemIndex, Description = D.StartingItemIndex)]
-    public int ItemIndex { get; set; } = 0;
-
-    [Option(T.Count, Description = D.DisplayCount)]
-    public int Count { get; set; } = 100;
-
     [Option(T.ItemColumns, Description = D.PlaylistItemColumns)]
     public string[]? ItemColumns { get; set; }
 
     [Option("-d|--indices", Description = "Display item indices")]
     public bool ShowIndices { get; set; }
 
+    [Option(T.IndicesFrom0, Description = D.IndicesFrom0)]
+    public bool IndicesFrom0 { get; set; }
+
+    [Argument(0, Description = "Playlist item range")]
+    public string Range { get; set; } = "1..100";
+
     public override async Task OnExecuteAsync(CancellationToken ct)
     {
         await base.OnExecuteAsync(ct);
 
         var columns = ItemColumns.GetOrDefault(storage.Settings.ListFormat);
-        var result = await Client.GetPlaylistItems(Playlist, new PlaylistItemRange(ItemIndex, Count), columns, ct);
+        var range = ValueParser.ParseRange(Range, IndicesFrom0);
+
+        var itemRange = range.GetItemRange(await Client.GetItemCount(Playlist, ct));
+        if (itemRange.Count == 0)
+        {
+            return;
+        }
+
+        var result = await Client.GetPlaylistItems(Playlist, itemRange, columns, ct);
+        var offset = itemRange.Offset + (IndicesFrom0 ? 0 : 1);
+
         var rows = ShowIndices
             ? result.Items.Select(
-                (i, n) => (string[]) [(n + ItemIndex).ToString(CultureInfo.InvariantCulture), ..i.Columns])
+                (i, n) => (string[]) [(n + offset).ToString(CultureInfo.InvariantCulture), ..i.Columns])
             : result.Items.Select(i => i.Columns.ToArray());
 
         writer.WriteTable(rows.ToArray(), ShowIndices ? ItemIndicesColumnAlign : null);

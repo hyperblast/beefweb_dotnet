@@ -14,7 +14,7 @@ public class PlayCommand(IClientProvider clientProvider) : ServerCommandBase(cli
     public PlaylistRef Playlist { get; set; } = PlaylistRef.Current;
 
     [Option(T.ItemIndex, Description = D.ItemIndex)]
-    public int? ItemIndex { get; set; }
+    public string? ItemIndex { get; set; }
 
     [Option("-n|--next", Description = "Play next item")]
     public bool Next { get; set; }
@@ -28,13 +28,19 @@ public class PlayCommand(IClientProvider clientProvider) : ServerCommandBase(cli
     [Option("--previous-by", Description = "Play previous item by specified formatting expression (e.g. %album%)")]
     public string? PreviousBy { get; set; }
 
+    [Option(T.IndicesFrom0, Description = D.IndicesFrom0)]
+    public bool IndicesFrom0 { get; set; }
+
     public override async Task OnExecuteAsync(CancellationToken ct)
     {
         await base.OnExecuteAsync(ct);
 
-        if (ItemIndex != null)
+        var position = await ValueParser.ParseIndexAsync(
+            ItemIndex, IndicesFrom0, () => Client.GetItemCount(Playlist, ct));
+
+        if (position != null)
         {
-            await Client.Play(Playlist, ItemIndex.Value, ct);
+            await Client.Play(Playlist, position.Value, ct);
             return;
         }
 

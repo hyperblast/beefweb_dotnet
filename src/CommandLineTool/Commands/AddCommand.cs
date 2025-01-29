@@ -16,7 +16,7 @@ public class AddCommand(IClientProvider clientProvider, IConsole console) : Serv
     public PlaylistRef Playlist { get; set; } = PlaylistRef.Current;
 
     [Option(T.Position, Description = D.PositionForItems)]
-    public int? Position { get; set; }
+    public string? Position { get; set; }
 
     [Option("-w|--no-wait", Description = "Do not wait for adding to complete")]
     public bool NoWait { get; set; }
@@ -29,6 +29,9 @@ public class AddCommand(IClientProvider clientProvider, IConsole console) : Serv
 
     [Option(T.Stdin, Description = D.StdinItems)]
     public bool ReadFromStdin { get; set; }
+
+    [Option(T.IndicesFrom0, Description = D.IndicesFrom0)]
+    public bool IndicesFrom0 { get; set; }
 
     public string[]? RemainingArguments { get; set; }
 
@@ -60,9 +63,13 @@ public class AddCommand(IClientProvider clientProvider, IConsole console) : Serv
             throw new InvalidRequestException("At least one item is required.");
         }
 
+        var position = Replace
+            ? null
+            : await ValueParser.ParseIndexAsync(Position, IndicesFrom0, () => Client.GetItemCount(Playlist, ct));
+
         await Client.AddPlaylistItems(Playlist, items, new AddPlaylistItemsOptions
         {
-            TargetPosition = Replace ? null : Position,
+            TargetPosition = position,
             ProcessAsynchronously = NoWait,
             ReplaceExistingItems = Replace,
             PlayAddedItems = Play,

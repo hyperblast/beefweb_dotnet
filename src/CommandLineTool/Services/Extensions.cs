@@ -1,15 +1,69 @@
+using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Beefweb.Client;
 
 namespace Beefweb.CommandLineTool.Services;
 
 public static class Extensions
 {
+    public static async ValueTask<int> GetItemCount(
+        this IPlayerClient client, PlaylistRef playlist, CancellationToken ct)
+    {
+        return (await client.GetPlaylist(playlist, ct)).ItemCount;
+    }
+
+    public static async ValueTask<int> GetPlaylistCount(this IPlayerClient client, CancellationToken ct)
+    {
+        return (await client.GetPlaylists(ct)).Count;
+    }
+
+    private static async ValueTask<PlaylistInfo> GetPlaylist(
+        this IPlayerClient client, PlaylistRef playlist, CancellationToken ct)
+    {
+        // TODO: use get single playlist API
+
+        var playlists = await client.GetPlaylists(ct);
+        if (playlist == PlaylistRef.Current)
+        {
+            return playlists.SingleOrDefault(p => p.IsCurrent) ?? playlists.First();
+        }
+
+        return playlist.Id != null ? playlists.Single(p => p.Id == playlist.Id) : playlists[playlist.Index];
+    }
+
+    public static IEnumerable<int> GetItems(this Range range, int totalCount)
+    {
+        var (offset, length) = range.GetOffsetAndLengthSafe(totalCount);
+        return Enumerable.Range(offset, length);
+    }
+
+    public static PlaylistItemRange GetItemRange(this Range range, int totalCount)
+    {
+        var (offset, length) = range.GetOffsetAndLengthSafe(totalCount);
+        return new PlaylistItemRange(offset, length);
+    }
+
+    public static (int offset, int length) GetOffsetAndLengthSafe(this Range range, int count)
+    {
+        var start = range.Start.GetOffset(count);
+        var end = range.End.GetOffset(count);
+        var length = end - start + 1;
+
+        if (start >= count || length <= 0)
+        {
+            return (0, 0);
+        }
+
+        return (start, length);
+    }
+
     public static IAsyncEnumerable<Token> ReadTokensAsync(this TextReader reader) => ReadTokensImplAsync(reader);
 
     private static async IAsyncEnumerable<Token> ReadTokensImplAsync(

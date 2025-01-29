@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -22,6 +23,9 @@ public class DeleteCommand(IClientProvider clientProvider, IConsole console) : S
     [Option(T.Stdin, Description = D.StdinIndices)]
     public bool ReadFromStdin { get; set; }
 
+    [Option(T.IndicesFrom0, Description = D.IndicesFrom0)]
+    public bool IndicesFrom0 { get; set; }
+
     public string[]? RemainingArguments { get; set; }
 
     public override async Task OnExecuteAsync(CancellationToken ct)
@@ -38,14 +42,14 @@ public class DeleteCommand(IClientProvider clientProvider, IConsole console) : S
 
         if (RemainingArguments != null)
         {
-            ranges.AddRange(RemainingArguments.Select(a => ValueParser.ParseRange(a)));
+            ranges.AddRange(RemainingArguments.Select(a => ValueParser.ParseRange(a, IndicesFrom0)));
         }
 
         if (ReadFromStdin)
         {
             await foreach (var token in console.In.ReadTokensAsync().WithCancellation(ct))
             {
-                ranges.Add(ValueParser.ParseRange(token));
+                ranges.Add(ValueParser.ParseRange(token, IndicesFrom0));
             }
         }
 
@@ -55,7 +59,7 @@ public class DeleteCommand(IClientProvider clientProvider, IConsole console) : S
         }
 
         var indices = new HashSet<int>();
-        var totalCount = (await GetPlaylist(ct)).ItemCount;
+        var totalCount = await Client.GetItemCount(Playlist, ct);
 
         foreach (var range in ranges)
         {
@@ -66,18 +70,5 @@ public class DeleteCommand(IClientProvider clientProvider, IConsole console) : S
         {
             await Client.RemovePlaylistItems(Playlist, indices.ToArray(), ct);
         }
-    }
-
-    private async ValueTask<PlaylistInfo> GetPlaylist(CancellationToken ct)
-    {
-        // TODO: use get single playlist API
-
-        var playlists = await Client.GetPlaylists(ct);
-        if (Playlist == PlaylistRef.Current)
-        {
-            return playlists.SingleOrDefault(p => p.IsCurrent) ?? playlists.First();
-        }
-
-        return Playlist.Id != null ? playlists.Single(p => p.Id == Playlist.Id) : playlists[Playlist.Index];
     }
 }
