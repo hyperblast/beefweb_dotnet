@@ -23,7 +23,7 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
     [Option("-o|--options", Description = "Display player options")]
     public bool Options { get; set; }
 
-    [Option("-p|--playlist", Description = "Display playlist information")]
+    [Option(T.Playlist, Description = "Display playlist information")]
     public bool Playlist { get; set; }
 
     [Option("-a|--all", Description = "Display all status information")]
