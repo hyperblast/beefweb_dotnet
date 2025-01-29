@@ -28,20 +28,24 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
     [Option(T.IndicesFrom0, Description = D.IndicesFrom0)]
     public bool IndicesFrom0 { get; set; }
 
-    [Argument(0, Description = "Playlist item range")]
-    public string Range { get; set; } = "1..100";
+    public string[]? RemainingArguments { get; set; }
 
     public override async Task OnExecuteAsync(CancellationToken ct)
     {
         await base.OnExecuteAsync(ct);
 
         var columns = ItemColumns.GetOrDefault(storage.Settings.ListFormat);
-        var range = ValueParser.ParseRange(Range, IndicesFrom0);
+        var itemRange = new PlaylistItemRange(0, 100);
 
-        var itemRange = range.GetItemRange(await Client.GetItemCount(Playlist, ct));
-        if (itemRange.Count == 0)
+        if (RemainingArguments is { Length: > 0 })
         {
-            return;
+            var range = ValueParser.ParseRange(RemainingArguments[0], IndicesFrom0);
+            itemRange = range.GetItemRange(await Client.GetItemCount(Playlist, ct));
+
+            if (itemRange.Count == 0)
+            {
+                return;
+            }
         }
 
         var result = await Client.GetPlaylistItems(Playlist, itemRange, columns, ct);
