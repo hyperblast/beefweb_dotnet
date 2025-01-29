@@ -57,7 +57,6 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
         if (Volume || All)
         {
             properties.Add(["Volume", state.Volume.Format()]);
-            properties.Add(["IsMuted", state.Volume.IsMuted.ToString()]);
         }
 
         if (Options || All)

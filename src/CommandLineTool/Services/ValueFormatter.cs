@@ -46,10 +46,11 @@ public static class ValueFormatter
 
     public static string Format(this VolumeInfo volumeInfo)
     {
+        var muteStatus = volumeInfo.IsMuted ? " [muted]" : "";
         return volumeInfo.Type switch
         {
-            VolumeType.Db => volumeInfo.Value.ToString("0.0", CultureInfo.InvariantCulture) + " dB",
-            VolumeType.Linear => volumeInfo.Value.ToString("0"),
+            VolumeType.Db => volumeInfo.Value.ToString("0.0", CultureInfo.InvariantCulture) + " dB" + muteStatus,
+            VolumeType.Linear => volumeInfo.Value.ToString("0") + muteStatus,
             _ => throw new ArgumentException($"Unknown volume type '{volumeInfo.Type}'."),
         };
     }
