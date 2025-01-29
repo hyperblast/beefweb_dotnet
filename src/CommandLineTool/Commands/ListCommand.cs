@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -10,7 +9,8 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("list", Description = "List playlist items")]
+[Command("list", Description = "List playlist items",
+    UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue)]
 public class ListCommand(IClientProvider clientProvider, ISettingsStorage storage, ITabularWriter writer)
     : ServerCommandBase(clientProvider)
 {

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Beefweb.Client;
 using FluentAssertions;
 using Xunit;
 
@@ -40,5 +41,13 @@ public class ExtensionsTests
         var reader = new StringReader(input.ToString());
         var result = await reader.ReadTokensAsync().ToListAsync();
         result.Select(r => r.Value).Should().BeEquivalentTo(Enumerable.Repeat("123", 1024));
+    }
+
+    [Fact]
+    public void ToItemRange()
+    {
+        var range = new Range(^200, ^100);
+        var result = range.GetItemRange(10);
+        result.Should().Be(new PlaylistItemRange(0, 0));
     }
 }

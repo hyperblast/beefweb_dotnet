@@ -101,18 +101,13 @@ public static class ValueParser
         throw new InvalidRequestException($"Invalid index value '{input.ToString()}'.");
     }
 
-    public static async ValueTask<int?> ParseIndexAsync(string? input, bool zeroBased, Func<ValueTask<int>> getCount)
+    public static async ValueTask<int?> ParseOffsetAsync(string? input, bool zeroBased, Func<ValueTask<int>> getCount)
     {
         if (input == null)
             return null;
 
         var index = ParseIndex(input, zeroBased);
-
-        if (!index.IsFromEnd)
-            return index.Value;
-
-        var count = await getCount();
-        return index.GetOffset(count);
+        return index.IsFromEnd ? await getCount() - index.Value - 1 : index.Value;
     }
 
     public static Range ParseRange(ReadOnlySpan<char> input, bool zeroBased)

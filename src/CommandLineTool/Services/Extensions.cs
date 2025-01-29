@@ -40,27 +40,32 @@ public static class Extensions
 
     public static IEnumerable<int> GetItems(this Range range, int totalCount)
     {
-        var (offset, length) = range.GetOffsetAndLengthSafe(totalCount);
+        var (offset, length) = range.GetOffsetAndLengthInclusive(totalCount);
         return Enumerable.Range(offset, length);
     }
 
     public static PlaylistItemRange GetItemRange(this Range range, int totalCount)
     {
-        var (offset, length) = range.GetOffsetAndLengthSafe(totalCount);
+        var (offset, length) = range.GetOffsetAndLengthInclusive(totalCount);
         return new PlaylistItemRange(offset, length);
     }
 
-    public static (int offset, int length) GetOffsetAndLengthSafe(this Range range, int count)
+    private static int GetOffsetInclusive(this Index index, int count)
     {
-        var start = range.Start.GetOffset(count);
-        var end = range.End.GetOffset(count);
-        var length = end - start + 1;
+        return index.IsFromEnd ? checked(count - index.Value - 1) : index.Value;
+    }
 
-        if (start >= count || length <= 0)
+    private static (int offset, int length) GetOffsetAndLengthInclusive(this Range range, int count)
+    {
+        var start = range.Start.GetOffsetInclusive(count);
+        var end = Math.Min(count - 1, range.End.GetOffsetInclusive(count));
+
+        if (start < 0 || end < 0 || start > end || start >= count)
         {
             return (0, 0);
         }
 
+        var length = end - start + 1;
         return (start, length);
     }
 

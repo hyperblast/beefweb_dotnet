@@ -65,7 +65,7 @@ public class AddCommand(IClientProvider clientProvider, IConsole console) : Serv
 
         var position = Replace
             ? null
-            : await ValueParser.ParseIndexAsync(Position, IndicesFrom0, () => Client.GetItemCount(Playlist, ct));
+            : await ValueParser.ParseOffsetAsync(Position, IndicesFrom0, () => Client.GetItemCount(Playlist, ct));
 
         await Client.AddPlaylistItems(Playlist, items, new AddPlaylistItemsOptions
         {

@@ -26,7 +26,7 @@ public class PlaylistsAddCommand(IClientProvider clientProvider) : ServerCommand
     {
         await base.OnExecuteAsync(ct);
 
-        var position = await ValueParser.ParseIndexAsync(Position, IndicesFrom0, () => Client.GetPlaylistCount(ct));
+        var position = await ValueParser.ParseOffsetAsync(Position, IndicesFrom0, () => Client.GetPlaylistCount(ct));
 
         await Client.AddPlaylist(Title, position, ct);
 

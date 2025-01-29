@@ -35,7 +35,7 @@ public class PlayCommand(IClientProvider clientProvider) : ServerCommandBase(cli
     {
         await base.OnExecuteAsync(ct);
 
-        var position = await ValueParser.ParseIndexAsync(
+        var position = await ValueParser.ParseOffsetAsync(
             ItemIndex, IndicesFrom0, () => Client.GetItemCount(Playlist, ct));
 
         if (position != null)
