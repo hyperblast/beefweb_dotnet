@@ -1,6 +1,5 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Beefweb.Client;
 using Beefweb.CommandLineTool.Services;
 using McMaster.Extensions.CommandLineUtils;
 using static Beefweb.CommandLineTool.Commands.CommonOptions;
@@ -16,16 +15,19 @@ public class PlayCommand(IClientProvider clientProvider) : ServerCommandBase(cli
     [Option(T.ItemIndex, Description = D.ItemIndex)]
     public string? ItemIndex { get; set; }
 
-    [Option("-n|--next", Description = "Play next item")]
+    [Option("-r|--random", Description = "Play random track")]
+    public bool Random { get; set; }
+
+    [Option("-n|--next", Description = "Play next track")]
     public bool Next { get; set; }
 
-    [Option("--next-by", Description = "Play next item by specified formatting expression (e.g. %album%)")]
+    [Option("--next-by", Description = "Play next track by specified formatting expression (e.g. %album%)")]
     public string? NextBy { get; set; }
 
-    [Option("-r|--previous", Description = "Play previous item")]
+    [Option("-v|--previous", Description = "Play previous track")]
     public bool Previous { get; set; }
 
-    [Option("--previous-by", Description = "Play previous item by specified formatting expression (e.g. %album%)")]
+    [Option("--previous-by", Description = "Play previous track by specified formatting expression (e.g. %album%)")]
     public string? PreviousBy { get; set; }
 
     [Option(T.IndicesFrom0, Description = D.IndicesFrom0)]
@@ -40,6 +42,12 @@ public class PlayCommand(IClientProvider clientProvider) : ServerCommandBase(cli
             var playlist = await Client.GetPlaylist(Playlist, IndicesFrom0, ct);
             var position = ValueParser.ParseOffset(ItemIndex, IndicesFrom0, playlist.ItemCount);
             await Client.Play(playlist.Id, position, ct);
+            return;
+        }
+
+        if (Random)
+        {
+            await Client.PlayRandom(ct);
             return;
         }
 

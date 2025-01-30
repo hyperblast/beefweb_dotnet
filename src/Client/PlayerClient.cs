@@ -321,7 +321,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     public async ValueTask SortPlaylistRandomly(PlaylistRef playlist, CancellationToken cancellationToken = default)
     {
         await _handler
-            .Post($"api/playlists/{playlist}/sort", new { random = true }, cancellationToken)
+            .Post($"api/playlists/{playlist}/items/sort", new { random = true }, cancellationToken)
             .ConfigureAwait(false);
     }
 

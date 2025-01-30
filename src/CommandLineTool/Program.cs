@@ -20,6 +20,7 @@ namespace Beefweb.CommandLineTool;
 [Subcommand(typeof(CopyCommand))]
 [Subcommand(typeof(MoveCommand))]
 [Subcommand(typeof(DeleteCommand))]
+[Subcommand(typeof(SortCommand))]
 [Subcommand(typeof(ServersCommand))]
 [Subcommand(typeof(PlaylistsCommand))]
 [Subcommand(typeof(StatusCommand))]
