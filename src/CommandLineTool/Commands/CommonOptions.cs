@@ -8,6 +8,7 @@ public static class CommonOptions
         public const string TargetPlaylist = "-t|--to-playlist";
         public const string ItemColumns = "-t|--tf";
         public const string Set = "-s|--set";
+        public const string Adjust = "-a|--adjust";
         public const string Position = "-p|--position";
         public const string Title = "-t|--title";
         public const string Select = "-s|--select";

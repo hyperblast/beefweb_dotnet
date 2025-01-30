@@ -17,7 +17,7 @@ public class VolumeCommand(IClientProvider clientProvider, IConsole console) : S
     [Option(T.Set, Description = "Set volume to absolute value (dB or linear in range [0..100])")]
     public string? AbsoluteValue { get; set; }
 
-    [Option("-a|--adjust", Description = "Adjust volume relative to current value (dB or linear in range [-100..100])")]
+    [Option(T.Adjust, Description = "Adjust volume relative to current value (dB or linear in range [-100..100])")]
     public string? RelativeValue { get; set; }
 
     public override async Task OnExecuteAsync(CancellationToken ct)

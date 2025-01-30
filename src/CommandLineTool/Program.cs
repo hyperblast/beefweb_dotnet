@@ -13,7 +13,7 @@ namespace Beefweb.CommandLineTool;
 [Subcommand(typeof(PlayCommand))]
 [Subcommand(typeof(StopCommand))]
 [Subcommand(typeof(PauseCommand))]
-[Subcommand(typeof(SeekCommand))]
+[Subcommand(typeof(PositionCommand))]
 [Subcommand(typeof(MuteCommand))]
 [Subcommand(typeof(VolumeCommand))]
 [Subcommand(typeof(ListCommand))]
