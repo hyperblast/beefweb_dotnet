@@ -20,9 +20,28 @@ public class SeekCommand(IClientProvider clientProvider) : ServerCommandBase(cli
     {
         await base.OnExecuteAsync(ct);
 
-        var newPosition = RemainingArguments is { Length: > 0 }
-            ? TimeSpan.FromSeconds(ValueParser.ParseDouble(RemainingArguments[0]))
-            : throw new InvalidRequestException("New position parameter is required.");
+        if (RemainingArguments is not { Length: > 0 })
+            throw new InvalidRequestException("New position parameter is required.");
+
+        var newPositionStr = RemainingArguments[0];
+
+        var state = await Client.GetPlayerState(null, ct);
+        if (state.PlaybackState == PlaybackState.Stopped)
+        {
+            return;
+        }
+
+        TimeSpan newPosition;
+
+        if (newPositionStr.EndsWith('%'))
+        {
+            var newPositionPercent = ValueParser.ParseDouble(newPositionStr.AsSpan()[..^1]);
+            newPosition = newPositionPercent / 100 * state.ActiveItem.Duration;
+        }
+        else
+        {
+            newPosition = TimeSpan.FromSeconds(ValueParser.ParseDouble(newPositionStr));
+        }
 
         if (Relative)
         {
@@ -36,10 +55,6 @@ public class SeekCommand(IClientProvider clientProvider) : ServerCommandBase(cli
             return;
         }
 
-        var state = await Client.GetPlayerState(null, ct);
-        if (state.PlaybackState != PlaybackState.Stopped)
-        {
-            await Client.SeekAbsolute(newPosition + state.ActiveItem.Duration, ct);
-        }
+        await Client.SeekAbsolute(newPosition + state.ActiveItem.Duration, ct);
     }
 }
