@@ -9,6 +9,8 @@ public static class CommonOptions
         public const string ItemColumns = "-t|--tf";
         public const string Set = "-s|--set";
         public const string Position = "-p|--position";
+        public const string Title = "-t|--title";
+        public const string Select = "-s|--select";
         public const string Stdin = "-I|--stdin";
         public const string Server = "-S|--server";
         public const string IndicesFrom0 = "-z|--zero";
@@ -27,5 +29,7 @@ public static class CommonOptions
         public const string StdinItemRanges = "Read item indices or ranges from standard input";
         public const string Server = "Server to use. Could be a server URL or name of the predefined server";
         public const string IndicesFrom0 = "Start counting indices from 0";
+        public const string PlaylistTitle = "Playlist title";
+        public const string Select = "Select playlist";
     }
 }

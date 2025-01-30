@@ -10,14 +10,14 @@ namespace Beefweb.CommandLineTool.Commands;
 [Command("add", Description = "Add playlist")]
 public class PlaylistsAddCommand(IClientProvider clientProvider) : ServerCommandBase(clientProvider)
 {
-    [Option("-t|--title", Description = "Playlist title")]
+    [Option(T.Title, Description = D.PlaylistTitle)]
     public string? Title { get; set; }
 
     [Option(T.Position, Description = D.PositionForPlaylist)]
     public string? Position { get; set; }
 
-    [Option("-c|--set-current", Description = "Select created playlist")]
-    public bool SetCurrent { get; set; }
+    [Option(T.Select, Description = D.Select)]
+    public bool Select { get; set; }
 
     [Option(T.IndicesFrom0, Description = D.IndicesFrom0)]
     public bool IndicesFrom0 { get; set; }
@@ -32,7 +32,7 @@ public class PlaylistsAddCommand(IClientProvider clientProvider) : ServerCommand
 
         await Client.AddPlaylist(Title, position, ct);
 
-        if (SetCurrent)
+        if (Select)
         {
             // TODO: use Id from response
 
