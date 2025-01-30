@@ -40,7 +40,7 @@ public static class ValueParser
             return false;
         }
 
-        index = new Index(Math.Abs(value) - (zeroBased ? 0 : 1), value < 0);
+        index = new Index(Math.Abs(value) + (zeroBased ? 0 : -1), value < 0);
         return true;
     }
 
@@ -140,16 +140,17 @@ public static class ValueParser
         throw new InvalidRequestException($"Invalid numeric value: {valueString}");
     }
 
-    public static int ParseEnumName(PlayerOption option, string value)
+    public static int ParseEnumValue(PlayerOption option, bool zeroBased, string value)
     {
-        if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var index))
+        if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var displayIndex))
         {
-            if (index < 0 || index >= option.EnumNames!.Count)
+            var realIndex = displayIndex + (zeroBased ? 0 : -1);
+            if (realIndex < 0 || realIndex >= option.EnumNames!.Count)
             {
-                throw new InvalidRequestException($"Option value index ({index}) is out of range.");
+                throw new InvalidRequestException($"Option value index ({displayIndex}) is out of range.");
             }
 
-            return index;
+            return realIndex;
         }
 
         var i = 0;

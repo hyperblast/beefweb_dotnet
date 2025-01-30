@@ -31,17 +31,28 @@ public static class ValueFormatter
         };
     }
 
-    public static string[] Format(this PlayerOption option)
+    public static string[] Format(this PlayerOption option, bool zeroBased)
     {
-        var valueSuffix = option.Type == PlayerOptionType.Enum ? " [" + option.Value + "]" : "";
-        return [option.Id.CapitalizeFirstChar(), option.FormatValue() + valueSuffix];
+        return [option.Id.CapitalizeFirstChar(), option.FormatValue(includeNumericValue: true, zeroBased)];
     }
 
-    public static string FormatValue(this PlayerOption option)
+    public static string FormatValue(this PlayerOption option, bool includeNumericValue = false, bool zeroBased = false)
     {
-        return option.Type == PlayerOptionType.Enum
-            ? option.EnumNames![(int)option.Value]
-            : option.Value.ToString()!;
+        if (option.Type != PlayerOptionType.Enum)
+        {
+            return option.Value.ToString()!;
+        }
+
+        var index = (int)option.Value;
+        var name = option.EnumNames![index];
+
+        if (!includeNumericValue)
+        {
+            return name;
+        }
+
+        var displayIndex = index + (zeroBased ? 0 : 1);
+        return $"{name} [{displayIndex}]";
     }
 
     public static string Format(this VolumeInfo volumeInfo)

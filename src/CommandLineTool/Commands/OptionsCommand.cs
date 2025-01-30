@@ -24,6 +24,9 @@ public class OptionsCommand(IClientProvider clientProvider, IConsole console, IT
     [Option("-t|--short", Description = "Display only current enum value (not all possible values)")]
     public bool Short { get; set; }
 
+    [Option(T.IndicesFrom0, Description = D.IndicesFrom0)]
+    public bool IndicesFrom0 { get; set; }
+
     public override async Task OnExecuteAsync(CancellationToken ct)
     {
         await base.OnExecuteAsync(ct);
@@ -32,7 +35,7 @@ public class OptionsCommand(IClientProvider clientProvider, IConsole console, IT
 
         if (Name == null)
         {
-            writer.WriteTable(state.Options.Select(o => o.Format()).ToList());
+            writer.WriteTable(state.Options.Select(o => o.Format(IndicesFrom0)).ToList());
             return;
         }
 
@@ -65,8 +68,10 @@ public class OptionsCommand(IClientProvider clientProvider, IConsole console, IT
     {
         return option.Type switch
         {
-            PlayerOptionType.Enum => new SetOptionRequest(option.Id, ValueParser.ParseEnumName(option, Value!)),
-            PlayerOptionType.Bool => new SetOptionRequest(option.Id, ValueParser.ParseSwitch(Value!)),
+            PlayerOptionType.Enum => new SetOptionRequest(
+                option.Id, ValueParser.ParseEnumValue(option, IndicesFrom0, Value!)),
+            PlayerOptionType.Bool => new SetOptionRequest(
+                option.Id, ValueParser.ParseSwitch(Value!)),
             _ => throw new ArgumentException($"Unknown option type '{option.Type}'.")
         };
     }

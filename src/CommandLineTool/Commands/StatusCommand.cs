@@ -32,6 +32,9 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
     [Option("-a|--all", Description = "Display all status information")]
     public bool All { get; set; }
 
+    [Option(T.IndicesFrom0, Description = D.IndicesFrom0)]
+    public bool IndicesFrom0 { get; set; }
+
     public override async Task OnExecuteAsync(CancellationToken ct)
     {
         await base.OnExecuteAsync(ct);
@@ -66,7 +69,7 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
         {
             properties.Add([]);
             properties.Add(["Options:"]);
-            properties.AddRange(state.Options.Select(o => o.Format()));
+            properties.AddRange(state.Options.Select(o => o.Format(IndicesFrom0)));
         }
 
         if (Version || All)
