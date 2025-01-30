@@ -9,6 +9,7 @@ namespace Beefweb.CommandLineTool.Commands;
 [Command("playlists", Description = "List or modify playlists")]
 [Subcommand(typeof(PlaylistsAddCommand))]
 [Subcommand(typeof(PlaylistsDeleteCommand))]
+[Subcommand(typeof(PlaylistsMoveCommand))]
 public class PlaylistsCommand(IClientProvider clientProvider, ITabularWriter writer)
     : ServerCommandBase(clientProvider)
 {
