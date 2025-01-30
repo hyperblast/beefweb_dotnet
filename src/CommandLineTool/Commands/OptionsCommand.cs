@@ -49,7 +49,7 @@ public class OptionsCommand(IClientProvider clientProvider, IConsole console, IT
 
         if (Short || option.Type != PlayerOptionType.Enum)
         {
-            console.WriteLine(option.FormatValue());
+            console.WriteLine(option.FormatValue(IndicesFrom0));
             return;
         }
 

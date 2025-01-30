@@ -31,12 +31,12 @@ public static class ValueFormatter
         };
     }
 
-    public static string[] Format(this PlayerOption option, bool zeroBased)
+    public static string[] Format(this PlayerOption option, bool zeroBasedIndexes)
     {
-        return [option.Id.CapitalizeFirstChar(), option.FormatValue(includeNumericValue: true, zeroBased)];
+        return [option.Id.CapitalizeFirstChar(), option.FormatValue(zeroBasedIndexes)];
     }
 
-    public static string FormatValue(this PlayerOption option, bool includeNumericValue = false, bool zeroBased = false)
+    public static string FormatValue(this PlayerOption option, bool zeroBasedIndexes)
     {
         if (option.Type != PlayerOptionType.Enum)
         {
@@ -45,13 +45,7 @@ public static class ValueFormatter
 
         var index = (int)option.Value;
         var name = option.EnumNames![index];
-
-        if (!includeNumericValue)
-        {
-            return name;
-        }
-
-        var displayIndex = index + (zeroBased ? 0 : 1);
+        var displayIndex = index + (zeroBasedIndexes ? 0 : 1);
         return $"{name} [{displayIndex}]";
     }
 
