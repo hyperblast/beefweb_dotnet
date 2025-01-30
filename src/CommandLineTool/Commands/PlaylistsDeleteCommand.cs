@@ -6,7 +6,7 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("delete", Description = "Delete playlist",
+[Command("delete", "del", "rm", Description = "Delete playlist",
     UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue)]
 public class PlaylistsDeleteCommand(IClientProvider clientProvider) : ServerCommandBase(clientProvider)
 {

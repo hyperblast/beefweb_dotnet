@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +8,7 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("now-playing", Description = "Display current track information")]
+[Command("now-playing", "np", Description = "Display current track information")]
 public class NowPlayingCommand(IClientProvider clientProvider, ITabularWriter writer, ISettingsStorage storage)
     : ServerCommandBase(clientProvider)
 {

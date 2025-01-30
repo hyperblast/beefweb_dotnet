@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Beefweb.CommandLineTool.Services;
@@ -9,7 +8,7 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("volume", Description = "Get or set volume",
+[Command("volume", "vol", Description = "Get or set volume",
     UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue)]
 public class VolumeCommand(IClientProvider clientProvider, IConsole console) : ServerCommandBase(clientProvider)
 {

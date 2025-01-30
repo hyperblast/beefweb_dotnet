@@ -6,7 +6,7 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("delete", Description = "Delete predefined server")]
+[Command("delete", "del", "rm", Description = "Delete predefined server")]
 public class ServersDeleteCommand(ISettingsStorage storage) : CommandBase
 {
     [Argument(0, Description = "Server name")]

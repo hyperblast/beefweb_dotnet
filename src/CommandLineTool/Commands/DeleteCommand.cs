@@ -9,7 +9,7 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("delete", Description = "Delete playlist items",
+[Command("delete", "del", "rm", Description = "Delete playlist items",
     UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue)]
 public class DeleteCommand(IClientProvider clientProvider, IConsole console) : ServerCommandBase(clientProvider)
 {

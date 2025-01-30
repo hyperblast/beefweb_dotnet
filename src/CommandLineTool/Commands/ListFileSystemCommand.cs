@@ -10,7 +10,7 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("list-fs", Description = "List file system entries")]
+[Command("list-fs", "lfs", Description = "List file system entries")]
 public class ListFileSystemCommand(IClientProvider clientProvider, IConsole console, ITabularWriter writer)
     : ServerCommandBase(clientProvider)
 {
