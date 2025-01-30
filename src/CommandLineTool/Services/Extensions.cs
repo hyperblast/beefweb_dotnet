@@ -22,13 +22,17 @@ public static class Extensions
         this IPlayerClient client, string playlistRef, bool zeroBasedIndexing, CancellationToken ct)
     {
         var playlists = await client.GetPlaylists(ct);
+        return playlists.Get(playlistRef, zeroBasedIndexing);
+    }
 
+    public static PlaylistInfo Get(this IList<PlaylistInfo> playlists, string playlistRef, bool zeroBasedIndexes)
+    {
         if (string.Equals(playlistRef, Constants.CurrentPlaylist, StringComparison.OrdinalIgnoreCase))
         {
             return playlists.FirstOrDefault(p => p.IsCurrent) ?? playlists.First();
         }
 
-        if (!ValueParser.TryParseIndex(playlistRef, zeroBasedIndexing, out var index))
+        if (!ValueParser.TryParseIndex(playlistRef, zeroBasedIndexes, out var index))
         {
             return playlists.FirstOrDefault(p => p.Id == playlistRef) ??
                    throw new InvalidRequestException($"Unable to find playlist with id '{playlistRef}'.");
