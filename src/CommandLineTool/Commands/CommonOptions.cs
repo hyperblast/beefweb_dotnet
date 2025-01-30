@@ -6,7 +6,6 @@ public static class CommonOptions
     {
         public const string Playlist = "-l|--playlist";
         public const string TargetPlaylist = "-t|--to-playlist";
-        public const string ItemIndex = "-i|--item";
         public const string ItemColumns = "-t|--tf";
         public const string Set = "-s|--set";
         public const string Position = "-p|--position";
@@ -20,7 +19,6 @@ public static class CommonOptions
         public const string PlaylistToUse = "Playlist to use (index, id or current)";
         public const string TargetPlaylist = "Target playlist, if not specified the same value as --playlist is used";
         public const string PlaylistToAddTo = "Playlist to add to (index, id or current)";
-        public const string ItemIndex = "Playlist item index";
         public const string CurrentItemColumns = "Format current track using specified title formatting expressions";
         public const string PlaylistItemColumns = "Format playlist items usign specified title formatting expressions";
         public const string PositionForPlaylist = "Position to insert playlist at";
