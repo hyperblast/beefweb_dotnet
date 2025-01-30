@@ -10,8 +10,8 @@ namespace Beefweb.CommandLineTool.Commands;
 [Command("play", Description = "Play current or specified track")]
 public class PlayCommand(IClientProvider clientProvider) : ServerCommandBase(clientProvider)
 {
-    [Option(T.Playlist, CommandOptionType.SingleValue, Description = D.PlaylistToUse)]
-    public PlaylistRef Playlist { get; set; } = PlaylistRef.Current;
+    [Option(T.Playlist, Description = D.PlaylistToUse)]
+    public string Playlist { get; set; } = Constants.CurrentPlaylist;
 
     [Option(T.ItemIndex, Description = D.ItemIndex)]
     public string? ItemIndex { get; set; }
@@ -35,12 +35,11 @@ public class PlayCommand(IClientProvider clientProvider) : ServerCommandBase(cli
     {
         await base.OnExecuteAsync(ct);
 
-        var position = await ValueParser.ParseOffsetAsync(
-            ItemIndex, IndicesFrom0, () => Client.GetItemCount(Playlist, ct));
-
-        if (position != null)
+        if (ItemIndex != null)
         {
-            await Client.Play(Playlist, position.Value, ct);
+            var playlist = await Client.GetPlaylist(Playlist, IndicesFrom0, ct);
+            var position = ValueParser.ParseOffset(ItemIndex, IndicesFrom0, playlist.ItemCount);
+            await Client.Play(playlist.Id, position, ct);
             return;
         }
 

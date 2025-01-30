@@ -12,8 +12,8 @@ namespace Beefweb.CommandLineTool.Commands;
     UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue)]
 public class AddCommand(IClientProvider clientProvider, IConsole console) : ServerCommandBase(clientProvider)
 {
-    [Option(T.Playlist, CommandOptionType.SingleValue, Description = D.PlaylistToAddTo)]
-    public PlaylistRef Playlist { get; set; } = PlaylistRef.Current;
+    [Option(T.Playlist, Description = D.PlaylistToAddTo)]
+    public string Playlist { get; set; } = Constants.CurrentPlaylist;
 
     [Option(T.Position, Description = D.PositionForItems)]
     public string? Position { get; set; }
@@ -63,11 +63,13 @@ public class AddCommand(IClientProvider clientProvider, IConsole console) : Serv
             throw new InvalidRequestException("At least one item is required.");
         }
 
-        var position = Replace
-            ? null
-            : await ValueParser.ParseOffsetAsync(Position, IndicesFrom0, () => Client.GetItemCount(Playlist, ct));
+        var playlist = await Client.GetPlaylist(Playlist, IndicesFrom0, ct);
 
-        await Client.AddPlaylistItems(Playlist, items, new AddPlaylistItemsOptions
+        var position = Position != null && !Replace
+            ? ValueParser.ParseOffset(Position, IndicesFrom0, playlist.ItemCount)
+            : (int?)null;
+
+        await Client.AddPlaylistItems(playlist.Id, items, new AddPlaylistItemsOptions
         {
             TargetPosition = position,
             ProcessAsynchronously = NoWait,

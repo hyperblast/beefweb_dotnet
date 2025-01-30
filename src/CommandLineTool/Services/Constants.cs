@@ -7,4 +7,6 @@ public static class Constants
 
     public const string ProjectName = "beefweb";
     public const string AppName = "beefctl";
+
+    public const string CurrentPlaylist = "current";
 }

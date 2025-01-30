@@ -16,8 +16,8 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
 {
     private static readonly bool[] ItemIndicesColumnAlign = [true];
 
-    [Option(T.Playlist, CommandOptionType.SingleValue, Description = D.PlaylistToUse)]
-    public PlaylistRef Playlist { get; set; } = PlaylistRef.Current;
+    [Option(T.Playlist, Description = D.PlaylistToUse)]
+    public string Playlist { get; set; } = Constants.CurrentPlaylist;
 
     [Option(T.ItemColumns, Description = D.PlaylistItemColumns)]
     public string[]? ItemColumns { get; set; }
@@ -35,12 +35,13 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
         await base.OnExecuteAsync(ct);
 
         var columns = ItemColumns.GetOrDefault(storage.Settings.ListFormat);
+        var playlist = await Client.GetPlaylist(Playlist, IndicesFrom0, ct);
         var itemRange = new PlaylistItemRange(0, 100);
 
         if (RemainingArguments is { Length: > 0 })
         {
             var range = ValueParser.ParseRange(RemainingArguments[0], IndicesFrom0);
-            itemRange = range.GetItemRange(await Client.GetItemCount(Playlist, ct));
+            itemRange = range.GetItemRange(playlist.ItemCount);
 
             if (itemRange.Count == 0)
             {
@@ -48,7 +49,7 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
             }
         }
 
-        var result = await Client.GetPlaylistItems(Playlist, itemRange, columns, ct);
+        var result = await Client.GetPlaylistItems(playlist.Id, itemRange, columns, ct);
         var offset = itemRange.Offset + (IndicesFrom0 ? 0 : 1);
 
         var rows = ShowIndices

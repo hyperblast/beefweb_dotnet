@@ -2,7 +2,6 @@ using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading.Tasks;
 using Beefweb.Client;
 
 namespace Beefweb.CommandLineTool.Services;
@@ -101,13 +100,9 @@ public static class ValueParser
         throw new InvalidRequestException($"Invalid index value '{input.ToString()}'.");
     }
 
-    public static async ValueTask<int?> ParseOffsetAsync(string? input, bool zeroBased, Func<ValueTask<int>> getCount)
+    public static int ParseOffset(string input, bool zeroBased, int totalCount)
     {
-        if (input == null)
-            return null;
-
-        var index = ParseIndex(input, zeroBased);
-        return index.IsFromEnd ? await getCount() - index.Value - 1 : index.Value;
+        return ParseIndex(input, zeroBased).GetOffsetInclusive(totalCount);
     }
 
     public static Range ParseRange(ReadOnlySpan<char> input, bool zeroBased)
@@ -147,7 +142,7 @@ public static class ValueParser
             var realIndex = displayIndex + (zeroBased ? 0 : -1);
             if (realIndex < 0 || realIndex >= option.EnumNames!.Count)
             {
-                throw new InvalidRequestException($"Option value index ({displayIndex}) is out of range.");
+                throw new InvalidRequestException($"Option value index ({value}) is out of range.");
             }
 
             return realIndex;

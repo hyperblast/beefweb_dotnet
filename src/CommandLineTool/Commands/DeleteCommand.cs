@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Beefweb.Client;
 using Beefweb.CommandLineTool.Services;
 using McMaster.Extensions.CommandLineUtils;
 using static Beefweb.CommandLineTool.Commands.CommonOptions;
@@ -17,8 +16,8 @@ public class DeleteCommand(IClientProvider clientProvider, IConsole console) : S
     [Option("-a|--all", Description = "Delete all playlist items (clear playlist)")]
     public bool All { get; set; }
 
-    [Option(T.Playlist, CommandOptionType.SingleValue, Description = D.PlaylistToUse)]
-    public PlaylistRef Playlist { get; set; } = PlaylistRef.Current;
+    [Option(T.Playlist, Description = D.PlaylistToUse)]
+    public string Playlist { get; set; } = Constants.CurrentPlaylist;
 
     [Option(T.Stdin, Description = D.StdinIndices)]
     public bool ReadFromStdin { get; set; }
@@ -32,9 +31,11 @@ public class DeleteCommand(IClientProvider clientProvider, IConsole console) : S
     {
         await base.OnExecuteAsync(ct);
 
+        var playlist = await Client.GetPlaylist(Playlist, IndicesFrom0, ct);
+
         if (All)
         {
-            await Client.ClearPlaylist(Playlist, ct);
+            await Client.ClearPlaylist(playlist.Id, ct);
             return;
         }
 
@@ -59,16 +60,15 @@ public class DeleteCommand(IClientProvider clientProvider, IConsole console) : S
         }
 
         var indices = new HashSet<int>();
-        var totalCount = await Client.GetItemCount(Playlist, ct);
 
         foreach (var range in ranges)
         {
-            indices.AddRange(range.GetItems(totalCount));
+            indices.AddRange(range.GetItems(playlist.ItemCount));
         }
 
         if (indices.Count > 0)
         {
-            await Client.RemovePlaylistItems(Playlist, indices.ToArray(), ct);
+            await Client.RemovePlaylistItems(playlist.Id, indices.ToArray(), ct);
         }
     }
 }

@@ -13,29 +13,34 @@ namespace Beefweb.CommandLineTool.Services;
 
 public static class Extensions
 {
-    public static async ValueTask<int> GetItemCount(
-        this IPlayerClient client, PlaylistRef playlist, CancellationToken ct)
-    {
-        return (await client.GetPlaylist(playlist, ct)).ItemCount;
-    }
-
     public static async ValueTask<int> GetPlaylistCount(this IPlayerClient client, CancellationToken ct)
     {
         return (await client.GetPlaylists(ct)).Count;
     }
 
-    private static async ValueTask<PlaylistInfo> GetPlaylist(
-        this IPlayerClient client, PlaylistRef playlist, CancellationToken ct)
+    public static async ValueTask<PlaylistInfo> GetPlaylist(
+        this IPlayerClient client, string playlistRef, bool zeroBasedIndexing, CancellationToken ct)
     {
-        // TODO: use get single playlist API
-
         var playlists = await client.GetPlaylists(ct);
-        if (playlist == PlaylistRef.Current)
+
+        if (string.Equals(playlistRef, Constants.CurrentPlaylist, StringComparison.OrdinalIgnoreCase))
         {
-            return playlists.SingleOrDefault(p => p.IsCurrent) ?? playlists.First();
+            return playlists.FirstOrDefault(p => p.IsCurrent) ?? playlists.First();
         }
 
-        return playlist.Id != null ? playlists.Single(p => p.Id == playlist.Id) : playlists[playlist.Index];
+        if (!ValueParser.TryParseIndex(playlistRef, zeroBasedIndexing, out var index))
+        {
+            return playlists.FirstOrDefault(p => p.Id == playlistRef) ??
+                   throw new InvalidRequestException($"Unable to find playlist with id '{playlistRef}'.");
+        }
+
+        var realIndex = index.GetOffsetInclusive(playlists.Count);
+        if (realIndex < 0 || realIndex >= playlists.Count)
+        {
+            throw new InvalidRequestException($"Playlist index ({playlistRef}) is out of range.");
+        }
+
+        return playlists[realIndex];
     }
 
     public static IEnumerable<int> GetItems(this Range range, int totalCount)
@@ -50,7 +55,7 @@ public static class Extensions
         return new PlaylistItemRange(offset, length);
     }
 
-    private static int GetOffsetInclusive(this Index index, int count)
+    public static int GetOffsetInclusive(this Index index, int count)
     {
         return index.IsFromEnd ? checked(count - index.Value - 1) : index.Value;
     }
