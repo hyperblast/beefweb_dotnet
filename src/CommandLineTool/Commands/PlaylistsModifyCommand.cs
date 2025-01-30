@@ -6,9 +6,9 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("change", Description = "Change playlist",
+[Command("modify", "mod", Description = "Modify playlist",
     UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue)]
-public class PlaylistsChangeCommand(IClientProvider clientProvider) : ServerCommandBase(clientProvider)
+public class PlaylistsModifyCommand(IClientProvider clientProvider) : ServerCommandBase(clientProvider)
 {
     [Option(T.Title, Description = D.PlaylistTitle)]
     public string? Title { get; set; }
