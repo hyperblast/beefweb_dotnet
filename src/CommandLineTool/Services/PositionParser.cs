@@ -42,11 +42,27 @@ public static class PositionParser
             return true;
         }
 
-        foreach (var format in TimeSpanFormats)
+        if (input[0] == '-')
         {
-            if (TimeSpan.TryParseExact(input, format, CultureInfo.InvariantCulture, out result))
+            var s = input[1..];
+
+            foreach (var format in TimeSpanFormats)
             {
-                return true;
+                if (TimeSpan.TryParseExact(
+                        s, format, CultureInfo.InvariantCulture, TimeSpanStyles.AssumeNegative, out result))
+                {
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            foreach (var format in TimeSpanFormats)
+            {
+                if (TimeSpan.TryParseExact(input, format, CultureInfo.InvariantCulture, out result))
+                {
+                    return true;
+                }
             }
         }
 
