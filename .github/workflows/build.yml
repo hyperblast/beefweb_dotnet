@@ -23,7 +23,7 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Install dependencies
       run: dotnet restore
@@ -41,7 +41,7 @@ jobs:
       run: dotnet pack -c Release --no-restore --no-build
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: beefweb_dotnet
         if-no-files-found: error
