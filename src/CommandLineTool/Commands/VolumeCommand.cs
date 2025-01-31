@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Beefweb.Client;
 using Beefweb.CommandLineTool.Services;
 using McMaster.Extensions.CommandLineUtils;
 
@@ -32,26 +33,52 @@ public class VolumeCommand(IClientProvider clientProvider, IConsole console) : S
             return;
         }
 
-        var newVolumeString = (RelativeValue ?? AbsoluteValue)!;
-        double newVolume;
+        var volumeChange = ValueParser.ParseVolumeChange(RelativeValue ?? AbsoluteValue);
 
-        if (newVolumeString.EndsWith(DbSuffix, StringComparison.OrdinalIgnoreCase))
+        var newVolume = volumeInfo.Type switch
         {
-            var value = ValueParser.ParseDouble(newVolumeString.AsSpan(..^DbSuffix.Length));
-
-            newVolume = RelativeValue != null
-                ? VolumeCalc.NormalizeDb(value + volumeInfo.Value, volumeInfo)
-                : VolumeCalc.NormalizeDb(value, volumeInfo);
-        }
-        else
-        {
-            var value = ValueParser.ParseDouble(newVolumeString);
-
-            newVolume = RelativeValue != null
-                ? VolumeCalc.LinearChange(volumeInfo.Value, value, volumeInfo)
-                : VolumeCalc.LinearToDb(value, volumeInfo);
-        }
+            VolumeType.Db => CalculateVolumeDb(volumeInfo, volumeChange, RelativeValue != null),
+            VolumeType.Linear => CalculateVolumeLinear(volumeInfo, volumeChange, RelativeValue != null),
+            _ => throw new InvalidOperationException("Unknown volume type " + volumeInfo.Type),
+        };
 
         await Client.SetVolume(newVolume, ct);
+    }
+
+    private static double CalculateVolumeLinear(VolumeInfo volumeInfo, VolumeChange volumeChange, bool isRelative)
+    {
+        return volumeChange.Type switch
+        {
+            VolumeChangeType.Db => throw new InvalidRequestException(
+                "Current player does not support dB volume control."),
+
+            VolumeChangeType.Linear => isRelative
+                ? VolumeCalc.Normalize(volumeChange.Value + volumeInfo.Value, volumeInfo)
+                : VolumeCalc.Normalize(volumeChange.Value, volumeInfo),
+
+            VolumeChangeType.Percent => isRelative
+                ? VolumeCalc.Normalize(
+                    volumeInfo.Value + VolumeCalc.PercentToLinear(volumeChange.Value, volumeInfo),
+                    volumeInfo)
+                : VolumeCalc.PercentToLinear(volumeChange.Value, volumeInfo),
+
+            _ => throw new InvalidOperationException("Unknown volume change type " + volumeChange.Type)
+        };
+    }
+
+    private static double CalculateVolumeDb(VolumeInfo volumeInfo, VolumeChange volumeChange, bool isRelative)
+    {
+        return volumeChange.Type switch
+        {
+            VolumeChangeType.Linear or VolumeChangeType.Percent => isRelative
+                ? VolumeCalc.AdjustDbPercentage(volumeInfo.Value, volumeChange.Value, volumeInfo)
+                : VolumeCalc.PercentToDb(volumeChange.Value, volumeInfo),
+
+            VolumeChangeType.Db => isRelative
+                ? VolumeCalc.Normalize(volumeChange.Value + volumeInfo.Value, volumeInfo)
+                : VolumeCalc.Normalize(volumeChange.Value, volumeInfo),
+
+            _ => throw new InvalidOperationException("Unknown volume change type " + volumeChange.Type)
+        };
     }
 }

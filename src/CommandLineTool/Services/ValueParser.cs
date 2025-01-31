@@ -27,7 +27,7 @@ public static class ValueParser
             return false;
         }
 
-        if (!int.TryParse(input, CultureInfo.InvariantCulture, out var value))
+        if (!int.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value))
         {
             index = default;
             return false;
@@ -90,6 +90,52 @@ public static class ValueParser
         return true;
     }
 
+    public static bool TryParseVolumeChange(ReadOnlySpan<char> input, out VolumeChange result)
+    {
+        const string db = "db";
+        const char percent = '%';
+        double value;
+
+        if (input.Length == 0)
+        {
+            result = default;
+            return false;
+        }
+
+        if (input.EndsWith(db, StringComparison.OrdinalIgnoreCase))
+        {
+            if (!double.TryParse(input[..^db.Length], NumberStyles.Number, CultureInfo.InvariantCulture, out value))
+            {
+                result = default;
+                return false;
+            }
+
+            result = new VolumeChange(VolumeChangeType.Db, value);
+            return true;
+        }
+
+        if (input[^1] == percent)
+        {
+            if (!double.TryParse(input[..^1], NumberStyles.Number, CultureInfo.InvariantCulture, out value))
+            {
+                result = default;
+                return false;
+            }
+
+            result = new VolumeChange(VolumeChangeType.Percent, value);
+            return true;
+        }
+
+        if (!double.TryParse(input[..^1], NumberStyles.Number, CultureInfo.InvariantCulture, out value))
+        {
+            result = default;
+            return false;
+        }
+
+        result = new VolumeChange(VolumeChangeType.Linear, value);
+        return true;
+    }
+
     public static Index ParseIndex(ReadOnlySpan<char> input, bool zeroBased)
     {
         if (TryParseIndex(input, zeroBased, out var index))
@@ -125,24 +171,34 @@ public static class ValueParser
         throw new InvalidRequestException($"Invalid item index or range '{input}' at {input.Location}.");
     }
 
-    public static double ParseDouble(ReadOnlySpan<char> valueString)
+    public static VolumeChange ParseVolumeChange(ReadOnlySpan<char> input)
     {
-        if (double.TryParse(valueString, NumberStyles.Number, CultureInfo.InvariantCulture, out var value))
+        if (TryParseVolumeChange(input, out var result))
+        {
+            return result;
+        }
+
+        throw new InvalidRequestException($"Invalid volume value '{input}', expected db, % or linear.");
+    }
+
+    public static double ParseDouble(ReadOnlySpan<char> input)
+    {
+        if (double.TryParse(input, NumberStyles.Number, CultureInfo.InvariantCulture, out var value))
         {
             return value;
         }
 
-        throw new InvalidRequestException($"Invalid numeric value: {valueString}");
+        throw new InvalidRequestException($"Invalid numeric value: {input}");
     }
 
-    public static int ParseEnumValue(PlayerOption option, bool zeroBased, string value)
+    public static int ParseEnumValue(PlayerOption option, bool zeroBased, string input)
     {
-        if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var displayIndex))
+        if (int.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out var displayIndex))
         {
             var realIndex = displayIndex + (zeroBased ? 0 : -1);
             if (realIndex < 0 || realIndex >= option.EnumNames!.Count)
             {
-                throw new InvalidRequestException($"Option value index ({value}) is out of range.");
+                throw new InvalidRequestException($"Option value index ({input}) is out of range.");
             }
 
             return realIndex;
@@ -151,7 +207,7 @@ public static class ValueParser
         var i = 0;
         foreach (var name in option.EnumNames!)
         {
-            if (string.Equals(name, value, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(name, input, StringComparison.OrdinalIgnoreCase))
             {
                 return i;
             }
@@ -159,21 +215,21 @@ public static class ValueParser
             i++;
         }
 
-        throw new InvalidRequestException($"Invalid option value '{value}'.");
+        throw new InvalidRequestException($"Invalid option value '{input}'.");
     }
 
-    public static BoolSwitch ParseSwitch(string value)
+    public static BoolSwitch ParseSwitch(string input)
     {
-        return BoolSwitches.TryGetValue(value, out var result)
+        return BoolSwitches.TryGetValue(input, out var result)
             ? result
-            : throw new InvalidRequestException($"Invalid bool value '{value}'.");
+            : throw new InvalidRequestException($"Invalid bool value '{input}'.");
     }
 
-    public static FileSystemEntryType ParseFileSystemEntryType(string value)
+    public static FileSystemEntryType ParseFileSystemEntryType(string input)
     {
-        return FsEntryTypes.TryGetValue(value, out var result)
+        return FsEntryTypes.TryGetValue(input, out var result)
             ? result
-            : throw new InvalidRequestException($"Invalid file system entry type '{value}'.");
+            : throw new InvalidRequestException($"Invalid file system entry type '{input}'.");
     }
 
     static ValueParser()
