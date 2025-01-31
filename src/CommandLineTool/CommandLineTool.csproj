@@ -4,6 +4,7 @@
         <AssemblyName>beefctl</AssemblyName>
         <RootNamespace>Beefweb.CommandLineTool</RootNamespace>
         <OutputType>Exe</OutputType>
+        <IsPublishable>True</IsPublishable>
     </PropertyGroup>
 
     <ItemGroup>

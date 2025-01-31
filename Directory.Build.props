@@ -7,6 +7,8 @@
         <Nullable>enable</Nullable>
         <Version>1.0.0-dev</Version>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <IsPackable>False</IsPackable>
+        <IsPublishable>False</IsPublishable>
     </PropertyGroup>
 
 </Project>

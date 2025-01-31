@@ -4,6 +4,7 @@
         <AssemblyName>Beefweb.Client</AssemblyName>
         <RootNamespace>Beefweb.Client</RootNamespace>
         <DocumentationFile>$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
+        <IsPackable>True</IsPackable>
     </PropertyGroup>
 
 </Project>
