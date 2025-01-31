@@ -33,7 +33,7 @@ public class VolumeCommand(IClientProvider clientProvider, IConsole console) : S
             return;
         }
 
-        var volumeChange = ValueParser.ParseVolumeChange(RelativeValue ?? AbsoluteValue);
+        var volumeChange = VolumeChange.Parse(RelativeValue ?? AbsoluteValue);
 
         var newVolume = volumeInfo.Type switch
         {

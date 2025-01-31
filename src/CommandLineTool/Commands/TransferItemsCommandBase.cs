@@ -20,7 +20,7 @@ public abstract class TransferItemsCommandBase(IClientProvider clientProvider, I
             : sourcePlaylist;
 
         var index = Position != null
-            ? ValueParser.ParseOffset(Position, IndicesFrom0, playlist.ItemCount)
+            ? IndexParser.ParseAndGetOffset(Position, IndicesFrom0, playlist.ItemCount)
             : (int?)null;
 
         return (playlist, index);

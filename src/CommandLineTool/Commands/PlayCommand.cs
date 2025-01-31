@@ -40,7 +40,7 @@ public class PlayCommand(IClientProvider clientProvider) : ServerCommandBase(cli
         if (ItemIndex != null)
         {
             var playlist = await Client.GetPlaylist(Playlist, IndicesFrom0, ct);
-            var position = ValueParser.ParseOffset(ItemIndex, IndicesFrom0, playlist.ItemCount);
+            var position = IndexParser.ParseAndGetOffset(ItemIndex, IndicesFrom0, playlist.ItemCount);
             await Client.Play(playlist.Id, position, ct);
             return;
         }

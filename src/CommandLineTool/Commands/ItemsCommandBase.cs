@@ -46,14 +46,14 @@ public abstract class ItemsCommandBase(IClientProvider clientProvider, IConsole 
 
         if (RemainingArguments != null)
         {
-            ranges.AddRange(RemainingArguments.Select(a => ValueParser.ParseRange(a, IndicesFrom0)));
+            ranges.AddRange(RemainingArguments.Select(a => RangeParser.Parse(a, IndicesFrom0)));
         }
 
         if (ReadFromStdin)
         {
             await foreach (var token in console.In.ReadTokensAsync().WithCancellation(ct))
             {
-                ranges.Add(ValueParser.ParseRange(token, IndicesFrom0));
+                ranges.Add(RangeParser.Parse(token, IndicesFrom0));
             }
         }
 

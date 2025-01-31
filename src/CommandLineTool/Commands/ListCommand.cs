@@ -40,7 +40,7 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
 
         if (RemainingArguments is { Length: > 0 })
         {
-            var range = ValueParser.ParseRange(RemainingArguments[0], IndicesFrom0);
+            var range = RangeParser.Parse(RemainingArguments[0], IndicesFrom0);
             itemRange = range.GetItemRange(playlist.ItemCount);
 
             if (itemRange.Count == 0)

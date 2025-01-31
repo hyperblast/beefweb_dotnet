@@ -57,7 +57,7 @@ public class PositionCommand(IClientProvider clientProvider, IConsole console) :
     {
         if (!input.EndsWith('%'))
         {
-            return ValueParser.ParseTimeSpan(input);
+            return PositionParser.Parse(input);
         }
 
         var positionPercent = ValueParser.ParseDouble(input.AsSpan()[..^1]);

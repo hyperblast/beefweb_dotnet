@@ -37,7 +37,7 @@ public class PlaylistsModifyCommand(IClientProvider clientProvider) : ServerComm
         var playlist = playlists.Get(RemainingArguments[0], IndicesFrom0);
 
         var newPosition = Position != null
-            ? ValueParser.ParseOffset(Position, IndicesFrom0, playlists.Count)
+            ? IndexParser.ParseAndGetOffset(Position, IndicesFrom0, playlists.Count)
             : (int?)null;
 
         if (Title != null)
