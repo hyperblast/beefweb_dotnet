@@ -10,6 +10,18 @@ public static class ValueParser
 {
     private static readonly FrozenDictionary<string, BoolSwitch> BoolSwitches;
     private static readonly FrozenDictionary<string, FileSystemEntryType> FsEntryTypes;
+    private static readonly (string name, TimeSpan value)[] DurationUnits;
+    private static readonly string[] TimeSpanFormats;
+
+    private static bool TryParseInt(ReadOnlySpan<char> input, out int value)
+    {
+        return int.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
+    }
+
+    private static bool TryParseDouble(ReadOnlySpan<char> input, out double value)
+    {
+        return double.TryParse(input, NumberStyles.Number, CultureInfo.InvariantCulture, out value);
+    }
 
     public static bool TryParseIndex(ReadOnlySpan<char> input, bool zeroBased, out Index index)
     {
@@ -27,7 +39,7 @@ public static class ValueParser
             return false;
         }
 
-        if (!int.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value))
+        if (!TryParseInt(input, out var value))
         {
             index = default;
             return false;
@@ -92,8 +104,8 @@ public static class ValueParser
 
     public static bool TryParseVolumeChange(ReadOnlySpan<char> input, out VolumeChange result)
     {
-        const string db = "db";
         const char percent = '%';
+        const string db = "db";
         double value;
 
         if (input.Length == 0)
@@ -102,21 +114,9 @@ public static class ValueParser
             return false;
         }
 
-        if (input.EndsWith(db, StringComparison.OrdinalIgnoreCase))
-        {
-            if (!double.TryParse(input[..^db.Length], NumberStyles.Number, CultureInfo.InvariantCulture, out value))
-            {
-                result = default;
-                return false;
-            }
-
-            result = new VolumeChange(VolumeChangeType.Db, value);
-            return true;
-        }
-
         if (input[^1] == percent)
         {
-            if (!double.TryParse(input[..^1], NumberStyles.Number, CultureInfo.InvariantCulture, out value))
+            if (!TryParseDouble(input[..^1], out value))
             {
                 result = default;
                 return false;
@@ -126,7 +126,19 @@ public static class ValueParser
             return true;
         }
 
-        if (!double.TryParse(input[..^1], NumberStyles.Number, CultureInfo.InvariantCulture, out value))
+        if (input.EndsWith(db, StringComparison.OrdinalIgnoreCase))
+        {
+            if (!TryParseDouble(input[..^db.Length], out value))
+            {
+                result = default;
+                return false;
+            }
+
+            result = new VolumeChange(VolumeChangeType.Db, value);
+            return true;
+        }
+
+        if (!TryParseDouble(input, out value))
         {
             result = default;
             return false;
@@ -134,6 +146,51 @@ public static class ValueParser
 
         result = new VolumeChange(VolumeChangeType.Linear, value);
         return true;
+    }
+
+    public static bool TryParseTimeSpan(ReadOnlySpan<char> input, out TimeSpan result)
+    {
+        if (input.Length == 0)
+        {
+            result = TimeSpan.Zero;
+            return false;
+        }
+
+        double value;
+
+        result = TimeSpan.Zero;
+
+        foreach (var (unitName, unitValue) in DurationUnits)
+        {
+            if (!input.EndsWith(unitName, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            if (!TryParseDouble(input[..^unitName.Length], out value))
+            {
+                return false;
+            }
+
+            result = value * unitValue;
+            return true;
+        }
+
+        if (TryParseDouble(input, out value))
+        {
+            result = TimeSpan.FromSeconds(value);
+            return true;
+        }
+
+        foreach (var format in TimeSpanFormats)
+        {
+            if (TimeSpan.TryParseExact(input, format, CultureInfo.InvariantCulture, out result))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static Index ParseIndex(ReadOnlySpan<char> input, bool zeroBased)
@@ -181,9 +238,19 @@ public static class ValueParser
         throw new InvalidRequestException($"Invalid volume value '{input}', expected db, % or linear.");
     }
 
+    public static TimeSpan ParseTimeSpan(ReadOnlySpan<char> input)
+    {
+        if (TryParseTimeSpan(input, out var result))
+        {
+            return result;
+        }
+
+        throw new InvalidRequestException($"Invalid position value '{input}'.");
+    }
+
     public static double ParseDouble(ReadOnlySpan<char> input)
     {
-        if (double.TryParse(input, NumberStyles.Number, CultureInfo.InvariantCulture, out var value))
+        if (TryParseDouble(input, out var value))
         {
             return value;
         }
@@ -193,7 +260,7 @@ public static class ValueParser
 
     public static int ParseEnumValue(PlayerOption option, bool zeroBased, string input)
     {
-        if (int.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out var displayIndex))
+        if (TryParseInt(input, out var displayIndex))
         {
             var realIndex = displayIndex + (zeroBased ? 0 : -1);
             if (realIndex < 0 || realIndex >= option.EnumNames!.Count)
@@ -234,6 +301,22 @@ public static class ValueParser
 
     static ValueParser()
     {
+        DurationUnits =
+        [
+            ("ms", TimeSpan.FromMilliseconds(1)),
+            ("s", TimeSpan.FromSeconds(1)),
+            ("m", TimeSpan.FromMinutes(1)),
+            ("h", TimeSpan.FromHours(1)),
+            ("d", TimeSpan.FromDays(1)),
+        ];
+
+        TimeSpanFormats =
+        [
+            @"m\:s",
+            @"h\:m\:s",
+            @"d\.h\:m\:s"
+        ];
+
         var boolSwitches = new Dictionary<string, BoolSwitch>(StringComparer.OrdinalIgnoreCase)
         {
             { "f", BoolSwitch.False },

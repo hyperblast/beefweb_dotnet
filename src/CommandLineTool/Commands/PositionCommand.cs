@@ -36,19 +36,7 @@ public class PositionCommand(IClientProvider clientProvider, IConsole console) :
             return;
         }
 
-        var positionStr = (RelativeValue ?? AbsoluteValue)!;
-
-        TimeSpan position;
-
-        if (positionStr.EndsWith('%'))
-        {
-            var positionPercent = ValueParser.ParseDouble(positionStr.AsSpan()[..^1]);
-            position = positionPercent / 100 * activeItem.Duration;
-        }
-        else
-        {
-            position = TimeSpan.FromSeconds(ValueParser.ParseDouble(positionStr));
-        }
+        var position = ParsePosition((RelativeValue ?? AbsoluteValue)!, activeItem);
 
         if (RelativeValue != null)
         {
@@ -63,5 +51,16 @@ public class PositionCommand(IClientProvider clientProvider, IConsole console) :
         }
 
         await Client.SeekAbsolute(position + activeItem.Duration, ct);
+    }
+
+    private static TimeSpan ParsePosition(string input, ActiveItemInfo activeItem)
+    {
+        if (!input.EndsWith('%'))
+        {
+            return ValueParser.ParseTimeSpan(input);
+        }
+
+        var positionPercent = ValueParser.ParseDouble(input.AsSpan()[..^1]);
+        return positionPercent / 100 * activeItem.Duration;
     }
 }
