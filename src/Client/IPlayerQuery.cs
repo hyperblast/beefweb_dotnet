@@ -23,7 +23,14 @@ public interface IPlayerQuery
     IPlayerQuery IncludePlaylists();
 
     /// <summary>
-    /// Configures player to include playlist items information
+    /// Configures player to include playlist items information.
+    /// This overload is usable with <see cref="ReadEvents"/> only.
+    /// </summary>
+    /// <returns>Configured query.</returns>
+    IPlayerQuery IncludePlaylistItems();
+
+    /// <summary>
+    /// Configures player to include playlist items information.
     /// </summary>
     /// <param name="playlist">Playlist to watch.</param>
     /// <param name="itemRange">Playlist items to watch.</param>

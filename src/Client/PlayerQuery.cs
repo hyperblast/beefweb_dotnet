@@ -14,6 +14,7 @@ internal sealed class PlayerQuery : IPlayerQuery
     private bool _includePlayQueue;
     private bool _includePlaylists;
     private bool _includePlaylistItems;
+    private bool _hasPlaylistItemsParameters;
     private IReadOnlyList<string>? _activeItemColumns;
     private IReadOnlyList<string>? _playQueueColumns;
     private IReadOnlyList<string>? _playlistItemColumns;
@@ -38,6 +39,12 @@ internal sealed class PlayerQuery : IPlayerQuery
         return this;
     }
 
+    public IPlayerQuery IncludePlaylistItems()
+    {
+        _includePlaylistItems = true;
+        return this;
+    }
+
     public IPlayerQuery IncludePlaylistItems(
         PlaylistRef playlist, PlaylistItemRange itemRange, IReadOnlyList<string> itemColumns)
     {
@@ -45,6 +52,7 @@ internal sealed class PlayerQuery : IPlayerQuery
         _playlist = playlist;
         _playlistItemRange = itemRange;
         _playlistItemColumns = itemColumns;
+        _hasPlaylistItemsParameters = true;
         return this;
     }
 
@@ -55,22 +63,24 @@ internal sealed class PlayerQuery : IPlayerQuery
         return this;
     }
 
-    public ValueTask<PlayerQueryResult> Execute(CancellationToken cancellationToken = default)
+    public async ValueTask<PlayerQueryResult> Execute(CancellationToken cancellationToken = default)
     {
-        return _handler.Get<PlayerQueryResult>("api/query", BuildQuery(), cancellationToken);
+        return await _handler
+            .Get<PlayerQueryResult>("api/query", BuildQuery(true), cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public IAsyncEnumerable<PlayerEvent> ReadEvents()
     {
-        return _handler.GetEvents<PlayerEvent>("api/query/events", BuildQuery());
+        return _handler.GetEvents<PlayerEvent>("api/query/events", BuildQuery(false));
     }
 
     public IAsyncEnumerable<PlayerQueryResult> ReadUpdates()
     {
-        return _handler.GetEvents<PlayerQueryResult>("api/query/updates", BuildQuery());
+        return _handler.GetEvents<PlayerQueryResult>("api/query/updates", BuildQuery(true));
     }
 
-    private QueryParameterCollection BuildQuery()
+    private QueryParameterCollection BuildQuery(bool wantPlaylistItemsParameters)
     {
         var query = new QueryParameterCollection();
 
@@ -98,17 +108,25 @@ internal sealed class PlayerQuery : IPlayerQuery
         if (_includePlaylistItems)
         {
             query["playlistItems"] = true;
-            query["plref"] = _playlist;
-            query["plrange"] = _playlistItemRange;
 
-            if (_playlistItemColumns is { Count: > 0 })
+            if (wantPlaylistItemsParameters)
+            {
+                if (!_hasPlaylistItemsParameters)
+                {
+                    throw new InvalidOperationException(
+                        "Use IncludePlaylists() overload with playlist, range and columns to call this method.");
+                }
+
+                query["plref"] = _playlist;
+                query["plrange"] = _playlistItemRange;
                 query["plcolumns"] = _playlistItemColumns;
+            }
         }
 
         if (query.Count == 0)
         {
             throw new InvalidOperationException(
-                "Query is empty, call at least one IncludeXxx() method before executing the query.");
+                "Query is empty, call at least one IncludeXxx() method before calling this method.");
         }
 
         return query;
