@@ -24,4 +24,10 @@ public sealed class PlayerEvent
     /// </summary>
     [JsonPropertyName("playlistItems")]
     public bool PlaylistItemsChanged { get; set; }
+
+    /// <summary>
+    /// Playback queue is changed. Use <see cref="IPlayerClient.GetPlayQueue"/> to query new state.
+    /// </summary>
+    [JsonPropertyName("playQueue")]
+    public bool PlayQueueChanged { get; set; }
 }
