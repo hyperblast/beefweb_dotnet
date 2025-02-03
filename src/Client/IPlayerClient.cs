@@ -153,6 +153,53 @@ public interface IPlayerClient
     /// <returns>Request task.</returns>
     ValueTask SeekRelative(TimeSpan offset, CancellationToken cancellationToken = default);
 
+    // Playback queue API
+
+    /// <summary>
+    /// Gets play queue with optional columns.
+    /// </summary>
+    /// <param name="columns">Play queue item columns.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request task.</returns>
+    ValueTask<IList<PlayQueueItemInfo>> GetPlayQueue(
+        IReadOnlyList<string>? columns = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Add specified item to play queue.
+    /// By default items are added at the end of the queue.
+    /// </summary>
+    /// <param name="playlist">Playlist to use.</param>
+    /// <param name="itemIndex">Index of item to add.</param>
+    /// <param name="queueIndex">Queue index to insert item at (DeaDBeeF only).</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request task.</returns>
+    ValueTask AddToPlayQueue(PlaylistRef playlist, int itemIndex, int? queueIndex = null,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Removes specified item from play queue.
+    /// </summary>
+    /// <param name="queueIndex">Item index in queue.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request task.</returns>
+    ValueTask RemoveFromPlayQueue(int queueIndex, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Removes specified item from play queue.
+    /// </summary>
+    /// <param name="playlist">Playlist to use.</param>
+    /// <param name="itemIndex">Item index to remove.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request task.</returns>
+    ValueTask RemoveFromPlayQueue(PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Removes all items from play queue.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request task.</returns>
+    ValueTask ClearPlayQueue(CancellationToken cancellationToken = default);
+
     // Playlists API
 
     /// <summary>

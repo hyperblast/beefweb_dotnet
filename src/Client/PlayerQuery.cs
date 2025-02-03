@@ -11,9 +11,11 @@ internal sealed class PlayerQuery : IPlayerQuery
     private readonly IRequestHandler _handler;
 
     private bool _includePlayer;
+    private bool _includePlayQueue;
     private bool _includePlaylists;
     private bool _includePlaylistItems;
     private IReadOnlyList<string>? _activeItemColumns;
+    private IReadOnlyList<string>? _playQueueColumns;
     private IReadOnlyList<string>? _playlistItemColumns;
     private PlaylistRef _playlist;
     private PlaylistItemRange _playlistItemRange;
@@ -46,6 +48,13 @@ internal sealed class PlayerQuery : IPlayerQuery
         return this;
     }
 
+    public IPlayerQuery IncludePlayQueue(IReadOnlyList<string>? columns = null)
+    {
+        _includePlayQueue = true;
+        _playQueueColumns = columns;
+        return this;
+    }
+
     public ValueTask<PlayerQueryResult> Execute(CancellationToken cancellationToken = default)
     {
         return _handler.Get<PlayerQueryResult>("api/query", BuildQuery(), cancellationToken);
@@ -69,8 +78,16 @@ internal sealed class PlayerQuery : IPlayerQuery
         {
             query["player"] = true;
 
-            if (_activeItemColumns?.Count > 0)
+            if (_activeItemColumns is { Count: > 0 })
                 query["trcolumns"] = _activeItemColumns;
+        }
+
+        if (_includePlayQueue)
+        {
+            query["playQueue"] = true;
+
+            if (_playQueueColumns is { Count: > 0 })
+                query["qcolumns"] = _playQueueColumns;
         }
 
         if (_includePlaylists)
@@ -84,7 +101,7 @@ internal sealed class PlayerQuery : IPlayerQuery
             query["plref"] = _playlist;
             query["plrange"] = _playlistItemRange;
 
-            if (_playlistItemColumns?.Count > 0)
+            if (_playlistItemColumns is { Count: > 0 })
                 query["plcolumns"] = _playlistItemColumns;
         }
 

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Beefweb.Client;
@@ -21,4 +22,9 @@ public sealed class PlayerQueryResult
     /// Requested playlist items.
     /// </summary>
     public PlaylistItemsResult? PlaylistItems { get; set; }
+
+    /// <summary>
+    /// Play queue contents.
+    /// </summary>
+    public IList<PlayQueueItemInfo>? PlayQueue { get; set; }
 }

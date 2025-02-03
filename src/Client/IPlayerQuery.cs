@@ -33,6 +33,13 @@ public interface IPlayerQuery
         PlaylistRef playlist, PlaylistItemRange itemRange, IReadOnlyList<string> itemColumns);
 
     /// <summary>
+    /// Configures query to include play queue.
+    /// </summary>
+    /// <param name="columns">List of columns of queued items to return.</param>
+    /// <returns>Configured query.</returns>
+    IPlayerQuery IncludePlayQueue(IReadOnlyList<string>? columns = null);
+
+    /// <summary>
     /// Executes this query and returns player information.
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>

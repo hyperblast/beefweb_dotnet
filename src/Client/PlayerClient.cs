@@ -51,7 +51,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
         IReadOnlyList<string>? activeItemColumns = null,
         CancellationToken cancellationToken = default)
     {
-        var queryParams = activeItemColumns?.Count > 0
+        var queryParams = activeItemColumns is { Count: > 0 }
             ? new QueryParameterCollection { ["columns"] = activeItemColumns }
             : null;
 
@@ -172,6 +172,55 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     {
         await SetPlayerState(new SetPlayerStateRequest { RelativePosition = offset }, cancellationToken)
             .ConfigureAwait(false);
+    }
+
+    // Playback queue API
+
+    /// <inheritdoc />
+    public async ValueTask<IList<PlayQueueItemInfo>> GetPlayQueue(
+        IReadOnlyList<string>? columns = null, CancellationToken cancellationToken = default)
+    {
+        var queryParams = columns is { Count: > 0 }
+            ? new QueryParameterCollection { ["columns"] = columns }
+            : null;
+
+        var result = await _handler
+            .Get<PlayerQueryResult>("api/playqueue", queryParams, cancellationToken)
+            .ConfigureAwait(false);
+
+        return result.PlayQueue ?? throw PropertyIsNull("playlistItems");
+    }
+
+    /// <inheritdoc />
+    public async ValueTask AddToPlayQueue(PlaylistRef playlist, int itemIndex, int? queueIndex = null,
+        CancellationToken cancellationToken = default)
+    {
+        var body = queueIndex != null
+            ? new { plref = playlist.GetValue(), itemIndex, queueIndex }
+            : (object) new { plref = playlist.GetValue(), itemIndex };
+
+        await _handler.Post("api/playqueue/add", body, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async ValueTask RemoveFromPlayQueue(int queueIndex, CancellationToken cancellationToken = default)
+    {
+        await _handler.Post("api/playqueue/remove", new { queueIndex }, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async ValueTask RemoveFromPlayQueue(
+        PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default)
+    {
+        await _handler
+            .Post("api/playqueue/remove", new { plref = playlist.GetValue(), itemIndex }, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async ValueTask ClearPlayQueue(CancellationToken cancellationToken = default)
+    {
+        await _handler.Post("api/playqueue/clear", null, cancellationToken).ConfigureAwait(false);
     }
 
     // Playlists API
