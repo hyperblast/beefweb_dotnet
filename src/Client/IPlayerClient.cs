@@ -203,7 +203,15 @@ public interface IPlayerClient
     // Playlists API
 
     /// <summary>
-    /// Gets playlists.
+    /// Gets information about single playlist
+    /// </summary>
+    /// <param name="playlist">Playlist to get information for.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    ValueTask<PlaylistInfo> GetPlaylist(PlaylistRef playlist, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets information about all playlists.
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>All available playlists.</returns>
@@ -236,11 +244,13 @@ public interface IPlayerClient
     /// </summary>
     /// <param name="title">New playlist title.</param>
     /// <param name="position">New playlist position. By default created playlist is added to the end.</param>
+    /// <param name="setCurrent">If true selects created playlist</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Request task.</returns>
-    ValueTask AddPlaylist(
+    ValueTask<PlaylistInfo> AddPlaylist(
         string? title = null,
         int? position = null,
+        bool setCurrent = false,
         CancellationToken cancellationToken = default);
 
     /// <summary>

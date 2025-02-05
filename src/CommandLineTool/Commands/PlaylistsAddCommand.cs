@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Beefweb.CommandLineTool.Services;
@@ -30,15 +29,6 @@ public class PlaylistsAddCommand(IClientProvider clientProvider) : ServerCommand
             ? IndexParser.ParseAndGetOffset(Position, IndicesFrom0, await Client.GetPlaylistCount(ct))
             : (int?)null;
 
-        await Client.AddPlaylist(Title, position, ct);
-
-        if (Select)
-        {
-            // TODO: use Id from response
-
-            var playlists = await Client.GetPlaylists(ct);
-            var playlistId = position != null ? playlists[position.Value].Id : playlists.Last().Id;
-            await Client.SetCurrentPlaylist(playlistId, ct);
-        }
+        await Client.AddPlaylist(Title, position, Select, ct);
     }
 }

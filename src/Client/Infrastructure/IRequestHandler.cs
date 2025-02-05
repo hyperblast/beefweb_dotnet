@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,7 +25,8 @@ internal interface IRequestHandler
         QueryParameterCollection? queryParams = null,
         CancellationToken cancellationToken = default);
 
-    ValueTask Post(
+    ValueTask<object?> Post(
+        Type? returnType,
         string url,
         object? body = null,
         CancellationToken cancellationToken = default);

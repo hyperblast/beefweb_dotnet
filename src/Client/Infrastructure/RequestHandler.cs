@@ -62,19 +62,7 @@ internal sealed class RequestHandler : IRequestHandler
 
         response.EnsureSuccessStatusCode();
 
-        var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        await using var responseStreamScope = responseStream.ConfigureAwait(false);
-
-        var result = await JsonSerializer
-            .DeserializeAsync(responseStream, returnType, SerializerOptions, cancellationToken)
-            .ConfigureAwait(false);
-
-        return result ?? throw InvalidResponse();
-    }
-
-    private static InvalidOperationException InvalidResponse()
-    {
-        return new InvalidOperationException("Invalid response: expected JSON value.");
+        return await ParseResponse(response, returnType, cancellationToken).ConfigureAwait(false);
     }
 
     public async ValueTask<IStreamedResult?> GetStream(string url, QueryParameterCollection? queryParams = null,
@@ -116,7 +104,7 @@ internal sealed class RequestHandler : IRequestHandler
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(ContentTypes.EventStream));
 
         using var response = await _client
-            .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
+            .SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken)
             .ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
@@ -138,7 +126,8 @@ internal sealed class RequestHandler : IRequestHandler
         }
     }
 
-    public async ValueTask Post(string url, object? body = null, CancellationToken cancellationToken = default)
+    public async ValueTask<object?> Post(Type? returnType, string url, object? body = null,
+        CancellationToken cancellationToken = default)
     {
         var requestUri = UriFormatter.Format(_baseUri, url);
         using var request = new HttpRequestMessage(HttpMethod.Post, requestUri);
@@ -152,9 +141,30 @@ internal sealed class RequestHandler : IRequestHandler
             .ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
-        return;
+
+        return returnType != null
+            ? await ParseResponse(response, returnType, cancellationToken).ConfigureAwait(false)
+            : null;
 
         static ByteArrayContent CreateContent(string type, byte[] data) =>
             new(data) { Headers = { ContentType = new MediaTypeHeaderValue(type) } };
+    }
+
+    private static async ValueTask<object> ParseResponse(
+        HttpResponseMessage response, Type returnType, CancellationToken cancellationToken)
+    {
+        var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+        await using var responseStreamScope = responseStream.ConfigureAwait(false);
+
+        var result = await JsonSerializer
+            .DeserializeAsync(responseStream, returnType, SerializerOptions, cancellationToken)
+            .ConfigureAwait(false);
+
+        return result ?? throw InvalidResponse();
+    }
+
+    private static InvalidOperationException InvalidResponse()
+    {
+        return new InvalidOperationException("Invalid response: expected JSON value.");
     }
 }

@@ -16,6 +16,24 @@ internal static class RequestHandlerExtensions
         return (T)await handler.Get(typeof(T), url, queryParams, cancellationToken).ConfigureAwait(false);
     }
 
+    public static ValueTask<object?> Post(
+        this IRequestHandler handler,
+        string url,
+        object? body = null,
+        CancellationToken cancellationToken = default)
+    {
+        return handler.Post(null, url, body, cancellationToken);
+    }
+
+    public static async ValueTask<T> Post<T>(
+        this IRequestHandler handler,
+        string url,
+        object? body = null,
+        CancellationToken cancellationToken = default)
+    {
+        return (T)(await handler.Post(typeof(T), url, body, cancellationToken).ConfigureAwait(false))!;
+    }
+
     public static async IAsyncEnumerable<T> GetEvents<T>(
         this IRequestHandler requestHandler,
         string url,

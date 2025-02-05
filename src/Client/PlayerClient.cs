@@ -226,6 +226,15 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     // Playlists API
 
     /// <inheritdoc />
+    public async ValueTask<PlaylistInfo> GetPlaylist(
+        PlaylistRef playlist, CancellationToken cancellationToken = default)
+    {
+        return await _handler
+            .Get<PlaylistInfo>($"api/playlists/{playlist}", null, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
     public async ValueTask<IList<PlaylistInfo>> GetPlaylists(CancellationToken cancellationToken = default)
     {
         var result = await _handler
@@ -259,11 +268,12 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     }
 
     /// <inheritdoc />
-    public async ValueTask AddPlaylist(
-        string? title = null, int? position = null, CancellationToken cancellationToken = default)
+    public async ValueTask<PlaylistInfo> AddPlaylist(
+        string? title = null, int? position = null, bool setCurrent = false,
+        CancellationToken cancellationToken = default)
     {
-        await _handler
-            .Post("api/playlists/add", new { title, index = position }, cancellationToken)
+        return await _handler
+            .Post<PlaylistInfo>("api/playlists/add", new { title, index = position, setCurrent }, cancellationToken)
             .ConfigureAwait(false);
     }
 
