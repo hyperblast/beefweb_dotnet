@@ -16,13 +16,15 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
 {
     private readonly IRequestHandler _handler;
     private IDisposable? _lifetime;
+    private readonly JsonSerializerOptions _clientConfigOptions;
 
     /// <summary>
     /// Creates new instance for specified <paramref name="baseUri"/>.
     /// </summary>
     /// <param name="baseUri">Base uri. This value should not include '/api' in path</param>
-    public PlayerClient(Uri baseUri)
-        : this(baseUri, new HttpClient())
+    /// <param name="clientConfigOptions">Options for serializing client configuration.</param>
+    public PlayerClient(Uri baseUri, JsonSerializerOptions? clientConfigOptions = null)
+        : this(baseUri, new HttpClient(), disposeClient: true, clientConfigOptions)
     {
     }
 
@@ -32,17 +34,21 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     /// <param name="baseUri">Base uri. This value should not include '/api' in path.</param>
     /// <param name="client"><see cref="HttpClient"/> to use.</param>
     /// <param name="disposeClient">If true <paramref name="client"/> will be disposed with this instance.</param>
-    public PlayerClient(Uri baseUri, HttpClient client, bool disposeClient = true)
+    /// <param name="clientConfigOptions">Options for serializing client configuration.</param>
+    public PlayerClient(
+        Uri baseUri, HttpClient client, bool disposeClient = true, JsonSerializerOptions? clientConfigOptions = null)
         : this(
             new RequestHandler(baseUri, client, new LineReaderFactory(new GrowableBufferFactory())),
             disposeClient ? client : null)
     {
     }
 
-    internal PlayerClient(IRequestHandler handler, IDisposable? lifetime = null)
+    internal PlayerClient(
+        IRequestHandler handler, IDisposable? lifetime = null, JsonSerializerOptions? clientConfigOptions = null)
     {
         _handler = handler;
         _lifetime = lifetime;
+        _clientConfigOptions = clientConfigOptions ?? JsonSerializerOptions.Default;
     }
 
     // Player API
@@ -421,30 +427,42 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     }
 
     /// <inheritdoc />
+    public async ValueTask<string?> GetClientConfig(string id, CancellationToken cancellationToken = default)
+    {
+        var result = (RawJson?)await GetClientConfig(id, typeof(RawJson), cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        return result?.Value == "null" ? null : result?.Value;
+    }
+
+    /// <inheritdoc />
     public async ValueTask<object?> GetClientConfig(
-        string id, Type configType, JsonSerializerOptions? serializerOptions = null,
-        CancellationToken cancellationToken = default)
+        string id, Type configType, CancellationToken cancellationToken = default)
     {
         return await _handler
             .Get(configType,
                 $"api/clientconfig/{id}",
-                serializerOptions: serializerOptions,
+                serializerOptions: _clientConfigOptions,
                 allowNullResponse: true,
                 cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async ValueTask SetClientConfig(
-        string id, object value, JsonSerializerOptions? serializerOptions = null,
-        CancellationToken cancellationToken = default)
+    public async ValueTask SetClientConfig(string id, string value, CancellationToken cancellationToken = default)
+    {
+        await SetClientConfig(id, new RawJson(value), cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async ValueTask SetClientConfig(string id, object value, CancellationToken cancellationToken = default)
     {
         await _handler
             .Post(
                 null,
                 $"api/clientconfig/{id}",
                 value,
-                serializerOptions: serializerOptions,
+                serializerOptions: _clientConfigOptions,
                 cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }

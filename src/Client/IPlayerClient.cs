@@ -411,30 +411,39 @@ public interface IPlayerClient
     // Client config API
 
     /// <summary>
-    /// Gets client configuration.
+    /// Gets client configuration as string.
     /// </summary>
     /// <param name="id">Configuration id.</param>
-    /// <param name="serializerOptions">Serializer options.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request task.</returns>
+    ValueTask<string?> GetClientConfig(string id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets client configuration as value of <paramref name="configType"/>.
+    /// </summary>
+    /// <param name="id">Configuration id.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <param name="configType"></param>
     /// <returns>Request task.</returns>
-    ValueTask<object?> GetClientConfig(
-        string id,
-        Type configType,
-        JsonSerializerOptions? serializerOptions = null,
-        CancellationToken cancellationToken = default);
+    ValueTask<object?> GetClientConfig(string id, Type configType, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Sets client configuration.
+    /// Sets client configuration as raw JSON value.
     /// </summary>
     /// <param name="id">Configuration id.</param>
-    /// <param name="serializerOptions">Serializer options.</param>
+    /// <param name="value">Configuration value (must be in JSON format).</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request task.</returns>
+    ValueTask SetClientConfig(string id, string value, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Sets client configuration as serialized <paramref name="value"/>.
+    /// </summary>
+    /// <param name="id">Configuration id.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <param name="value"></param>
     /// <returns>Request task.</returns>
-    ValueTask SetClientConfig(
-        string id, object value, JsonSerializerOptions? serializerOptions = null,
-        CancellationToken cancellationToken = default);
+    ValueTask SetClientConfig(string id, object value, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Remove client configuration.

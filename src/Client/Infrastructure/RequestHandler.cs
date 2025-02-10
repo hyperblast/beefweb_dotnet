@@ -17,7 +17,7 @@ namespace Beefweb.Client.Infrastructure;
 internal sealed class RequestHandler : IRequestHandler
 {
     private static readonly Encoding Utf8 = new UTF8Encoding(false);
-    private static readonly Type StringType = typeof(string);
+    private static readonly Type RawJsonType = typeof(RawJson);
     private static readonly byte[] EventPrefix = "data:"u8.ToArray();
 
     internal static readonly JsonSerializerOptions DefaultSerializerOptions = CreateSerializerOptions();
@@ -159,8 +159,8 @@ internal sealed class RequestHandler : IRequestHandler
 
         HttpContent GetContent()
         {
-            if (body is string str)
-                return new StringContent(str, Utf8, new MediaTypeHeaderValue(ContentTypes.Json, "utf-8"));
+            if (body is RawJson rawJson)
+                return new StringContent(rawJson.Value, Utf8, new MediaTypeHeaderValue(ContentTypes.Json, "utf-8"));
 
             if (body != null)
                 return JsonContent.Create(body, body.GetType(), options: serializerOptions ?? DefaultSerializerOptions);
@@ -172,9 +172,9 @@ internal sealed class RequestHandler : IRequestHandler
     private static async ValueTask<object?> ParseResponse(HttpResponseMessage response, Type returnType,
         JsonSerializerOptions? serializerOptions, bool allowNull, CancellationToken cancellationToken)
     {
-        if (returnType == StringType)
+        if (returnType == RawJsonType)
         {
-            return response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+            return new RawJson(await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false));
         }
 
         var result = await response.Content
