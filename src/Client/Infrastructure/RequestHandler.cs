@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -13,6 +16,8 @@ namespace Beefweb.Client.Infrastructure;
 
 internal sealed class RequestHandler : IRequestHandler
 {
+    private static readonly Encoding Utf8 = new UTF8Encoding(false);
+    private static readonly Type StringType = typeof(string);
     private static readonly byte[] EventPrefix = "data:"u8.ToArray();
 
     internal static readonly JsonSerializerOptions SerializerOptions = CreateSerializerOptions();
@@ -132,9 +137,10 @@ internal sealed class RequestHandler : IRequestHandler
         var requestUri = UriFormatter.Format(_baseUri, url);
         using var request = new HttpRequestMessage(HttpMethod.Post, requestUri);
 
-        request.Content = body != null
-            ? CreateContent(ContentTypes.Json, JsonSerializer.SerializeToUtf8Bytes(body, SerializerOptions))
-            : CreateContent(ContentTypes.Text, []);
+        if (returnType != null)
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(ContentTypes.Json));
+
+        request.Content = GetContent();
 
         using var response = await _client
             .SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken)
@@ -146,25 +152,35 @@ internal sealed class RequestHandler : IRequestHandler
             ? await ParseResponse(response, returnType, cancellationToken).ConfigureAwait(false)
             : null;
 
-        static ByteArrayContent CreateContent(string type, byte[] data) =>
-            new(data) { Headers = { ContentType = new MediaTypeHeaderValue(type) } };
+        HttpContent GetContent()
+        {
+            if (body is string str)
+                return new StringContent(str, Utf8, new MediaTypeHeaderValue(ContentTypes.Json, "utf-8"));
+
+            if (body != null)
+                return JsonContent.Create(body, body.GetType(), options: SerializerOptions);
+
+            return new ByteArrayContent([]);
+        }
     }
 
     private static async ValueTask<object> ParseResponse(
         HttpResponseMessage response, Type returnType, CancellationToken cancellationToken)
     {
-        var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        await using var responseStreamScope = responseStream.ConfigureAwait(false);
+        if (returnType == StringType)
+        {
+            return response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        }
 
-        var result = await JsonSerializer
-            .DeserializeAsync(responseStream, returnType, SerializerOptions, cancellationToken)
+        var result = await response.Content
+            .ReadFromJsonAsync(returnType, SerializerOptions, cancellationToken)
             .ConfigureAwait(false);
 
         return result ?? throw InvalidResponse();
     }
 
-    private static InvalidOperationException InvalidResponse()
+    private static InvalidDataException InvalidResponse()
     {
-        return new InvalidOperationException("Invalid response: expected JSON value.");
+        return new InvalidDataException("Invalid response: expected JSON object.");
     }
 }
