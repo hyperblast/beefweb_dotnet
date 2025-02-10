@@ -24,7 +24,7 @@ public static class CommonOptions
         public const string TargetPlaylist = "Target playlist, if not specified the same value as --playlist is used";
         public const string PlaylistToAddTo = "Playlist to add to (index, id or current)";
         public const string CurrentItemColumns = "Format current track using specified title formatting expressions";
-        public const string PlaylistItemColumns = "Format playlist items usign specified title formatting expressions";
+        public const string PlaylistItemColumns = "Format playlist items using specified title formatting expressions";
         public const string PositionForPlaylist = "Position to insert playlist at";
         public const string PositionForItems = "Position to insert items at";
         public const string StdinItems = "Read items from standard input";
