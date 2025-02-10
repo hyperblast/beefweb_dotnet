@@ -44,7 +44,8 @@ public class PlayerClientException : HttpRequestException
     }
 
     internal static PlayerClientException Create(
-        HttpResponseMessage message,
+        HttpStatusCode statusCode,
+        string? reasonPhrase = null,
         string? serverErrorMessage = null,
         string? errorParameterName = null)
     {
@@ -52,11 +53,11 @@ public class PlayerClientException : HttpRequestException
 
         messageBuilder.Append(
             CultureInfo.InvariantCulture,
-            $"Response status code does not indicate success: {(int)message.StatusCode}");
+            $"Response status code does not indicate success: {(int)statusCode}");
 
-        if (message.ReasonPhrase != null)
+        if (reasonPhrase != null)
         {
-            messageBuilder.Append($" ({message.ReasonPhrase})");
+            messageBuilder.Append($" ({reasonPhrase})");
         }
 
         messageBuilder.Append('.');
@@ -77,7 +78,7 @@ public class PlayerClientException : HttpRequestException
         return new PlayerClientException(
             messageBuilder.ToString(),
             HttpRequestError.Unknown,
-            message.StatusCode,
+            statusCode,
             serverErrorMessage,
             errorParameterName);
     }

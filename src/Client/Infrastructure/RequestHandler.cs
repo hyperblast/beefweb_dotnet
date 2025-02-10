@@ -201,14 +201,18 @@ internal sealed class RequestHandler : IRequestHandler
     {
         if (response.Content.Headers.ContentType?.MediaType != ContentTypes.Json)
         {
-            throw PlayerClientException.Create(response);
+            throw PlayerClientException.Create(response.StatusCode, response.ReasonPhrase);
         }
 
         var errorResponse = (ErrorResponse?)await ParseResponse(
                 response, ErrorResponseType, DefaultSerializerOptions, true, cancellationToken)
             .ConfigureAwait(false);
 
-        throw PlayerClientException.Create(response, errorResponse?.Error?.Message, errorResponse?.Error?.Parameter);
+        throw PlayerClientException.Create(
+            response.StatusCode,
+            response.ReasonPhrase,
+            errorResponse?.Error?.Message,
+            errorResponse?.Error?.Parameter);
     }
 
     private static PlayerClientException InvalidResponse()

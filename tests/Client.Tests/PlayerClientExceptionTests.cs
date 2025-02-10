@@ -1,6 +1,4 @@
 using System.Net;
-using System.Net.Http;
-using Beefweb.Client.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
@@ -11,7 +9,7 @@ public class PlayerClientExceptionTests
     [Fact]
     public void Create_Simple()
     {
-        var exception = PlayerClientException.Create(new HttpResponseMessage(HttpStatusCode.MethodNotAllowed));
+        var exception = PlayerClientException.Create(HttpStatusCode.MethodNotAllowed, "Method Not Allowed");
         exception.Message.Should().Be("Response status code does not indicate success: 405 (Method Not Allowed).");
         exception.StatusCode.Should().Be(HttpStatusCode.MethodNotAllowed);
         exception.ServerErrorMessage.Should().BeNull();
@@ -22,7 +20,8 @@ public class PlayerClientExceptionTests
     public void Create_WithServerMessage()
     {
         var exception = PlayerClientException.Create(
-            new HttpResponseMessage(HttpStatusCode.InternalServerError),
+            HttpStatusCode.InternalServerError,
+            "Internal Server Error",
             "it hits the fan");
 
         exception.Message.Should().Be(
@@ -37,8 +36,10 @@ public class PlayerClientExceptionTests
     public void Create_WithServerMessage_WithParameterName()
     {
         var exception = PlayerClientException.Create(
-            new HttpResponseMessage(HttpStatusCode.BadRequest),
-            "parameter is required", "index");
+            HttpStatusCode.BadRequest,
+            "Bad Request",
+            "parameter is required",
+            "index");
 
         exception.Message.Should().Be(
             "Response status code does not indicate success: 400 (Bad Request). Server error: parameter is required. Parameter name: index.");
