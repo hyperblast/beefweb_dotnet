@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 namespace Beefweb.Client;
 
 /// <summary>
-/// Extension methods for <see cref="IPlayerClient"/>
+/// Extension methods.
 /// </summary>
-public static class PlayerClientExtensions
+public static class Extensions
 {
     /// <summary>
     /// Gets client configuration as value of <typeparamref name="T"/>.
