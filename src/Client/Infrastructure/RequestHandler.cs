@@ -219,7 +219,7 @@ internal sealed class RequestHandler : IRequestHandler
         string? serverMessage = null,
         string? parameterName = null)
     {
-        var messageBuilder = new StringBuilder(120);
+        var messageBuilder = new StringBuilder(150);
 
         messageBuilder.Append(
             CultureInfo.InvariantCulture,
