@@ -12,7 +12,7 @@ public class SerializationTests
     {
         var enumOption = JsonSerializer.Deserialize<PlayerOption>(
             @"{""id"":""test"", ""type"":""enum"", ""value"":1, ""enumNames"":[ ""Off"", ""On"" ], ""name"":""Test""}",
-            RequestHandler.SerializerOptions)!;
+            RequestHandler.DefaultSerializerOptions)!;
 
         enumOption.Should().BeEquivalentTo(new PlayerOption
         {
@@ -29,7 +29,7 @@ public class SerializationTests
     {
         var enumOption = JsonSerializer.Deserialize<PlayerOption>(
             @"{""id"":""test"", ""type"":""bool"", ""value"":true, ""name"":""Test""}",
-            RequestHandler.SerializerOptions)!;
+            RequestHandler.DefaultSerializerOptions)!;
 
         enumOption.Should().BeEquivalentTo(new PlayerOption
         {

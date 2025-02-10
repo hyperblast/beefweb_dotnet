@@ -20,7 +20,7 @@ internal sealed class RequestHandler : IRequestHandler
     private static readonly Type StringType = typeof(string);
     private static readonly byte[] EventPrefix = "data:"u8.ToArray();
 
-    internal static readonly JsonSerializerOptions SerializerOptions = CreateSerializerOptions();
+    internal static readonly JsonSerializerOptions DefaultSerializerOptions = CreateSerializerOptions();
 
     private readonly HttpClient _client;
     private readonly ILineReaderFactory _readerFactory;
@@ -51,10 +51,12 @@ internal sealed class RequestHandler : IRequestHandler
         };
     }
 
-    public async ValueTask<object> Get(
+    public async ValueTask<object?> Get(
         Type returnType,
         string url,
         QueryParameterCollection? queryParams = null,
+        JsonSerializerOptions? serializerOptions = null,
+        bool allowNullResponse = false,
         CancellationToken cancellationToken = default)
     {
         var requestUri = UriFormatter.Format(_baseUri, url, queryParams);
@@ -67,7 +69,8 @@ internal sealed class RequestHandler : IRequestHandler
 
         response.EnsureSuccessStatusCode();
 
-        return await ParseResponse(response, returnType, cancellationToken).ConfigureAwait(false);
+        return await ParseResponse(response, returnType, serializerOptions, allowNullResponse, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public async ValueTask<IStreamedResult?> GetStream(string url, QueryParameterCollection? queryParams = null,
@@ -125,14 +128,15 @@ internal sealed class RequestHandler : IRequestHandler
             if (lineData.Span.StartsWith(EventPrefix))
             {
                 var eventValue = JsonSerializer.Deserialize(
-                    lineData.Span[EventPrefix.Length..], itemType, SerializerOptions);
+                    lineData.Span[EventPrefix.Length..], itemType, DefaultSerializerOptions);
                 yield return eventValue ?? throw InvalidResponse();
             }
         }
     }
 
-    public async ValueTask<object?> Post(Type? returnType, string url, object? body = null,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<object?> Post(
+        Type? returnType, string url, object? body = null, JsonSerializerOptions? serializerOptions = null,
+        bool allowNullResponse = false, CancellationToken cancellationToken = default)
     {
         var requestUri = UriFormatter.Format(_baseUri, url);
         using var request = new HttpRequestMessage(HttpMethod.Post, requestUri);
@@ -149,7 +153,8 @@ internal sealed class RequestHandler : IRequestHandler
         response.EnsureSuccessStatusCode();
 
         return returnType != null
-            ? await ParseResponse(response, returnType, cancellationToken).ConfigureAwait(false)
+            ? await ParseResponse(response, returnType, serializerOptions, allowNullResponse, cancellationToken)
+                .ConfigureAwait(false)
             : null;
 
         HttpContent GetContent()
@@ -158,14 +163,14 @@ internal sealed class RequestHandler : IRequestHandler
                 return new StringContent(str, Utf8, new MediaTypeHeaderValue(ContentTypes.Json, "utf-8"));
 
             if (body != null)
-                return JsonContent.Create(body, body.GetType(), options: SerializerOptions);
+                return JsonContent.Create(body, body.GetType(), options: serializerOptions ?? DefaultSerializerOptions);
 
             return new ByteArrayContent([]);
         }
     }
 
-    private static async ValueTask<object> ParseResponse(
-        HttpResponseMessage response, Type returnType, CancellationToken cancellationToken)
+    private static async ValueTask<object?> ParseResponse(HttpResponseMessage response, Type returnType,
+        JsonSerializerOptions? serializerOptions, bool allowNull, CancellationToken cancellationToken)
     {
         if (returnType == StringType)
         {
@@ -173,10 +178,15 @@ internal sealed class RequestHandler : IRequestHandler
         }
 
         var result = await response.Content
-            .ReadFromJsonAsync(returnType, SerializerOptions, cancellationToken)
+            .ReadFromJsonAsync(returnType, serializerOptions ?? DefaultSerializerOptions, cancellationToken)
             .ConfigureAwait(false);
 
-        return result ?? throw InvalidResponse();
+        if (result == null && !allowNull)
+        {
+            throw InvalidResponse();
+        }
+
+        return result;
     }
 
     private static InvalidDataException InvalidResponse()

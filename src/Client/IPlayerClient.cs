@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -406,6 +407,42 @@ public interface IPlayerClient
     /// <returns>Artwork image stream, or null, if no artwork is found for specified item.</returns>
     ValueTask<IStreamedResult?> GetArtwork(
         PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default);
+
+    // Client config API
+
+    /// <summary>
+    /// Gets client configuration.
+    /// </summary>
+    /// <param name="id">Configuration id.</param>
+    /// <param name="serializerOptions">Serializer options.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <param name="configType"></param>
+    /// <returns>Request task.</returns>
+    ValueTask<object?> GetClientConfig(
+        string id,
+        Type configType,
+        JsonSerializerOptions? serializerOptions = null,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Sets client configuration.
+    /// </summary>
+    /// <param name="id">Configuration id.</param>
+    /// <param name="serializerOptions">Serializer options.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <param name="value"></param>
+    /// <returns>Request task.</returns>
+    ValueTask SetClientConfig(
+        string id, object value, JsonSerializerOptions? serializerOptions = null,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Remove client configuration.
+    /// </summary>
+    /// <param name="id">Configuration id.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request task.</returns>
+    ValueTask RemoveClientConfig(string id, CancellationToken cancellationToken = default);
 
     // Query API
 

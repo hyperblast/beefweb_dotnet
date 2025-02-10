@@ -13,7 +13,9 @@ internal static class RequestHandlerExtensions
         QueryParameterCollection? queryParams = null,
         CancellationToken cancellationToken = default)
     {
-        return (T)await handler.Get(typeof(T), url, queryParams, cancellationToken).ConfigureAwait(false);
+        return (T)(await handler
+            .Get(typeof(T), url, queryParams, cancellationToken: cancellationToken)
+            .ConfigureAwait(false))!;
     }
 
     public static ValueTask<object?> Post(
@@ -22,7 +24,7 @@ internal static class RequestHandlerExtensions
         object? body = null,
         CancellationToken cancellationToken = default)
     {
-        return handler.Post(null, url, body, cancellationToken);
+        return handler.Post(null, url, body, cancellationToken: cancellationToken);
     }
 
     public static async ValueTask<T> Post<T>(
@@ -31,7 +33,9 @@ internal static class RequestHandlerExtensions
         object? body = null,
         CancellationToken cancellationToken = default)
     {
-        return (T)(await handler.Post(typeof(T), url, body, cancellationToken).ConfigureAwait(false))!;
+        return (T)(await handler
+            .Post(typeof(T), url, body, cancellationToken: cancellationToken)
+            .ConfigureAwait(false))!;
     }
 
     public static async IAsyncEnumerable<T> GetEvents<T>(

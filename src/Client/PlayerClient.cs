@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Beefweb.Client.Infrastructure;
@@ -417,6 +418,41 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
         return await _handler
             .GetStream(FormattableString.Invariant($"api/artwork/{playlist}/{itemIndex}"), null, cancellationToken)
             .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async ValueTask<object?> GetClientConfig(
+        string id, Type configType, JsonSerializerOptions? serializerOptions = null,
+        CancellationToken cancellationToken = default)
+    {
+        return await _handler
+            .Get(configType,
+                $"api/clientconfig/{id}",
+                serializerOptions: serializerOptions,
+                allowNullResponse: true,
+                cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async ValueTask SetClientConfig(
+        string id, object value, JsonSerializerOptions? serializerOptions = null,
+        CancellationToken cancellationToken = default)
+    {
+        await _handler
+            .Post(
+                null,
+                $"api/clientconfig/{id}",
+                value,
+                serializerOptions: serializerOptions,
+                cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async ValueTask RemoveClientConfig(string id, CancellationToken cancellationToken = default)
+    {
+        await _handler.Post($"api/clientconfig/remove/{id}", null, cancellationToken).ConfigureAwait(false);
     }
 
     // Query API
