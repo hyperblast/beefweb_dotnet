@@ -46,7 +46,8 @@ internal sealed class RequestHandler : IRequestHandler
                 new UnixTimestampConverter(),
                 new TimeSpanAsSecondsConverter(),
                 new FileSystemEntryTypeConverter(),
-                new JsonStringEnumConverter(namingPolicy)
+                new PlaylistRefConverter(),
+                new JsonStringEnumConverter(namingPolicy),
             },
         };
     }
@@ -160,10 +161,15 @@ internal sealed class RequestHandler : IRequestHandler
         HttpContent GetContent()
         {
             if (body is RawJson rawJson)
-                return new StringContent(rawJson.Value, Utf8, new MediaTypeHeaderValue(ContentTypes.Json, "utf-8"));
+            {
+                return new StringContent(rawJson.Value ?? "null", Utf8,
+                    new MediaTypeHeaderValue(ContentTypes.Json, "utf-8"));
+            }
 
             if (body != null)
+            {
                 return JsonContent.Create(body, body.GetType(), options: serializerOptions ?? DefaultSerializerOptions);
+            }
 
             return new ByteArrayContent([]);
         }

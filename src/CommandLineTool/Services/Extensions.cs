@@ -25,15 +25,20 @@ public static class Extensions
         return playlists.Get(playlistRef, zeroBasedIndexing);
     }
 
-    public static PlaylistInfo Get(this IList<PlaylistInfo> playlists, string playlistRef, bool zeroBasedIndexes)
+    public static PlaylistInfo Get(this IList<PlaylistInfo> playlists, string playlistRef, bool zeroBasedIndices)
     {
         if (string.Equals(playlistRef, Constants.CurrentPlaylist, StringComparison.OrdinalIgnoreCase))
         {
             return playlists.FirstOrDefault(p => p.IsCurrent) ?? playlists.First();
         }
 
-        if (!IndexParser.TryParse(playlistRef, zeroBasedIndexes, out var index))
+        if (!IndexParser.TryParse(playlistRef, zeroBasedIndices, out var index))
         {
+            if (!zeroBasedIndices && playlistRef == "0")
+            {
+                throw new InvalidRequestException("Playlist index (0) is out of range.");
+            }
+
             return playlists.FirstOrDefault(p => p.Id == playlistRef) ??
                    throw new InvalidRequestException($"Unable to find playlist with id '{playlistRef}'.");
         }

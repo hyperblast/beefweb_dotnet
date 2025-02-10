@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using Beefweb.Client.Infrastructure;
 
 namespace Beefweb.Client;
 
@@ -34,9 +35,7 @@ public readonly struct PlaylistRef : IEquatable<PlaylistRef>
     /// <exception cref="ArgumentException"><paramref name="id"/> is null or contains only whitespace characters.</exception>
     public PlaylistRef(string id)
     {
-        if (string.IsNullOrWhiteSpace(id))
-            throw new ArgumentException("Invalid playlist identifier.", nameof(id));
-
+        ArgumentValidator.ValidatePlaylistId(id);
         Id = id;
         Index = -1;
     }

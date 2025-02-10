@@ -6,6 +6,8 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Beefweb.Client.Infrastructure;
+using static System.FormattableString;
+using static Beefweb.Client.Infrastructure.ArgumentValidator;
 
 namespace Beefweb.Client;
 
@@ -109,7 +111,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     public async ValueTask Play(PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default)
     {
         await _handler
-            .Post(FormattableString.Invariant($"api/player/play/{playlist}/{itemIndex}"), null, cancellationToken)
+            .Post(Invariant($"api/player/play/{playlist}/{itemIndex}"), null, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -203,8 +205,8 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
         CancellationToken cancellationToken = default)
     {
         var body = queueIndex != null
-            ? new { plref = playlist.GetValue(), itemIndex, queueIndex }
-            : (object) new { plref = playlist.GetValue(), itemIndex };
+            ? new { plref = playlist, itemIndex, queueIndex }
+            : (object) new { plref = playlist, itemIndex };
 
         await _handler.Post("api/playqueue/add", body, cancellationToken).ConfigureAwait(false);
     }
@@ -220,7 +222,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
         PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default)
     {
         await _handler
-            .Post("api/playqueue/remove", new { plref = playlist.GetValue(), itemIndex }, cancellationToken)
+            .Post("api/playqueue/remove", new { plref = playlist, itemIndex }, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -270,7 +272,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     public async ValueTask SetCurrentPlaylist(PlaylistRef playlist, CancellationToken cancellationToken = default)
     {
         await _handler
-            .Post("api/playlists", new { current = playlist.GetValue() }, cancellationToken)
+            .Post("api/playlists", new { current = playlist }, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -289,7 +291,7 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
         PlaylistRef playlist, int newPosition, CancellationToken cancellationToken = default)
     {
         await _handler
-            .Post(FormattableString.Invariant($"api/playlists/move/{playlist}/{newPosition}"), null, cancellationToken)
+            .Post(Invariant($"api/playlists/move/{playlist}/{newPosition}"), null, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -422,16 +424,14 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
         PlaylistRef playlist, int itemIndex, CancellationToken cancellationToken = default)
     {
         return await _handler
-            .GetStream(FormattableString.Invariant($"api/artwork/{playlist}/{itemIndex}"), null, cancellationToken)
+            .GetStream(Invariant($"api/artwork/{playlist}/{itemIndex}"), null, cancellationToken)
             .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask<string?> GetClientConfig(string id, CancellationToken cancellationToken = default)
     {
-        var result = (RawJson?)await GetClientConfig(id, typeof(RawJson), cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
-
+        var result = await this.GetClientConfig<RawJson?>(id, cancellationToken).ConfigureAwait(false);
         return result?.Value == "null" ? null : result?.Value;
     }
 
@@ -439,6 +439,8 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     public async ValueTask<object?> GetClientConfig(
         string id, Type configType, CancellationToken cancellationToken = default)
     {
+        ValidateConfigId(id);
+
         return await _handler
             .Get(configType,
                 $"api/clientconfig/{id}",
@@ -451,12 +453,16 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     /// <inheritdoc />
     public async ValueTask SetClientConfig(string id, string value, CancellationToken cancellationToken = default)
     {
+        ValidateConfigId(id);
+
         await SetClientConfig(id, new RawJson(value), cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async ValueTask SetClientConfig(string id, object value, CancellationToken cancellationToken = default)
     {
+        ValidateConfigId(id);
+
         await _handler
             .Post(
                 null,
