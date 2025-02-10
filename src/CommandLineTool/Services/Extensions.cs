@@ -36,7 +36,7 @@ public static class Extensions
         {
             if (!zeroBasedIndices && playlistRef == "0")
             {
-                throw new InvalidRequestException("Playlist index (0) is out of range.");
+                throw IndexIsOutOfRange();
             }
 
             return playlists.FirstOrDefault(p => p.Id == playlistRef) ??
@@ -46,10 +46,15 @@ public static class Extensions
         var realIndex = index.GetOffsetInclusive(playlists.Count);
         if (realIndex < 0 || realIndex >= playlists.Count)
         {
-            throw new InvalidRequestException($"Playlist index ({playlistRef}) is out of range.");
+            throw IndexIsOutOfRange();
         }
 
         return playlists[realIndex];
+
+        InvalidRequestException IndexIsOutOfRange()
+        {
+            return new InvalidRequestException($"Playlist index ({playlistRef}) is out of range.");
+        }
     }
 
     public static IEnumerable<int> GetItems(this Range range, int totalCount)

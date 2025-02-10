@@ -7,7 +7,7 @@ namespace Beefweb.Client.Infrastructure;
 internal static partial class ArgumentValidator
 {
     [GeneratedRegex("^[a-z0-9_]+$")]
-    private static partial Regex IdMatcher();
+    public static partial Regex IdMatcher();
 
     public static void ValidatePlaylistId(string? id,
         [CallerArgumentExpression(nameof(id))] string parameterName = "")

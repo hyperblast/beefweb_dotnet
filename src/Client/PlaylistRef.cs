@@ -14,7 +14,7 @@ public readonly struct PlaylistRef : IEquatable<PlaylistRef>
     /// <summary>
     /// <see cref="PlaylistRef"/> referencing currently selected playlist.
     /// </summary>
-    public static PlaylistRef Current { get; } = new("current");
+    public static PlaylistRef Current { get; } = new(false, "current");
 
     /// <summary>
     /// Playlist identifier.
@@ -36,6 +36,7 @@ public readonly struct PlaylistRef : IEquatable<PlaylistRef>
     public PlaylistRef(string id)
     {
         ArgumentValidator.ValidatePlaylistId(id);
+
         Id = id;
         Index = -1;
     }
@@ -51,6 +52,18 @@ public readonly struct PlaylistRef : IEquatable<PlaylistRef>
 
         Id = null;
         Index = index;
+    }
+
+    private PlaylistRef(bool unused, int index)
+    {
+        Id = null;
+        Index = index;
+    }
+
+    private PlaylistRef(bool unused, string id)
+    {
+        Id = id;
+        Index = -1;
     }
 
     /// <summary>
@@ -89,9 +102,40 @@ public readonly struct PlaylistRef : IEquatable<PlaylistRef>
     /// <returns>Parsed value of <paramref name="value"/>.</returns>
     public static PlaylistRef Parse(string value)
     {
-        return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var index)
-            ? new PlaylistRef(index)
-            : new PlaylistRef(value);
+        if (TryParse(value, out var playlistRef))
+            return playlistRef;
+
+        throw new ArgumentException($"Invalid playlist reference '{value}'.", nameof(value));
+    }
+
+    /// <summary>
+    /// Tries to create <see cref="PlaylistRef"/> from string representation.
+    /// </summary>
+    /// <param name="value">String representation of playlist reference.</param>
+    /// <param name="playlistRef">Parsed value.</param>
+    /// <returns>Parsed value of <paramref name="value"/>.</returns>
+    public static bool TryParse(string? value, out PlaylistRef playlistRef)
+    {
+        if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var index))
+        {
+            if (index < 0)
+            {
+                playlistRef = default;
+                return false;
+            }
+
+            playlistRef = new PlaylistRef(false, index);
+            return true;
+        }
+
+        if (value != null && ArgumentValidator.IdMatcher().IsMatch(value))
+        {
+            playlistRef = new PlaylistRef(false, value);
+            return true;
+        }
+
+        playlistRef = default;
+        return false;
     }
 
     /// <inheritdoc />
