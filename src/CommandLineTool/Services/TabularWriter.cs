@@ -8,13 +8,22 @@ public interface ITabularWriter
 {
     void WriteTable(IReadOnlyCollection<string[]> rows, bool[]? rightAlign = null);
 
+    void WriteTable(IReadOnlyCollection<string[]> rows, bool rightAlignFirstColumn);
+
     void WriteRow(IReadOnlyCollection<string> values);
 }
 
 public sealed class TabularWriter(IConsole console) : ITabularWriter
 {
+    private static readonly bool[] RightAlignFirstColumn = [true];
+
     private const int MaxColumnWidth = 99;
     private static readonly string PaddingData = new(' ', MaxColumnWidth + 1);
+
+    public void WriteTable(IReadOnlyCollection<string[]> rows, bool rightAlignFirstColumn)
+    {
+        WriteTable(rows, rightAlignFirstColumn ? RightAlignFirstColumn : null);
+    }
 
     public void WriteRow(IReadOnlyCollection<string> values)
     {

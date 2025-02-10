@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Beefweb.CommandLineTool.Services;
 using McMaster.Extensions.CommandLineUtils;
+using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
@@ -13,22 +14,31 @@ namespace Beefweb.CommandLineTool.Commands;
 public class PlaylistsCommand(IClientProvider clientProvider, ITabularWriter writer)
     : ServerCommandBase(clientProvider)
 {
+    [Option(T.ShowIndices, Description = D.ShowItemIndices)]
+    public bool ShowIndices { get; set; }
+
+    [Option(T.IndicesFrom0, Description = D.IndicesFrom0)]
+    public bool IndicesFrom0 { get; set; }
+
     public override async Task OnExecuteAsync(CancellationToken ct)
     {
         await base.OnExecuteAsync(ct);
 
         var playlists = await Client.GetPlaylists(ct);
 
-        var rows = playlists
+        var playlistData = playlists
             .Select(p =>
                 new[]
                 {
                     p.Id,
                     p.Title,
                     p.IsCurrent ? "(current)" : ""
-                })
-            .ToList();
+                });
 
-        writer.WriteTable(rows);
+        var rows = ShowIndices
+            ? playlistData.ToTable(IndicesFrom0 ? 0 : 1)
+            : playlistData.ToTable();
+
+        writer.WriteTable(rows, ShowIndices);
     }
 }

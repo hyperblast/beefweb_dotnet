@@ -1,10 +1,9 @@
 using System;
-using System.Buffers;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Beefweb.Client;
@@ -129,5 +128,15 @@ public static class Extensions
         this IReadOnlyList<string>? values, IReadOnlyList<string> defaultValues)
     {
         return values is { Count: > 0 } ? values : defaultValues;
+    }
+
+    public static List<string[]> ToTable(this IEnumerable<IEnumerable<string>> rows)
+    {
+        return rows.Select(r => r as string[] ?? r.ToArray()).ToList();
+    }
+
+    public static List<string[]> ToTable(this IEnumerable<IEnumerable<string>> rows, int baseIndex)
+    {
+        return rows.Select((r, i) => (string[]) [(i + baseIndex).ToString(CultureInfo.InvariantCulture), ..r]).ToList();
     }
 }

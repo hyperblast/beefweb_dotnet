@@ -15,6 +15,7 @@ public static class CommonOptions
         public const string Stdin = "-I|--stdin";
         public const string Server = "-S|--server";
         public const string IndicesFrom0 = "-z|--zero";
+        public const string ShowIndices = "-n|--indices";
     }
 
     public static class D
@@ -32,5 +33,7 @@ public static class CommonOptions
         public const string IndicesFrom0 = "Start counting indices from 0";
         public const string PlaylistTitle = "Playlist title";
         public const string Select = "Select playlist";
+        public const string ShowItemIndices = "Show item indices";
+        public const string ShowPlaylistIndices = "Show playlist indices";
     }
 }

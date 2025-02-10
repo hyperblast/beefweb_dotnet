@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,15 +13,13 @@ namespace Beefweb.CommandLineTool.Commands;
 public class ListCommand(IClientProvider clientProvider, ISettingsStorage storage, ITabularWriter writer)
     : ServerCommandBase(clientProvider)
 {
-    private static readonly bool[] ItemIndicesColumnAlign = [true];
-
     [Option(T.Playlist, Description = D.PlaylistToUse)]
     public string Playlist { get; set; } = Constants.CurrentPlaylist;
 
     [Option(T.ItemColumns, Description = D.PlaylistItemColumns)]
     public string[]? ItemColumns { get; set; }
 
-    [Option("-n|--indices", Description = "Display item indices")]
+    [Option(T.ShowIndices, Description = D.ShowItemIndices)]
     public bool ShowIndices { get; set; }
 
     [Option(T.IndicesFrom0, Description = D.IndicesFrom0)]
@@ -53,10 +50,9 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
         var offset = itemRange.Offset + (IndicesFrom0 ? 0 : 1);
 
         var rows = ShowIndices
-            ? result.Items.Select(
-                (i, n) => (string[]) [(n + offset).ToString(CultureInfo.InvariantCulture), ..i.Columns])
-            : result.Items.Select(i => i.Columns.ToArray());
+            ? result.Items.Select(i => i.Columns).ToTable(offset)
+            : result.Items.Select(i => i.Columns).ToTable();
 
-        writer.WriteTable(rows.ToArray(), ShowIndices ? ItemIndicesColumnAlign : null);
+        writer.WriteTable(rows, ShowIndices);
     }
 }
