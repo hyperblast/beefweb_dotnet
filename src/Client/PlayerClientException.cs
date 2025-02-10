@@ -1,6 +1,8 @@
 using System;
+using System.Globalization;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 
 namespace Beefweb.Client;
 
@@ -39,5 +41,44 @@ public class PlayerClientException : HttpRequestException
     {
         ServerErrorMessage = serverErrorMessage;
         ErrorParameterName = errorParameterName;
+    }
+
+    internal static PlayerClientException Create(
+        HttpResponseMessage message,
+        string? serverErrorMessage = null,
+        string? errorParameterName = null)
+    {
+        var messageBuilder = new StringBuilder(150);
+
+        messageBuilder.Append(
+            CultureInfo.InvariantCulture,
+            $"Response status code does not indicate success: {(int)message.StatusCode}");
+
+        if (message.ReasonPhrase != null)
+        {
+            messageBuilder.Append($" ({message.ReasonPhrase})");
+        }
+
+        messageBuilder.Append('.');
+
+        if (serverErrorMessage != null)
+        {
+            messageBuilder.Append(" Server error: ").Append(serverErrorMessage);
+
+            if (!serverErrorMessage.EndsWith('.'))
+                messageBuilder.Append('.');
+        }
+
+        if (errorParameterName != null)
+        {
+            messageBuilder.Append($" Parameter name: {errorParameterName}.");
+        }
+
+        return new PlayerClientException(
+            messageBuilder.ToString(),
+            HttpRequestError.Unknown,
+            message.StatusCode,
+            serverErrorMessage,
+            errorParameterName);
     }
 }

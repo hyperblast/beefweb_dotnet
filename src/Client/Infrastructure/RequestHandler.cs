@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -204,53 +201,14 @@ internal sealed class RequestHandler : IRequestHandler
     {
         if (response.Content.Headers.ContentType?.MediaType != ContentTypes.Json)
         {
-            throw CreateException(response);
+            throw PlayerClientException.Create(response);
         }
 
         var errorResponse = (ErrorResponse?)await ParseResponse(
                 response, ErrorResponseType, DefaultSerializerOptions, true, cancellationToken)
             .ConfigureAwait(false);
 
-        throw CreateException(response, errorResponse?.Error?.Message, errorResponse?.Error?.Parameter);
-    }
-
-    internal static PlayerClientException CreateException(
-        HttpResponseMessage message,
-        string? serverErrorMessage = null,
-        string? errorParameterName = null)
-    {
-        var messageBuilder = new StringBuilder(150);
-
-        messageBuilder.Append(
-            CultureInfo.InvariantCulture,
-            $"Response status code does not indicate success: {(int)message.StatusCode}");
-
-        if (message.ReasonPhrase != null)
-        {
-            messageBuilder.Append($" ({message.ReasonPhrase})");
-        }
-
-        messageBuilder.Append('.');
-
-        if (serverErrorMessage != null)
-        {
-            messageBuilder.Append(" Server error: ").Append(serverErrorMessage);
-
-            if (!serverErrorMessage.EndsWith('.'))
-                messageBuilder.Append('.');
-        }
-
-        if (errorParameterName != null)
-        {
-            messageBuilder.Append($" Parameter name: {errorParameterName}.");
-        }
-
-        return new PlayerClientException(
-            messageBuilder.ToString(),
-            HttpRequestError.Unknown,
-            message.StatusCode,
-            serverErrorMessage,
-            errorParameterName);
+        throw PlayerClientException.Create(response, errorResponse?.Error?.Message, errorResponse?.Error?.Parameter);
     }
 
     private static PlayerClientException InvalidResponse()

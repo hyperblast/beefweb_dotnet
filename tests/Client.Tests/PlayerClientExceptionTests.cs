@@ -6,12 +6,12 @@ using Xunit;
 
 namespace Beefweb.Client;
 
-public class RequestHandlerTests
+public class PlayerClientExceptionTests
 {
     [Fact]
-    public void CreateException_Simple()
+    public void Create_Simple()
     {
-        var exception = RequestHandler.CreateException(new HttpResponseMessage(HttpStatusCode.MethodNotAllowed));
+        var exception = PlayerClientException.Create(new HttpResponseMessage(HttpStatusCode.MethodNotAllowed));
         exception.Message.Should().Be("Response status code does not indicate success: 405 (Method Not Allowed).");
         exception.StatusCode.Should().Be(HttpStatusCode.MethodNotAllowed);
         exception.ServerErrorMessage.Should().BeNull();
@@ -19,9 +19,9 @@ public class RequestHandlerTests
     }
 
     [Fact]
-    public void CreateException_ServerMessage()
+    public void Create_WithServerMessage()
     {
-        var exception = RequestHandler.CreateException(
+        var exception = PlayerClientException.Create(
             new HttpResponseMessage(HttpStatusCode.InternalServerError),
             "it hits the fan");
 
@@ -34,9 +34,9 @@ public class RequestHandlerTests
     }
 
     [Fact]
-    public void CreateException_ServerMessage_ParameterName()
+    public void Create_WithServerMessage_WithParameterName()
     {
-        var exception = RequestHandler.CreateException(
+        var exception = PlayerClientException.Create(
             new HttpResponseMessage(HttpStatusCode.BadRequest),
             "parameter is required", "index");
 
