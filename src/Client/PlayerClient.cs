@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
@@ -487,6 +488,11 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     /// <inheritdoc />
     public void Dispose() => Interlocked.Exchange(ref _lifetime, null)?.Dispose();
 
-    private static InvalidDataException PropertyIsNull(string name) =>
-        new($"Expected response property '{name}' to be not null.");
+    private static PlayerClientException PropertyIsNull(string name)
+    {
+        return new PlayerClientException(
+            $"Expected response property '{name}' to be not null.",
+            HttpRequestError.InvalidResponse,
+            HttpStatusCode.OK);
+    }
 }
