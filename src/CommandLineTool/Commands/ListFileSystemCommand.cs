@@ -40,12 +40,15 @@ public class ListFileSystemCommand(IClientProvider clientProvider, IConsole cons
             return;
         }
 
+        var parsedType = Type != null
+            ? ValueParser.ParseFileSystemEntryType(Type)
+            : FileSystemEntryType.Unknown;
+
         var entriesResult = await Client.GetFileSystemEntries(Path, ct);
         var entries = entriesResult.Entries.AsEnumerable();
 
         if (Type != null)
         {
-            var parsedType = ValueParser.ParseFileSystemEntryType(Type);
             entries = entries.Where(e => e.Type == parsedType);
         }
 
