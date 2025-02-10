@@ -14,17 +14,17 @@ namespace Beefweb.CommandLineTool.Commands;
 public class ListFileSystemCommand(IClientProvider clientProvider, IConsole console, ITabularWriter writer)
     : ServerCommandBase(clientProvider)
 {
-    private static readonly bool[] FullOutputRightAlign = [true, true, true, false];
+    private static readonly bool[] LongFormatAlign = [true, true, true, false];
 
     [Argument(0, Description = "Path or special value 'roots'")]
     [Required]
     public string Path { get; set; } = null!;
 
     [Option("-p|--paths", Description = "Display full paths")]
-    public bool Full { get; set; }
+    public bool FullPaths { get; set; }
 
     [Option("-l|--long", Description = "Display file sizes and timestamps")]
-    public bool Long { get; set; }
+    public bool LongFormat { get; set; }
 
     [Option("-t|--type", Description = "Only display entries of specified type")]
     public string? Type { get; set; }
@@ -54,11 +54,11 @@ public class ListFileSystemCommand(IClientProvider clientProvider, IConsole cons
 
     private void WriteEntries(IEnumerable<FileSystemEntry> entries)
     {
-        if (!Long)
+        if (!LongFormat)
         {
             foreach (var entry in entries)
             {
-                var path = Full ? entry.Path : entry.Name;
+                var path = FullPaths ? entry.Path : entry.Name;
                 console.WriteLine(path);
             }
 
@@ -72,10 +72,10 @@ public class ListFileSystemCommand(IClientProvider clientProvider, IConsole cons
                     e.Type == FileSystemEntryType.Directory ? "<DIR>" : e.Size.FormatFileSize(),
                     e.Timestamp.ToString("d"),
                     e.Timestamp.ToString("t"),
-                    Full ? e.Path : e.Name,
+                    FullPaths ? e.Path : e.Name,
                 })
             .ToList();
 
-        writer.WriteTable(output, FullOutputRightAlign);
+        writer.WriteTable(output, LongFormatAlign);
     }
 }
