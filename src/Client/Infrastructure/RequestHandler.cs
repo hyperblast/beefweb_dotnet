@@ -214,10 +214,10 @@ internal sealed class RequestHandler : IRequestHandler
         throw CreateException(response, errorResponse?.Error?.Message, errorResponse?.Error?.Parameter);
     }
 
-    private static PlayerClientException CreateException(
+    internal static PlayerClientException CreateException(
         HttpResponseMessage message,
-        string? serverMessage = null,
-        string? parameterName = null)
+        string? serverErrorMessage = null,
+        string? errorParameterName = null)
     {
         var messageBuilder = new StringBuilder(150);
 
@@ -232,25 +232,25 @@ internal sealed class RequestHandler : IRequestHandler
 
         messageBuilder.Append('.');
 
-        if (serverMessage != null)
+        if (serverErrorMessage != null)
         {
-            messageBuilder.Append(" Server error: ").Append(serverMessage);
+            messageBuilder.Append(" Server error: ").Append(serverErrorMessage);
 
-            if (!serverMessage.EndsWith('.'))
+            if (!serverErrorMessage.EndsWith('.'))
                 messageBuilder.Append('.');
         }
 
-        if (parameterName != null)
+        if (errorParameterName != null)
         {
-            messageBuilder.Append($" Parameter name: {parameterName}.");
+            messageBuilder.Append($" Parameter name: {errorParameterName}.");
         }
 
         return new PlayerClientException(
             messageBuilder.ToString(),
             HttpRequestError.Unknown,
             message.StatusCode,
-            serverMessage,
-            parameterName);
+            serverErrorMessage,
+            errorParameterName);
     }
 
     private static PlayerClientException InvalidResponse()
