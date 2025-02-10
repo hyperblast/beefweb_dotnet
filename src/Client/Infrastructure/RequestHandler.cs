@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -18,6 +20,7 @@ internal sealed class RequestHandler : IRequestHandler
 {
     private static readonly Encoding Utf8 = new UTF8Encoding(false);
     private static readonly Type RawJsonType = typeof(RawJson);
+    private static readonly Type ErrorResponseType = typeof(ErrorResponse);
     private static readonly byte[] EventPrefix = "data:"u8.ToArray();
 
     internal static readonly JsonSerializerOptions DefaultSerializerOptions = CreateSerializerOptions();
@@ -68,7 +71,8 @@ internal sealed class RequestHandler : IRequestHandler
             .SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken)
             .ConfigureAwait(false);
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            await ThrowResponseError(response, cancellationToken).ConfigureAwait(false);
 
         return await ParseResponse(response, returnType, serializerOptions, allowNullResponse, cancellationToken)
             .ConfigureAwait(false);
@@ -90,15 +94,13 @@ internal sealed class RequestHandler : IRequestHandler
             return null;
         }
 
-        try
-        {
-            response.EnsureSuccessStatusCode();
+        if (response.IsSuccessStatusCode)
             return new HttpStreamedResult(response);
-        }
-        catch
+
+        using (response)
         {
-            response.Dispose();
-            throw;
+            await ThrowResponseError(response, cancellationToken).ConfigureAwait(false);
+            return null;
         }
     }
 
@@ -116,7 +118,8 @@ internal sealed class RequestHandler : IRequestHandler
             .SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken)
             .ConfigureAwait(false);
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            await ThrowResponseError(response, cancellationToken).ConfigureAwait(false);
 
         var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
         await using var responseStreamScope = responseStream.ConfigureAwait(false);
@@ -151,7 +154,8 @@ internal sealed class RequestHandler : IRequestHandler
             .SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken)
             .ConfigureAwait(false);
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            await ThrowResponseError(response, cancellationToken).ConfigureAwait(false);
 
         return returnType != null
             ? await ParseResponse(response, returnType, serializerOptions, allowNullResponse, cancellationToken)
@@ -195,8 +199,62 @@ internal sealed class RequestHandler : IRequestHandler
         return result;
     }
 
-    private static InvalidDataException InvalidResponse()
+    private static async ValueTask ThrowResponseError(
+        HttpResponseMessage response, CancellationToken cancellationToken)
     {
-        return new InvalidDataException("Invalid response: expected JSON object.");
+        if (response.Content.Headers.ContentType?.MediaType != ContentTypes.Json)
+        {
+            throw CreateException(response);
+        }
+
+        var errorResponse = (ErrorResponse?)await ParseResponse(
+                response, ErrorResponseType, DefaultSerializerOptions, true, cancellationToken)
+            .ConfigureAwait(false);
+
+        throw CreateException(response, errorResponse?.Error?.Message, errorResponse?.Error?.Parameter);
+    }
+
+    private static PlayerClientException CreateException(
+        HttpResponseMessage message,
+        string? serverMessage = null,
+        string? parameterName = null)
+    {
+        var messageBuilder = new StringBuilder(120);
+
+        messageBuilder.Append(
+            CultureInfo.InvariantCulture,
+            $"Response status code does not indicate success: {(int)message.StatusCode}");
+
+        if (message.ReasonPhrase != null)
+        {
+            messageBuilder.Append($" ({message.ReasonPhrase})");
+        }
+
+        messageBuilder.Append('.');
+
+        if (serverMessage != null)
+        {
+            messageBuilder.Append(" Server error: ").Append(serverMessage);
+
+            if (!serverMessage.EndsWith('.'))
+                messageBuilder.Append('.');
+        }
+
+        if (parameterName != null)
+        {
+            messageBuilder.Append($" Parameter name: {parameterName}.");
+        }
+
+        return new PlayerClientException(
+            messageBuilder.ToString(),
+            HttpRequestError.Unknown,
+            message.StatusCode,
+            serverMessage,
+            parameterName);
+    }
+
+    private static PlayerClientException InvalidResponse()
+    {
+        return new PlayerClientException("Invalid response: expected JSON object.", HttpRequestError.InvalidResponse);
     }
 }
