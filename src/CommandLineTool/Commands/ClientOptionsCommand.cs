@@ -8,13 +8,13 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("settings", Description = "List client settings, get or set client setting")]
-public class SettingsCommand(ITabularWriter writer, ISettingsAccessor accessor, ISettingsStorage storage) : CommandBase
+[Command("client-options", "cloptions", Description = "List client options, get or set client option")]
+public class ClientOptionsCommand(ITabularWriter writer, ISettingsAccessor accessor, ISettingsStorage storage) : CommandBase
 {
-    [Argument(0, Description = "Setting name")]
+    [Argument(0, Description = "Option name")]
     public string? Name { get; set; } = null!;
 
-    [Option(T.Set, Description = "New setting value")]
+    [Option(T.Set, Description = "New option value (could be specified multiple times)")]
     public string[]? Values { get; set; }
 
     public override Task OnExecuteAsync(CancellationToken ct)

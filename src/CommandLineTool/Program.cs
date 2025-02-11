@@ -27,7 +27,7 @@ namespace Beefweb.CommandLineTool;
 [Subcommand(typeof(QueueCommand))]
 [Subcommand(typeof(StatusCommand))]
 [Subcommand(typeof(NowPlayingCommand))]
-[Subcommand(typeof(SettingsCommand))]
+[Subcommand(typeof(ClientOptionsCommand))]
 [Subcommand(typeof(OptionsCommand))]
 [Subcommand(typeof(ListFileSystemCommand))]
 public sealed class Program(CommandLineApplication application) : CommandBase
