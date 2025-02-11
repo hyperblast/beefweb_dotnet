@@ -135,8 +135,28 @@ public static class Extensions
         return rows.Select(r => r as string[] ?? r.ToArray()).ToList();
     }
 
-    public static List<string[]> ToTable(this IEnumerable<IEnumerable<string>> rows, int baseIndex)
+    public static List<string[]> ToTable(this IEnumerable<IEnumerable<string>> rows, int baseIndex,
+        int indexColumnOffset = 0)
     {
-        return rows.Select((r, i) => (string[]) [(i + baseIndex).ToString(CultureInfo.InvariantCulture), ..r]).ToList();
+        return rows
+            .Select((r, i) =>
+            {
+                var index = (i + baseIndex).ToString(CultureInfo.InvariantCulture);
+
+                switch (indexColumnOffset)
+                {
+                    case < 0:
+                        return (string[]) [..r, index];
+
+                    case 0:
+                        return (string[]) [index, ..r];
+
+                    default:
+                        var list = r.ToList();
+                        list.Insert(indexColumnOffset, index);
+                        return list.ToArray();
+                }
+            })
+            .ToList();
     }
 }

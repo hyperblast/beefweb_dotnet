@@ -16,6 +16,7 @@ public static class CommonOptions
         public const string Server = "-S|--server";
         public const string IndicesFrom0 = "-z|--zero";
         public const string ShowIndices = "-n|--indices";
+        public const string ShowIdentifiers = "-d|--id";
     }
 
     public static class D
@@ -35,5 +36,8 @@ public static class CommonOptions
         public const string Select = "Select playlist";
         public const string ShowItemIndices = "Show item indices";
         public const string ShowPlaylistIndices = "Show playlist indices";
+        public const string ShowQueueIndices = "Show playback queue indices";
+        public const string ShowPlaylistIdentifiers = "Show playlist identifiers";
+        public const string ShowPlaylistIdentifiersAndItemIndices = "Show playlist identifiers and item indices";
     }
 }

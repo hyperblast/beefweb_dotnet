@@ -24,6 +24,7 @@ namespace Beefweb.CommandLineTool;
 [Subcommand(typeof(SortCommand))]
 [Subcommand(typeof(ServersCommand))]
 [Subcommand(typeof(PlaylistsCommand))]
+[Subcommand(typeof(QueueCommand))]
 [Subcommand(typeof(StatusCommand))]
 [Subcommand(typeof(NowPlayingCommand))]
 [Subcommand(typeof(SettingsCommand))]

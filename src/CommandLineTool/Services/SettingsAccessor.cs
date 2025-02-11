@@ -37,7 +37,7 @@ public class SettingsAccessor(ISettingsStorage storage) : ISettingsAccessor
         GetAccessorPair(name).writer.Invoke(storage.Settings, values);
     }
 
-    private AccessorPair GetAccessorPair(string name)
+    private static AccessorPair GetAccessorPair(string name)
     {
         if (Accessors.TryGetValue(name, out var pair))
         {
@@ -62,6 +62,10 @@ public class SettingsAccessor(ISettingsStorage storage) : ISettingsAccessor
             {
                 nameof(Settings.ListFormat),
                 (s => s.ListFormat, (s, v) => s.ListFormat = v.ToList())
+            },
+            {
+                nameof(Settings.PlayQueueFormat),
+                (s => s.PlayQueueFormat, (s, v) => s.PlayQueueFormat = v.ToList())
             },
         };
 

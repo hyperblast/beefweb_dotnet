@@ -15,6 +15,8 @@ public sealed class Settings
 
     public List<string> ListFormat { get; set; } = new();
 
+    public List<string> PlayQueueFormat { get; set; } = new();
+
     public bool IsDefaultServer(string name) => string.Equals(name, DefaultServer, StringComparison.OrdinalIgnoreCase);
 
     public static Settings CreateDefault()
@@ -29,6 +31,7 @@ public sealed class Settings
             NowPlayingFormat = ["%artist% - %title%"],
             StatusFormat = ["%artist% - %title%"],
             ListFormat = ["%artist%", "%album%", "%title%"],
+            PlayQueueFormat = ["%artist%", "%album%", "%title%"],
         };
     }
 }
