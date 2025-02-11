@@ -12,7 +12,7 @@ public class PlayCommand(IClientProvider clientProvider) : ServerCommandBase(cli
     [Option(T.Playlist, Description = D.PlaylistToUse)]
     public string Playlist { get; set; } = Constants.CurrentPlaylist;
 
-    [Option("-t|--track", Description = "Playlist track at specified position")]
+    [Option(T.TrackIndex, Description = D.PlayTrackIndex)]
     public string? ItemIndex { get; set; }
 
     [Option("-r|--random", Description = "Play random track")]

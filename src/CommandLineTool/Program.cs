@@ -50,18 +50,14 @@ public sealed class Program(CommandLineApplication application) : CommandBase
         }
         catch (HttpRequestException exception)
         {
-            return WriteError(exception);
+            await Console.Error.WriteLineAsync(exception.Message);
+            return 1;
         }
         catch (InvalidRequestException exception)
         {
-            return WriteError(exception);
+            await Console.Error.WriteLineAsync(exception.Message + " Try --help.");
+            return 1;
         }
-    }
-
-    private static int WriteError(Exception exception)
-    {
-        Console.Error.WriteLine(exception.Message);
-        return 1;
     }
 
     public override Task OnExecuteAsync(CancellationToken ct)

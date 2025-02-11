@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using Beefweb.Client;
 using Beefweb.CommandLineTool.Services;
 using McMaster.Extensions.CommandLineUtils;
-
 using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
 [Command("queue", "q", Description = "List or modify playback queue")]
+[Subcommand(typeof(QueueAddCommand))]
+[Subcommand(typeof(QueueDeleteCommand))]
 public class QueueCommand(IClientProvider clientProvider, ISettingsStorage storage, ITabularWriter writer)
     : ServerCommandBase(clientProvider)
 {

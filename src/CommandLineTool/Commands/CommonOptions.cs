@@ -17,6 +17,7 @@ public static class CommonOptions
         public const string IndicesFrom0 = "-z|--zero";
         public const string ShowIndices = "-n|--indices";
         public const string ShowIdentifiers = "-d|--id";
+        public const string TrackIndex = "-t|--track";
     }
 
     public static class D
@@ -39,5 +40,8 @@ public static class CommonOptions
         public const string ShowQueueIndices = "Show playback queue indices";
         public const string ShowPlaylistIdentifiers = "Show playlist identifiers";
         public const string ShowPlaylistIdentifiersAndItemIndices = "Show playlist identifiers and item indices";
+        public const string PlayTrackIndex = "Play track at specified index";
+        public const string DeleteTrackAtQueueIndex = "Delete track at specified queue index";
+        public const string DeleteTrackAtPlaylistIndex = "Delete track at specified playlist index";
     }
 }
