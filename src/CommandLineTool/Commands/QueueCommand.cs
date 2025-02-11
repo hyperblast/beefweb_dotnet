@@ -32,7 +32,7 @@ public class QueueCommand(IClientProvider clientProvider, ISettingsStorage stora
     {
         await base.OnExecuteAsync(ct);
 
-        var columns = ItemColumns.GetOrDefault(storage.Settings.ListFormat);
+        var columns = ItemColumns.GetOrDefault(storage.Settings.PlayQueueFormat);
         var queue = await Client.GetPlayQueue(columns, ct);
         var baseIndex = IndicesFrom0 ? 0 : 1;
         var data = queue.Select(q => GetItemColumns(q, baseIndex));
