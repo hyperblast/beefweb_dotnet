@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +10,11 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 namespace Beefweb.CommandLineTool.Commands;
 
 [Command("client-options", "clopt", Description = "List client options, get or set client option")]
-public class ClientOptionsCommand(ITabularWriter writer, ISettingsAccessor accessor, ISettingsStorage storage)
+public class ClientOptionsCommand(
+    ITabularWriter writer,
+    ISettingsAccessor accessor,
+    ISettingsStorage storage,
+    IConsole console)
     : CommandBase
 {
     [Argument(0, Description = "Option name")]
@@ -25,12 +30,14 @@ public class ClientOptionsCommand(ITabularWriter writer, ISettingsAccessor acces
     {
         if (Name == null)
         {
-            var allSettings = accessor.GetAllValues()
-                .OrderBy(a => a.Key)
-                .Select(a => (string[]) [a.Key, ..a.Value])
-                .ToList();
+            var allValues = accessor.GetAllValues().ToList();
 
-            writer.WriteTable(allSettings);
+            console.WriteLine("Single value:");
+            WriteOptions(allValues.Where(v => v.isMultiValue == false));
+            console.WriteLine();
+            console.WriteLine("Multiple values:");
+            WriteOptions(allValues.Where(v => v.isMultiValue == true));
+
             return Task.CompletedTask;
         }
 
@@ -50,5 +57,15 @@ public class ClientOptionsCommand(ITabularWriter writer, ISettingsAccessor acces
 
         writer.WriteRow(accessor.GetValues(Name));
         return Task.CompletedTask;
+    }
+
+    private void WriteOptions(IEnumerable<(string name, bool isMultiValue, List<string> values)> allValues)
+    {
+        var rows = allValues
+            .OrderBy(a => a.name)
+            .Select(a => (string[]) ["  " + a.name, ..a.values])
+            .ToList();
+
+        writer.WriteTable(rows);
     }
 }

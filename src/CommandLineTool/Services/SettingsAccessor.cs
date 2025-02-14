@@ -2,7 +2,8 @@ using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
-using AccessorPair = (
+using AccessorEntry = (
+    bool isMultiValue,
     System.Func<Beefweb.CommandLineTool.Services.Settings, System.Collections.Generic.List<string>> reader,
     System.Action<Beefweb.CommandLineTool.Services.Settings, System.Collections.Generic.IEnumerable<string>> writer);
 
@@ -10,7 +11,7 @@ namespace Beefweb.CommandLineTool.Services;
 
 public interface ISettingsAccessor
 {
-    IEnumerable<KeyValuePair<string, List<string>>> GetAllValues();
+    IEnumerable<(string name, bool isMultiValue, List<string> values)> GetAllValues();
 
     List<string> GetValues(string name);
 
@@ -21,32 +22,32 @@ public interface ISettingsAccessor
 
 public class SettingsAccessor(ISettingsStorage storage) : ISettingsAccessor
 {
-    private static readonly FrozenDictionary<string, AccessorPair> Accessors;
+    private static readonly FrozenDictionary<string, AccessorEntry> Accessors;
 
-    public IEnumerable<KeyValuePair<string, List<string>>> GetAllValues()
+    public IEnumerable<(string name, bool isMultiValue, List<string> values)> GetAllValues()
     {
         var settings = storage.Settings;
-        return Accessors.Select(a => KeyValuePair.Create(a.Key, a.Value.reader.Invoke(settings)));
+        return Accessors.Select(a => (a.Key, a.Value.isMultiValue, a.Value.reader.Invoke(settings)));
     }
 
     public List<string> GetValues(string name)
     {
-        return GetAccessorPair(name).reader.Invoke(storage.Settings);
+        return GetEntry(name).reader.Invoke(storage.Settings);
     }
 
     public void SetValues(string name, IEnumerable<string> values)
     {
-        GetAccessorPair(name).writer.Invoke(storage.Settings, values);
+        GetEntry(name).writer.Invoke(storage.Settings, values);
     }
 
     public void ResetValues(string name)
     {
-        var accessorPair = GetAccessorPair(name);
+        var accessor = GetEntry(name);
         var defaultSettings = Settings.CreateDefault();
-        accessorPair.writer.Invoke(storage.Settings, accessorPair.reader.Invoke(defaultSettings));
+        accessor.writer.Invoke(storage.Settings, accessor.reader.Invoke(defaultSettings));
     }
 
-    private static AccessorPair GetAccessorPair(string name)
+    private static AccessorEntry GetEntry(string name)
     {
         if (Accessors.TryGetValue(name, out var pair))
         {
@@ -58,23 +59,23 @@ public class SettingsAccessor(ISettingsStorage storage) : ISettingsAccessor
 
     static SettingsAccessor()
     {
-        var accessors = new Dictionary<string, AccessorPair>(StringComparer.OrdinalIgnoreCase)
+        var accessors = new Dictionary<string, AccessorEntry>(StringComparer.OrdinalIgnoreCase)
         {
             {
                 nameof(Settings.NowPlayingFormat),
-                (s => [s.NowPlayingFormat], (s, v) => s.NowPlayingFormat = v.First())
+                (false, s => [s.NowPlayingFormat], (s, v) => s.NowPlayingFormat = v.First())
             },
             {
                 nameof(Settings.StatusFormat),
-                (s => [s.StatusFormat], (s, v) => s.StatusFormat = v.First())
+                (false, s => [s.StatusFormat], (s, v) => s.StatusFormat = v.First())
             },
             {
                 nameof(Settings.ListFormat),
-                (s => s.ListFormat, (s, v) => s.ListFormat = v.ToList())
+                (true, s => s.ListFormat, (s, v) => s.ListFormat = v.ToList())
             },
             {
                 nameof(Settings.PlayQueueFormat),
-                (s => s.PlayQueueFormat, (s, v) => s.PlayQueueFormat = v.ToList())
+                (true, s => s.PlayQueueFormat, (s, v) => s.PlayQueueFormat = v.ToList())
             },
         };
 
