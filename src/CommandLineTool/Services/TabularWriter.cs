@@ -91,7 +91,11 @@ public sealed class TabularWriter(IConsole console) : ITabularWriter
                     console.Out.Write(PaddingData.AsSpan(0, padding));
                 }
 
-                console.Out.Write(options.Separator);
+                if (i < row.Length - 1)
+                {
+                    console.Out.Write(options.Separator);
+                }
+
                 i++;
             }
 

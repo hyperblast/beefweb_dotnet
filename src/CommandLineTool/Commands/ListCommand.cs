@@ -29,6 +29,9 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
     [Option(T.IndicesFrom0, Description = D.IndicesFrom0)]
     public bool IndicesFrom0 { get; set; }
 
+    [Option(T.Separator, Description = D.Separator)]
+    public string Separator { get; set; } = " | ";
+
     public string[]? RemainingArguments { get; set; }
 
     public override async Task OnExecuteAsync(CancellationToken ct)
@@ -60,7 +63,7 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
         writer.WriteTable(rows, new TableWriteOptions
         {
             RightAlign = [ShowIndices],
-            Separator = " | "
+            Separator = Separator
         });
     }
 }

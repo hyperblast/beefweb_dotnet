@@ -21,6 +21,7 @@ public static class CommonOptions
         public const string ShowIdentifiers = "-d|--id";
         public const string TrackIndex = "-t|--track";
         public const string AllowEmptyInput = "-e|--allow-empty";
+        public const string Separator = "-s|--separator";
     }
 
     public static class D
@@ -47,6 +48,7 @@ public static class CommonOptions
         public const string DeleteTrackAtQueueIndex = "Delete track at specified queue index";
         public const string DeleteTrackAtPlaylistIndex = "Delete track at specified playlist index";
         public const string AllowEmptyInput = "Do not fail if no input items are specified";
+        public const string Separator = "Separate columns using specified character";
 
         public const string ItemsCommandHelpDetails =
             "\nItems could be specified as either command line arguments or stdin stream (if -I is specified)." +
