@@ -5,7 +5,9 @@ Beefweb.Client is a client library for interacting with [Beefweb](http://github.
 ## Basic usage
 
 ```cs
-using var client = new PlayerClient("http://localhost:8880");
+// Create client
+var client = new PlayerClient(new Uri("http://localhost:8880"));
 
-await client.Play();
+// Play first track of current playlist
+await client.Play(PlaylistRef.Current, 0);
 ```
