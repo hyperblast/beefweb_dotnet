@@ -15,6 +15,8 @@ public interface ISettingsAccessor
     List<string> GetValues(string name);
 
     void SetValues(string name, IEnumerable<string> values);
+
+    void ResetValues(string name);
 }
 
 public class SettingsAccessor(ISettingsStorage storage) : ISettingsAccessor
@@ -35,6 +37,13 @@ public class SettingsAccessor(ISettingsStorage storage) : ISettingsAccessor
     public void SetValues(string name, IEnumerable<string> values)
     {
         GetAccessorPair(name).writer.Invoke(storage.Settings, values);
+    }
+
+    public void ResetValues(string name)
+    {
+        var accessorPair = GetAccessorPair(name);
+        var defaultSettings = Settings.CreateDefault();
+        accessorPair.writer.Invoke(storage.Settings, accessorPair.reader.Invoke(defaultSettings));
     }
 
     private static AccessorPair GetAccessorPair(string name)

@@ -17,6 +17,9 @@ public class ClientOptionsCommand(ITabularWriter writer, ISettingsAccessor acces
     [Option(T.Set, Description = "New option value (could be specified multiple times)")]
     public string[]? Values { get; set; }
 
+    [Option("-r|--reset", Description = "Reset option value to default")]
+    public bool Reset { get; set; }
+
     public override Task OnExecuteAsync(CancellationToken ct)
     {
         if (Name == null)
@@ -27,6 +30,13 @@ public class ClientOptionsCommand(ITabularWriter writer, ISettingsAccessor acces
                 .ToList();
 
             writer.WriteTable(allSettings);
+            return Task.CompletedTask;
+        }
+
+        if (Reset)
+        {
+            accessor.ResetValues(Name);
+            storage.Save();
             return Task.CompletedTask;
         }
 
