@@ -62,6 +62,10 @@ public class SettingsAccessor(ISettingsStorage storage) : ISettingsAccessor
         var accessors = new Dictionary<string, AccessorEntry>(StringComparer.OrdinalIgnoreCase)
         {
             {
+                nameof(Settings.ColumnSeparator),
+                (false, s => [s.ColumnSeparator], (s, v) => s.ColumnSeparator = v.First())
+            },
+            {
                 nameof(Settings.NowPlayingFormat),
                 (false, s => [s.NowPlayingFormat], (s, v) => s.NowPlayingFormat = v.First())
             },
@@ -70,12 +74,12 @@ public class SettingsAccessor(ISettingsStorage storage) : ISettingsAccessor
                 (false, s => [s.StatusFormat], (s, v) => s.StatusFormat = v.First())
             },
             {
-                nameof(Settings.ListFormat),
-                (true, s => s.ListFormat, (s, v) => s.ListFormat = v.ToList())
+                nameof(Settings.ListColumns),
+                (true, s => s.ListColumns, (s, v) => s.ListColumns = v.ToList())
             },
             {
-                nameof(Settings.PlayQueueFormat),
-                (true, s => s.PlayQueueFormat, (s, v) => s.PlayQueueFormat = v.ToList())
+                nameof(Settings.PlayQueueColumns),
+                (true, s => s.PlayQueueColumns, (s, v) => s.PlayQueueColumns = v.ToList())
             },
         };
 

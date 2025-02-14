@@ -29,13 +29,13 @@ public class QueueCommand(IClientProvider clientProvider, ISettingsStorage stora
     public bool IndicesFrom0 { get; set; }
 
     [Option(T.Separator, Description = D.Separator)]
-    public string Separator { get; set; } = " | ";
+    public string? Separator { get; set; }
 
     public override async Task OnExecuteAsync(CancellationToken ct)
     {
         await base.OnExecuteAsync(ct);
 
-        var columns = Columns.GetOrDefault(storage.Settings.PlayQueueFormat);
+        var columns = Columns.GetOrDefault(storage.Settings.PlayQueueColumns);
         var queue = await Client.GetPlayQueue(columns, ct);
         var baseIndex = IndicesFrom0 ? 0 : 1;
         var data = queue.Select(q => GetItemColumns(q, baseIndex));
@@ -47,7 +47,7 @@ public class QueueCommand(IClientProvider clientProvider, ISettingsStorage stora
         writer.WriteTable(rows, new TableWriteOptions
         {
             RightAlign = [ShowIndices],
-            Separator = Separator
+            Separator = Separator.GetOrDefault(storage.Settings.ColumnSeparator)
         });
     }
 

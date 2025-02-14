@@ -30,7 +30,7 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
     public bool IndicesFrom0 { get; set; }
 
     [Option(T.Separator, Description = D.Separator)]
-    public string Separator { get; set; } = " | ";
+    public string? Separator { get; set; }
 
     public string[]? RemainingArguments { get; set; }
 
@@ -38,7 +38,7 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
     {
         await base.OnExecuteAsync(ct);
 
-        var columns = Columns.GetOrDefault(storage.Settings.ListFormat);
+        var columns = Columns.GetOrDefault(storage.Settings.ListColumns);
         var playlist = await Client.GetPlaylist(Playlist, IndicesFrom0, ct);
         var itemRange = new PlaylistItemRange(0, 100);
 
@@ -63,7 +63,7 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
         writer.WriteTable(rows, new TableWriteOptions
         {
             RightAlign = [ShowIndices],
-            Separator = Separator
+            Separator = Separator.GetOrDefault(storage.Settings.ColumnSeparator)
         });
     }
 }

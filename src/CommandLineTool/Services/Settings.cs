@@ -9,13 +9,15 @@ public sealed class Settings
 
     public string? DefaultServer { get; set; }
 
+    public string ColumnSeparator { get; set; } = "";
+
     public string NowPlayingFormat { get; set; } = "";
 
     public string StatusFormat { get; set; } = "";
 
-    public List<string> ListFormat { get; set; } = new();
+    public List<string> ListColumns { get; set; } = new();
 
-    public List<string> PlayQueueFormat { get; set; } = new();
+    public List<string> PlayQueueColumns { get; set; } = new();
 
     public bool IsDefaultServer(string name) => string.Equals(name, DefaultServer, StringComparison.OrdinalIgnoreCase);
 
@@ -28,10 +30,11 @@ public sealed class Settings
             {
                 { Constants.LocalServerName, new Uri(Constants.LocalServerUrl) }
             },
+            ColumnSeparator = " | ",
             NowPlayingFormat = "%artist% - %title%",
             StatusFormat = "%artist% - %title%",
-            ListFormat = ["%artist%", "%album%", "%title%"],
-            PlayQueueFormat = ["%artist%", "%album%", "%title%"],
+            ListColumns = ["%artist%", "%album%", "%title%"],
+            PlayQueueColumns = ["%artist%", "%album%", "%title%"],
         };
     }
 }

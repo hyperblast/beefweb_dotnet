@@ -33,10 +33,10 @@ public class ClientOptionsCommand(
             var allValues = accessor.GetAllValues().ToList();
 
             console.WriteLine("Single value:");
-            WriteOptions(allValues.Where(v => v.isMultiValue == false));
+            WriteOptions(allValues.Where(v => !v.isMultiValue));
             console.WriteLine();
             console.WriteLine("Multiple values:");
-            WriteOptions(allValues.Where(v => v.isMultiValue == true));
+            WriteOptions(allValues.Where(v => v.isMultiValue));
 
             return Task.CompletedTask;
         }
@@ -55,7 +55,7 @@ public class ClientOptionsCommand(
             return Task.CompletedTask;
         }
 
-        writer.WriteRow(accessor.GetValues(Name));
+        writer.WriteRow(accessor.GetValues(Name).Select(Quote).ToList());
         return Task.CompletedTask;
     }
 
@@ -63,9 +63,14 @@ public class ClientOptionsCommand(
     {
         var rows = allValues
             .OrderBy(a => a.name)
-            .Select(a => (string[]) ["  " + a.name, ..a.values])
+            .Select(a => (string[]) ["  " + a.name, ..a.values.Select(Quote)])
             .ToList();
 
         writer.WriteTable(rows);
+    }
+
+    private static string Quote(string s)
+    {
+        return s.Length > 0 && char.IsWhiteSpace(s[0]) || char.IsWhiteSpace(s[^1]) ? $"\"{s}\"" : s;
     }
 }
