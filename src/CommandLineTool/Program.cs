@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Beefweb.CommandLineTool.Commands;
@@ -10,6 +11,7 @@ using ServiceProvider = Beefweb.CommandLineTool.Services.ServiceProvider;
 namespace Beefweb.CommandLineTool;
 
 [Command(Constants.AppName, Description = "Control music players in command line")]
+[VersionOptionFromMember(MemberName = nameof(GetVersion))]
 [Subcommand(typeof(PlayCommand))]
 [Subcommand(typeof(StopCommand))]
 [Subcommand(typeof(PauseCommand))]
@@ -32,6 +34,9 @@ namespace Beefweb.CommandLineTool;
 [Subcommand(typeof(ListFileSystemCommand))]
 public sealed class Program(CommandLineApplication application) : CommandBase
 {
+    private static string GetVersion()
+        => typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+
     private static async Task<int> Main(string[] args)
     {
         using var serviceProvider = new ServiceProvider();
@@ -49,6 +54,11 @@ public sealed class Program(CommandLineApplication application) : CommandBase
             return await app.ExecuteAsync(args);
         }
         catch (HttpRequestException exception)
+        {
+            await Console.Error.WriteLineAsync(exception.Message);
+            return 1;
+        }
+        catch (CommandParsingException exception)
         {
             await Console.Error.WriteLineAsync(exception.Message);
             return 1;
