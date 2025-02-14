@@ -8,7 +8,7 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("client-options", "cloptions", Description = "List client options, get or set client option")]
+[Command("client-options", "clopt", Description = "List client options, get or set client option")]
 public class ClientOptionsCommand(ITabularWriter writer, ISettingsAccessor accessor, ISettingsStorage storage)
     : CommandBase
 {

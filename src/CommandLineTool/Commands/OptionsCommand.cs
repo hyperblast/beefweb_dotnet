@@ -11,7 +11,7 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("options", Description = "List player options, get or set player option")]
+[Command("options", "opt", Description = "List player options, get or set player option")]
 public class OptionsCommand(IClientProvider clientProvider, IConsole console, ITabularWriter writer)
     : ServerCommandBase(clientProvider)
 {
