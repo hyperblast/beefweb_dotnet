@@ -130,6 +130,11 @@ public static class Extensions
         return values is { Count: > 0 } ? values : defaultValues;
     }
 
+    public static string GetOrDefault(this string? value, string defaultValue)
+    {
+        return string.IsNullOrEmpty(value) ? defaultValue : value;
+    }
+
     public static List<string[]> ToTable(this IEnumerable<IEnumerable<string>> rows)
     {
         return rows.Select(r => r as string[] ?? r.ToArray()).ToList();

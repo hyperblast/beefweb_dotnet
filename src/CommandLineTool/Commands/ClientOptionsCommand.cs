@@ -9,12 +9,13 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 namespace Beefweb.CommandLineTool.Commands;
 
 [Command("client-options", "cloptions", Description = "List client options, get or set client option")]
-public class ClientOptionsCommand(ITabularWriter writer, ISettingsAccessor accessor, ISettingsStorage storage) : CommandBase
+public class ClientOptionsCommand(ITabularWriter writer, ISettingsAccessor accessor, ISettingsStorage storage)
+    : CommandBase
 {
     [Argument(0, Description = "Option name")]
     public string? Name { get; set; } = null!;
 
-    [Option(T.Set, Description = "New option value (could be specified multiple times)")]
+    [Option(T.Set, Description = "New option value (could be specified multiple times for multi-value settings)")]
     public string[]? Values { get; set; }
 
     [Option("-r|--reset", Description = "Reset option value to default")]

@@ -62,11 +62,11 @@ public class SettingsAccessor(ISettingsStorage storage) : ISettingsAccessor
         {
             {
                 nameof(Settings.NowPlayingFormat),
-                (s => s.NowPlayingFormat, (s, v) => s.NowPlayingFormat = v.ToList())
+                (s => [s.NowPlayingFormat], (s, v) => s.NowPlayingFormat = v.First())
             },
             {
                 nameof(Settings.StatusFormat),
-                (s => s.StatusFormat, (s, v) => s.StatusFormat = v.ToList())
+                (s => [s.StatusFormat], (s, v) => s.StatusFormat = v.First())
             },
             {
                 nameof(Settings.ListFormat),

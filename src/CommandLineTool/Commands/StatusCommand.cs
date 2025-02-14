@@ -14,8 +14,11 @@ namespace Beefweb.CommandLineTool.Commands;
 public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer, ISettingsStorage storage)
     : ServerCommandBase(clientProvider)
 {
-    [Option(T.ItemColumns, Description = D.CurrentItemColumns)]
-    public string[]? ItemColumns { get; set; }
+    [Option(T.Format, Description = D.CurrentItemFormat)]
+    public string? Format { get; set; }
+
+    [Option("-p|--playback", Description = "Display playback information (default if no other option is specified)")]
+    public bool Playback { get; set; }
 
     [Option("-v|--volume", Description = "Display volume information")]
     public bool Volume { get; set; }
@@ -39,47 +42,76 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
     {
         await base.OnExecuteAsync(ct);
 
-        var columns = ItemColumns.GetOrDefault(storage.Settings.StatusFormat);
-        var state = await Client.GetPlayerState(columns, ct);
+        var format = Format.GetOrDefault(storage.Settings.StatusFormat);
+        var state = await Client.GetPlayerState([format], ct);
         var activeItem = state.ActiveItem;
-
+        var baseIndex = IndicesFrom0 ? 0 : 1;
         var properties = new List<string[]>();
 
-        if (state.PlaybackState == PlaybackState.Stopped)
+        if (Playback || All || !(Playlist || Volume || Options || Version))
         {
-            properties.Add([state.PlaybackState.ToString()]);
-        }
-        else
-        {
-            properties.Add([state.PlaybackState.ToString(), ..activeItem.Columns]);
+            var isStopped = state.PlaybackState == PlaybackState.Stopped;
+            var track = isStopped ? "none" : activeItem.Columns[0];
+            var position = isStopped ? "none" : activeItem.FormatProgress();
+
+            properties.Add(["Playback:"]);
+            properties.Add(["", "State", state.PlaybackState.ToString()]);
+            properties.Add(["", "Track", track]);
+            properties.Add(["", "Position", position]);
         }
 
         if (Playlist || All)
         {
-            properties.Add(["Playlist", activeItem.PlaylistId ?? ""]);
-            properties.Add(["Index", activeItem.Index.ToString(CultureInfo.InvariantCulture)]);
+            AddEmptyLine();
+            properties.Add(["Playlist:"]);
+
+            var playlistId = activeItem.PlaylistId ?? "none";
+
+            var playlistIndex = activeItem.PlaylistIndex >= 0
+                ? (activeItem.PlaylistIndex + baseIndex).ToString(CultureInfo.InvariantCulture)
+                : "none";
+
+            var itemIndex = activeItem.Index >= 0
+                ? (activeItem.Index + baseIndex).ToString(CultureInfo.InvariantCulture)
+                : "none";
+
+            properties.Add(["", "Playlist id", playlistId]);
+            properties.Add(["", "Playlist index", playlistIndex]);
+            properties.Add(["", "Item index", itemIndex]);
         }
 
         if (Volume || All)
         {
-            properties.Add(["Volume", state.Volume.Format()]);
+            AddEmptyLine();
+            properties.Add(["Volume:"]);
+            properties.Add(["", "Value", state.Volume.Format()]);
         }
 
         if (Options || All)
         {
-            properties.Add([]);
+            AddEmptyLine();
             properties.Add(["Options:"]);
-            properties.AddRange(state.Options.Select(o => o.Format(IndicesFrom0)));
+            properties.AddRange(state.Options.Select(o => (string[])
+                ["", o.Name.CapitalizeFirstChar(), o.FormatValue(IndicesFrom0)]));
         }
 
         if (Version || All)
         {
-            properties.Add([]);
+            AddEmptyLine();
             properties.Add(["Versions:"]);
-            properties.Add([state.Info.Title, state.Info.Version]);
-            properties.Add(["Plugin", state.Info.PluginVersion]);
+            properties.Add(["", state.Info.Title, state.Info.Version]);
+            properties.Add(["", "Beefweb", state.Info.PluginVersion]);
         }
 
         writer.WriteTable(properties);
+        return;
+
+        void AddEmptyLine()
+        {
+            if (properties.Count > 0)
+            {
+                properties.Add([]);
+            }
+        }
     }
 }

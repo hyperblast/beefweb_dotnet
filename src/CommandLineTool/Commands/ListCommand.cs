@@ -20,8 +20,8 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
     [Option(T.Playlist, Description = D.PlaylistToUse)]
     public string Playlist { get; set; } = Constants.CurrentPlaylist;
 
-    [Option(T.ItemColumns, Description = D.PlaylistItemColumns)]
-    public string[]? ItemColumns { get; set; }
+    [Option(T.Format, Description = D.PlaylistItemsFormat)]
+    public string[]? Columns { get; set; }
 
     [Option(T.ShowIndices, Description = D.ShowItemIndices)]
     public bool ShowIndices { get; set; }
@@ -35,7 +35,7 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
     {
         await base.OnExecuteAsync(ct);
 
-        var columns = ItemColumns.GetOrDefault(storage.Settings.ListFormat);
+        var columns = Columns.GetOrDefault(storage.Settings.ListFormat);
         var playlist = await Client.GetPlaylist(Playlist, IndicesFrom0, ct);
         var itemRange = new PlaylistItemRange(0, 100);
 

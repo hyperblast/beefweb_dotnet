@@ -38,8 +38,7 @@ public class PositionCommand(IClientProvider clientProvider, IConsole console) :
         var activeItem = state.ActiveItem;
         if (AbsoluteValue == null && RelativeValue == null)
         {
-            console.WriteLine(activeItem.Position.FormatAsTrackTime() + " / " +
-                              activeItem.Duration.FormatAsTrackTime());
+            console.WriteLine(activeItem.FormatProgress());
             return;
         }
 

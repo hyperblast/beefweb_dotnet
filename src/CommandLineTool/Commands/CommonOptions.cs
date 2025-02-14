@@ -8,7 +8,7 @@ public static class CommonOptions
     {
         public const string Playlist = "-l|--playlist";
         public const string TargetPlaylist = "-t|--to-playlist";
-        public const string ItemColumns = "-t|--tf";
+        public const string Format = "-t|--tf";
         public const string Set = "-s|--set";
         public const string Adjust = "-a|--adjust";
         public const string Position = "-p|--position";
@@ -28,8 +28,8 @@ public static class CommonOptions
         public const string PlaylistToUse = "Playlist to use (index, id or current)";
         public const string TargetPlaylist = "Target playlist, if not specified the same value as --playlist is used";
         public const string PlaylistToAddTo = "Playlist to add to (index, id or current)";
-        public const string CurrentItemColumns = "Format current track using specified title formatting expressions";
-        public const string PlaylistItemColumns = "Format playlist items using specified title formatting expressions";
+        public const string CurrentItemFormat = "Format current track using specified title formatting expression";
+        public const string PlaylistItemsFormat = "Format playlist items using specified title formatting expressions";
         public const string PositionForPlaylist = "Position to insert playlist at";
         public const string PositionForItems = "Position to insert items at";
         public const string StdinItems = "Read items from standard input";

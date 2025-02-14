@@ -6,7 +6,7 @@ namespace Beefweb.CommandLineTool.Services;
 
 public static class ValueFormatter
 {
-    private static string CapitalizeFirstChar(this string str)
+    public static string CapitalizeFirstChar(this string str)
     {
         if (str.Length == 0)
         {
@@ -34,6 +34,12 @@ public static class ValueFormatter
     public static string[] Format(this PlayerOption option, bool zeroBasedIndexes)
     {
         return [option.Id.CapitalizeFirstChar(), option.FormatValue(zeroBasedIndexes)];
+    }
+
+    public static string FormatProgress(this ActiveItemInfo activeItem)
+    {
+        return activeItem.Position.FormatAsTrackTime() + " / " +
+               activeItem.Duration.FormatAsTrackTime();
     }
 
     public static string FormatValue(this PlayerOption option, bool zeroBasedIndexes)

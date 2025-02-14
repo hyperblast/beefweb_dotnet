@@ -16,8 +16,8 @@ namespace Beefweb.CommandLineTool.Commands;
 public class QueueCommand(IClientProvider clientProvider, ISettingsStorage storage, ITabularWriter writer)
     : ServerCommandBase(clientProvider)
 {
-    [Option(T.ItemColumns, Description = D.PlaylistItemColumns)]
-    public string[]? ItemColumns { get; set; }
+    [Option(T.Format, Description = D.PlaylistItemsFormat)]
+    public string[]? Columns { get; set; }
 
     [Option(T.ShowIndices, Description = D.ShowQueueIndices)]
     public bool ShowIndices { get; set; }
@@ -32,7 +32,7 @@ public class QueueCommand(IClientProvider clientProvider, ISettingsStorage stora
     {
         await base.OnExecuteAsync(ct);
 
-        var columns = ItemColumns.GetOrDefault(storage.Settings.PlayQueueFormat);
+        var columns = Columns.GetOrDefault(storage.Settings.PlayQueueFormat);
         var queue = await Client.GetPlayQueue(columns, ct);
         var baseIndex = IndicesFrom0 ? 0 : 1;
         var data = queue.Select(q => GetItemColumns(q, baseIndex));

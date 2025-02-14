@@ -9,9 +9,9 @@ public sealed class Settings
 
     public string? DefaultServer { get; set; }
 
-    public List<string> NowPlayingFormat { get; set; } = new();
+    public string NowPlayingFormat { get; set; } = "";
 
-    public List<string> StatusFormat { get; set; } = new();
+    public string StatusFormat { get; set; } = "";
 
     public List<string> ListFormat { get; set; } = new();
 
@@ -28,8 +28,8 @@ public sealed class Settings
             {
                 { Constants.LocalServerName, new Uri(Constants.LocalServerUrl) }
             },
-            NowPlayingFormat = ["%artist% - %title%"],
-            StatusFormat = ["%artist% - %title%"],
+            NowPlayingFormat = "%artist% - %title%",
+            StatusFormat = "%artist% - %title%",
             ListFormat = ["%artist%", "%album%", "%title%"],
             PlayQueueFormat = ["%artist%", "%album%", "%title%"],
         };
