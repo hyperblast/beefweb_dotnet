@@ -5,7 +5,13 @@
     <PropertyGroup>
         <OutputPath>$(SolutionRoot)artifacts\bin</OutputPath>
         <BaseIntermediateOutputPath>$(SolutionRoot)artifacts\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+        <Authors>Hyperblast</Authors>
+        <Product>Beefweb</Product>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/hyperblast/beefweb_dotnet</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
+        <Copyright>Copyright 2022-2025 Hyperblast</Copyright>
     </PropertyGroup>
 
 </Project>

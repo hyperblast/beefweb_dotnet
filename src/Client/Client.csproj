@@ -5,6 +5,13 @@
         <RootNamespace>Beefweb.Client</RootNamespace>
         <DocumentationFile>$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
         <IsPackable>True</IsPackable>
+        <PackageReadmeFile>ApiDocs.md</PackageReadmeFile>
+        <PackageTags>RemoteControl;foobar2000;DeaDBeeF</PackageTags>
+        <Description>Beefweb.Client is a client library for interacting with Beefweb enabled players.</Description>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="ApiDocs.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 
 </Project>
