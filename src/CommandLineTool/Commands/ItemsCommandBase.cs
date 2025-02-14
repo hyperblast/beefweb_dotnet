@@ -25,6 +25,9 @@ public abstract class ItemsCommandBase(IClientProvider clientProvider, IConsole 
     [Option(T.IndicesFrom0, Description = D.IndicesFrom0)]
     public bool IndicesFrom0 { get; set; }
 
+    [Option(T.AllowEmptyInput, Description = D.AllowEmptyInput)]
+    public bool AllowEmpty { get; set; }
+
     public string[]? RemainingArguments { get; set; }
 
     protected IList<PlaylistInfo> AllPlaylists { get; private set; } = Array.Empty<PlaylistInfo>();
@@ -59,7 +62,12 @@ public abstract class ItemsCommandBase(IClientProvider clientProvider, IConsole 
 
         if (ranges.Count == 0)
         {
-            throw new InvalidRequestException("At least one item index or range is required.");
+            if (AllowEmpty)
+            {
+                return;
+            }
+
+            throw new InvalidRequestException("Missing items or ranges to process.");
         }
 
         var items = new HashSet<int>();

@@ -13,10 +13,10 @@ namespace Beefweb.CommandLineTool.Commands;
     UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue,
     ExtendedHelpText =
         "\nPosition values could be specified in multiple formats:" +
-        "\n  - [HH:]MM:SS" +
-        "\n  - number with time unit (e.g. 1m for 1 minute)" +
-        "\n  - percentage of current track length (e.g. 30%)" +
-        "\n  - plain number of seconds")]
+        "\n  - Detailed time format [HH:]MM:SS" +
+        "\n  - Number with time unit (e.g. 1m for 1 minute)" +
+        "\n  - Percentage of current track length (e.g. 30%)" +
+        "\n  - Plain number of seconds")]
 public class PositionCommand(IClientProvider clientProvider, IConsole console) : ServerCommandBase(clientProvider)
 {
     [Option(T.Set, Description = "Change position to absolute value (negative value means from end)")]

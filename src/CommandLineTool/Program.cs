@@ -65,7 +65,7 @@ public sealed class Program(CommandLineApplication application) : CommandBase
         }
         catch (InvalidRequestException exception)
         {
-            await Console.Error.WriteLineAsync(exception.Message + " Try --help.");
+            await Console.Error.WriteLineAsync(exception.Message + " Try --help for details about command invocation.");
             return 1;
         }
     }

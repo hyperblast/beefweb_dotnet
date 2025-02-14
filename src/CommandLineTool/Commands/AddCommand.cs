@@ -8,8 +8,12 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("add", Description = "Add playlist items",
-    UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue)]
+[Command("add",
+    Description = "Add playlist items",
+    UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue,
+    ExtendedHelpText =
+        "\nItems are files, directories or URLs to add to the specified playlist (by default current playlist)." +
+        "\nItems could be specified using command line arguments or stdin stream (if -I is specified).")]
 public class AddCommand(IClientProvider clientProvider, IConsole console) : ServerCommandBase(clientProvider)
 {
     [Option(T.Playlist, Description = D.PlaylistToAddTo)]
@@ -32,6 +36,9 @@ public class AddCommand(IClientProvider clientProvider, IConsole console) : Serv
 
     [Option(T.IndicesFrom0, Description = D.IndicesFrom0)]
     public bool IndicesFrom0 { get; set; }
+
+    [Option(T.AllowEmptyInput, Description = D.AllowEmptyInput)]
+    public bool AllowEmpty { get; set; }
 
     public string[]? RemainingArguments { get; set; }
 
@@ -60,7 +67,12 @@ public class AddCommand(IClientProvider clientProvider, IConsole console) : Serv
 
         if (items.Count == 0)
         {
-            throw new InvalidRequestException("At least one item is required.");
+            if (AllowEmpty)
+            {
+                return;
+            }
+
+            throw new InvalidRequestException("Missing items to add.");
         }
 
         var playlist = await Client.GetPlaylist(Playlist, IndicesFrom0, ct);

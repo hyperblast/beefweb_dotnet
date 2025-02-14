@@ -12,7 +12,7 @@ namespace Beefweb.CommandLineTool.Commands;
 [Command("volume", "vol",
     Description = "Get or set volume",
     UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue,
-    ExtendedHelpText = "\nVolume values could be specified in decibels (e.g. -5db) or percentage (e.g. 50%)")]
+    ExtendedHelpText = "\nVolume values could be specified in decibels (e.g. -5db) or percentage (e.g. 50% or simply 50)")]
 public class VolumeCommand(IClientProvider clientProvider, IConsole console) : ServerCommandBase(clientProvider)
 {
     [Option(T.Set, Description = "Set volume to absolute value")]
