@@ -4,26 +4,26 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Services;
 
+public class TableWriteOptions
+{
+    public static TableWriteOptions Default { get; } = new();
+
+    public IReadOnlyList<bool>? RightAlign { get; init; }
+
+    public string Separator { get; init; } = " ";
+}
+
 public interface ITabularWriter
 {
-    void WriteTable(IReadOnlyCollection<string[]> rows, bool[]? rightAlign = null);
-
-    void WriteTable(IReadOnlyCollection<string[]> rows, bool rightAlignFirstColumn);
+    void WriteTable(IReadOnlyCollection<string[]> rows, TableWriteOptions? writeOptions = null);
 
     void WriteRow(IReadOnlyCollection<string> values);
 }
 
 public sealed class TabularWriter(IConsole console) : ITabularWriter
 {
-    private static readonly bool[] RightAlignFirstColumn = [true];
-
     private const int MaxColumnWidth = 99;
     private static readonly string PaddingData = new(' ', MaxColumnWidth + 1);
-
-    public void WriteTable(IReadOnlyCollection<string[]> rows, bool rightAlignFirstColumn)
-    {
-        WriteTable(rows, rightAlignFirstColumn ? RightAlignFirstColumn : null);
-    }
 
     public void WriteRow(IReadOnlyCollection<string> values)
     {
@@ -44,10 +44,12 @@ public sealed class TabularWriter(IConsole console) : ITabularWriter
         }
     }
 
-    public void WriteTable(IReadOnlyCollection<string[]> rows, bool[]? rightAlign = null)
+    public void WriteTable(IReadOnlyCollection<string[]> rows, TableWriteOptions? options = null)
     {
+        options ??= TableWriteOptions.Default;
+
         var widths = new List<int>();
-        rightAlign ??= [];
+        var rightAlign = options.RightAlign ?? [];
 
         foreach (var row in rows)
         {
@@ -75,7 +77,7 @@ public sealed class TabularWriter(IConsole console) : ITabularWriter
             foreach (var value in row)
             {
                 var padding = widths[i] - value.Length;
-                var isRightAlign = i < rightAlign.Length && rightAlign[i];
+                var isRightAlign = i < rightAlign.Count && rightAlign[i];
 
                 if (isRightAlign && padding > 0)
                 {
@@ -89,7 +91,7 @@ public sealed class TabularWriter(IConsole console) : ITabularWriter
                     console.Out.Write(PaddingData.AsSpan(0, padding));
                 }
 
-                console.Out.Write(' ');
+                console.Out.Write(options.Separator);
                 i++;
             }
 

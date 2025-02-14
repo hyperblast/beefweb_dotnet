@@ -41,7 +41,11 @@ public class QueueCommand(IClientProvider clientProvider, ISettingsStorage stora
             ? data.ToTable(baseIndex)
             : data.ToTable();
 
-        writer.WriteTable(rows, ShowIndices);
+        writer.WriteTable(rows, new TableWriteOptions
+        {
+            RightAlign = [ShowIndices],
+            Separator = " | "
+        });
     }
 
     private IEnumerable<string> GetItemColumns(PlayQueueItemInfo item, int baseIndex)

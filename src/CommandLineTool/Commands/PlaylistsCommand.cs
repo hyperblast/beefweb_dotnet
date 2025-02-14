@@ -37,7 +37,7 @@ public class PlaylistsCommand(IClientProvider clientProvider, ITabularWriter wri
             ? playlistData.ToTable(IndicesFrom0 ? 0 : 1, 1)
             : playlistData.ToTable();
 
-        writer.WriteTable(rows, ShowIndices);
+        writer.WriteTable(rows, new TableWriteOptions { RightAlign = [ShowIndices] });
     }
 
     private IEnumerable<string> GetPlaylistColumns(PlaylistInfo p)

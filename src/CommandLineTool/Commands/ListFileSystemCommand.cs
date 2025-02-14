@@ -14,7 +14,7 @@ namespace Beefweb.CommandLineTool.Commands;
 public class ListFileSystemCommand(IClientProvider clientProvider, IConsole console, ITabularWriter writer)
     : ServerCommandBase(clientProvider)
 {
-    private static readonly bool[] LongFormatAlign = [true, true, true, false];
+    private static readonly TableWriteOptions LongFormatWriteOptions = new() { RightAlign = [true, true, true, false] };
 
     [Argument(0, Description = "Path or special value 'roots'")]
     [Required]
@@ -79,6 +79,6 @@ public class ListFileSystemCommand(IClientProvider clientProvider, IConsole cons
                 })
             .ToList();
 
-        writer.WriteTable(output, LongFormatAlign);
+        writer.WriteTable(output, LongFormatWriteOptions);
     }
 }

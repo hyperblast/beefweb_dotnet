@@ -57,6 +57,10 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
             ? result.Items.Select(i => i.Columns).ToTable(offset)
             : result.Items.Select(i => i.Columns).ToTable();
 
-        writer.WriteTable(rows, ShowIndices);
+        writer.WriteTable(rows, new TableWriteOptions
+        {
+            RightAlign = [ShowIndices],
+            Separator = " | "
+        });
     }
 }
