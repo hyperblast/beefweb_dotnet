@@ -19,6 +19,17 @@ internal sealed class PlayerOptionValueConverter : JsonConverter<object>
 
     public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
     {
-        throw new NotSupportedException("PlayerOptionValueConverter can not be used during serialization.");
+        if (value is int intValue)
+        {
+            writer.WriteNumberValue(intValue);
+        }
+        else if (value is bool boolValue)
+        {
+            writer.WriteBooleanValue(boolValue);
+        }
+        else
+        {
+            throw new ArgumentException($"Invalid option value: '{value}'.");
+        }
     }
 }

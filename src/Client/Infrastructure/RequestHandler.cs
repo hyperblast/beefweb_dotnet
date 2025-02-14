@@ -112,7 +112,7 @@ internal sealed class RequestHandler : IRequestHandler
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(ContentTypes.EventStream));
 
         using var response = await _client
-            .SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken)
+            .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
             .ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
