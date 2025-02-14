@@ -5,6 +5,7 @@
     <PropertyGroup>
         <OutputPath>$(SolutionRoot)artifacts\bin</OutputPath>
         <BaseIntermediateOutputPath>$(SolutionRoot)artifacts\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
 </Project>
