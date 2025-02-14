@@ -44,7 +44,7 @@ public class QueueCommand(IClientProvider clientProvider, ISettingsStorage stora
             ? data.ToTable(baseIndex)
             : data.ToTable();
 
-        writer.WriteTable(rows, new TableWriteOptions
+        writer.WriteTable(rows, new WriteTableOptions
         {
             RightAlign = [ShowIndices],
             Separator = Separator.GetOrDefault(storage.Settings.ColumnSeparator)

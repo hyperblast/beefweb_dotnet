@@ -60,7 +60,7 @@ public class ListCommand(IClientProvider clientProvider, ISettingsStorage storag
             ? result.Items.Select(i => i.Columns).ToTable(offset)
             : result.Items.Select(i => i.Columns).ToTable();
 
-        writer.WriteTable(rows, new TableWriteOptions
+        writer.WriteTable(rows, new WriteTableOptions
         {
             RightAlign = [ShowIndices],
             Separator = Separator.GetOrDefault(storage.Settings.ColumnSeparator)

@@ -4,9 +4,9 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Services;
 
-public class TableWriteOptions
+public class WriteTableOptions
 {
-    public static TableWriteOptions Default { get; } = new();
+    public static WriteTableOptions Default { get; } = new();
 
     public IReadOnlyList<bool>? RightAlign { get; init; }
 
@@ -15,7 +15,7 @@ public class TableWriteOptions
 
 public interface ITabularWriter
 {
-    void WriteTable(IReadOnlyCollection<string[]> rows, TableWriteOptions? writeOptions = null);
+    void WriteTable(IReadOnlyCollection<string[]> rows, WriteTableOptions? writeOptions = null);
 
     void WriteRow(IReadOnlyCollection<string> values);
 }
@@ -44,9 +44,9 @@ public sealed class TabularWriter(IConsole console) : ITabularWriter
         }
     }
 
-    public void WriteTable(IReadOnlyCollection<string[]> rows, TableWriteOptions? options = null)
+    public void WriteTable(IReadOnlyCollection<string[]> rows, WriteTableOptions? options = null)
     {
-        options ??= TableWriteOptions.Default;
+        options ??= WriteTableOptions.Default;
 
         var widths = new List<int>();
         var rightAlign = options.RightAlign ?? [];

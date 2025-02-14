@@ -14,7 +14,7 @@ namespace Beefweb.CommandLineTool.Commands;
 public class ListFileSystemCommand(IClientProvider clientProvider, IConsole console, ITabularWriter writer)
     : ServerCommandBase(clientProvider)
 {
-    private static readonly TableWriteOptions LongFormatWriteOptions = new() { RightAlign = [true, true, true, false] };
+    private static readonly WriteTableOptions LongFormatWriteOptions = new() { RightAlign = [true, true, true, false] };
 
     [Argument(0, Description = "Path or special value 'roots'")]
     [Required]
