@@ -71,6 +71,6 @@ public class ClientOptionsCommand(
 
     private static string Quote(string s)
     {
-        return s.Length > 0 && char.IsWhiteSpace(s[0]) || char.IsWhiteSpace(s[^1]) ? $"\"{s}\"" : s;
+        return s.Length > 0 && (char.IsWhiteSpace(s[0]) || char.IsWhiteSpace(s[^1])) ? $"\"{s}\"" : s;
     }
 }
