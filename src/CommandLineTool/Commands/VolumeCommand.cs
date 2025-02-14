@@ -9,16 +9,16 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("volume", "vol", Description = "Get or set volume",
-    UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue)]
+[Command("volume", "vol",
+    Description = "Get or set volume",
+    UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue,
+    ExtendedHelpText = "\nVolume values could be specified in decibels (e.g. -5db) or percentage (e.g. 50%)")]
 public class VolumeCommand(IClientProvider clientProvider, IConsole console) : ServerCommandBase(clientProvider)
 {
-    private const string DbSuffix = "db";
-
-    [Option(T.Set, Description = "Set volume to absolute value (dB or linear in range [0..100])")]
+    [Option(T.Set, Description = "Set volume to absolute value")]
     public string? AbsoluteValue { get; set; }
 
-    [Option(T.Adjust, Description = "Adjust volume relative to current value (dB or linear in range [-100..100])")]
+    [Option(T.Adjust, Description = "Adjust volume relative to current value")]
     public string? RelativeValue { get; set; }
 
     public override async Task OnExecuteAsync(CancellationToken ct)

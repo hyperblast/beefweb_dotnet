@@ -1,3 +1,5 @@
+using System;
+
 namespace Beefweb.CommandLineTool.Commands;
 
 public static class CommonOptions
@@ -43,5 +45,12 @@ public static class CommonOptions
         public const string PlayTrackIndex = "Play track at specified index";
         public const string DeleteTrackAtQueueIndex = "Delete track at specified queue index";
         public const string DeleteTrackAtPlaylistIndex = "Delete track at specified playlist index";
+
+        public const string ItemsCommandHelpDetails =
+            "\nItems could be specified as either command line arguments or stdin input (if -I is specified)." +
+            "\nPositive number is intepreted as playlist item position (counting from 1 by default unless -z is specified)." +
+            "\nNegative index means playlist position from the end (e.g. -1 for last playlist item)." +
+            "\nItem indices could also be specified in range format Start..End (inclusive)." +
+            "\nStart and End parts are optional, if they are not specified 1 and -1 are assumed respectively.";
     }
 }

@@ -8,8 +8,10 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("move", "mv", Description = "Move playlist items",
-    UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue)]
+[Command("move", "mv",
+    Description = "Move playlist items",
+    UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue,
+    ExtendedHelpText = CommonOptions.D.ItemsCommandHelpDetails)]
 public class MoveCommand(IClientProvider clientProvider, IConsole console)
     : TransferItemsCommandBase(clientProvider, console)
 {

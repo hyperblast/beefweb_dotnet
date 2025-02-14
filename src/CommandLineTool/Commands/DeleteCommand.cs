@@ -7,8 +7,10 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("delete", "del", "rm", Description = "Delete playlist items",
-    UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue)]
+[Command("delete", "del", "rm",
+    Description = "Delete playlist items",
+    UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue,
+    ExtendedHelpText = CommonOptions.D.ItemsCommandHelpDetails)]
 public class DeleteCommand(IClientProvider clientProvider, IConsole console)
     : ItemsCommandBase(clientProvider, console)
 {

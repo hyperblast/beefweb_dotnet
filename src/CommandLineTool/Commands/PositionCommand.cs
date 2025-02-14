@@ -8,8 +8,15 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("position", "pos", "seek", Description = "Get or set playback position",
-    UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue)]
+[Command("position", "pos", "seek",
+    Description = "Get or set playback position",
+    UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue,
+    ExtendedHelpText =
+        "\nPosition values could be specified in multiple formats:" +
+        "\n  - [HH:]MM:SS" +
+        "\n  - number with time unit (e.g. 1m for 1 minute)" +
+        "\n  - percentage of current track length (e.g. 30%)" +
+        "\n  - plain number of seconds")]
 public class PositionCommand(IClientProvider clientProvider, IConsole console) : ServerCommandBase(clientProvider)
 {
     [Option(T.Set, Description = "Change position to absolute value (negative value means from end)")]

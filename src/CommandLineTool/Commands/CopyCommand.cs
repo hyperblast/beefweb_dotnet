@@ -8,8 +8,10 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("copy", "cp", Description = "Copy playlist items",
-    UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue)]
+[Command("copy", "cp",
+    Description = "Copy playlist items",
+    UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue,
+    ExtendedHelpText = CommonOptions.D.ItemsCommandHelpDetails)]
 public class CopyCommand(IClientProvider clientProvider, IConsole console)
     : TransferItemsCommandBase(clientProvider, console)
 {

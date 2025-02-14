@@ -8,8 +8,12 @@ using static Beefweb.CommandLineTool.Commands.CommonOptions;
 
 namespace Beefweb.CommandLineTool.Commands;
 
-[Command("list", "ls", Description = "List playlist items",
-    UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue)]
+[Command("list", "ls",
+    Description = "List playlist items",
+    UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue,
+    ExtendedHelpText =
+        "\nBy default first 100 items of the playlist are returned." +
+        "\nArgument in format Start..End could be used to specify other range.")]
 public class ListCommand(IClientProvider clientProvider, ISettingsStorage storage, ITabularWriter writer)
     : ServerCommandBase(clientProvider)
 {
