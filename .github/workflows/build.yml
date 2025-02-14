@@ -37,12 +37,21 @@ jobs:
     - name: Build release
       run: dotnet build -c Release --no-restore
 
-    - name: Pack
+    - name: Create NuGet
       run: dotnet pack -c Release --no-restore --no-build
+
+    - name: Create Zip
+      run: |
+        dotnet publish -c Release --no-restore --no-build
+        dotnet publish -r win-x64 -c Release
+        cp LICENSE artifacts/bin/win-x64/publish/beefctl.exe artifacts/bin/publish
+        (cd artifacts/bin/publish && 7z a -mx9 ../beefctl.zip *)
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: beefweb_dotnet
         if-no-files-found: error
-        path: artifacts/bin/*.nupkg
+        path: |
+          artifacts/bin/*.nupkg
+          artifacts/bin/*.zip
