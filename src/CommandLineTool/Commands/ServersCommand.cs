@@ -18,7 +18,7 @@ public class ServersCommand(ISettingsStorage storage, ITabularWriter writer) : C
 
         var rows = settings.PredefinedServers
             .OrderBy(i => i.Key)
-            .Select(kv => new[] { kv.Key, kv.Value.ToString(), settings.IsDefaultServer(kv.Key) ? "(default)" : "" })
+            .Select(kv => new[] { kv.Key, kv.Value.ToString(), settings.IsDefaultServer(kv.Key) ? "[default]" : "" })
             .ToList();
 
         writer.WriteTable(rows);
