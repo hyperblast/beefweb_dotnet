@@ -15,7 +15,7 @@ public sealed class SetPlayerStateRequest
     public double? Volume { get; set; }
 
     /// <summary>
-    /// Adjust volume in one step. 1 for volume increase, -1 for volume decrease.
+    /// Adjust volume in one step: 1 for volume increase, -1 for volume decrease.
     /// </summary>
     public int? VolumeStep { get; set; }
 
