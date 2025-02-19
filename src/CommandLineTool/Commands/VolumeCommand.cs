@@ -21,9 +21,27 @@ public class VolumeCommand(IClientProvider clientProvider, IConsole console) : S
     [Option(T.Adjust, Description = "Adjust volume relative to current value")]
     public string? RelativeValue { get; set; }
 
+    [Option("-u|--up", Description = "Increase volume")]
+    public bool Up { get; set; }
+
+    [Option("-d|--down", Description = "Decrease volume")]
+    public bool Down { get; set; }
+
     public override async Task OnExecuteAsync(CancellationToken ct)
     {
         await base.OnExecuteAsync(ct);
+
+        if (Up)
+        {
+            await Client.VolumeStep(1, ct);
+            return;
+        }
+
+        if (Down)
+        {
+            await Client.VolumeStep(-1, ct);
+            return;
+        }
 
         var volumeInfo = (await Client.GetPlayerState(null, ct)).Volume;
 
@@ -39,6 +57,8 @@ public class VolumeCommand(IClientProvider clientProvider, IConsole console) : S
         {
             VolumeType.Db => CalculateVolumeDb(volumeInfo, volumeChange, RelativeValue != null),
             VolumeType.Linear => CalculateVolumeLinear(volumeInfo, volumeChange, RelativeValue != null),
+            VolumeType.UpDown => throw new InvalidRequestException(
+                "Current volume control does not support arbitrary volume changes, use --up or --down."),
             _ => throw new InvalidOperationException("Unknown volume type " + volumeInfo.Type),
         };
 
