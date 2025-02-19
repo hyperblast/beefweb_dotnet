@@ -19,4 +19,10 @@ public enum VolumeType
     /// Volume type is linear.
     /// </summary>
     Linear,
+
+    /// <summary>
+    /// Similar to <see cref="Linear"/>,
+    /// but only <see cref="SetPlayerStateRequest.VolumeStep"/> is allowed to change volume.
+    /// </summary>
+    UpDown,
 }

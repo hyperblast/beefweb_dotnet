@@ -164,6 +164,13 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     }
 
     /// <inheritdoc />
+    public async ValueTask VolumeStep(int direction, CancellationToken cancellationToken = default)
+    {
+        await SetPlayerState(new SetPlayerStateRequest { VolumeStep = direction }, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
     public async ValueTask SetOption(SetOptionRequest request, CancellationToken cancellationToken = default)
     {
         await SetPlayerState(new SetPlayerStateRequest { Options = [request] }, cancellationToken)

@@ -58,12 +58,16 @@ public static class ValueFormatter
     public static string Format(this VolumeInfo volumeInfo)
     {
         var muteStatus = volumeInfo.IsMuted ? " [muted]" : "";
-        return volumeInfo.Type switch
+        switch (volumeInfo.Type)
         {
-            VolumeType.Db => volumeInfo.Value.ToString("0.0", CultureInfo.InvariantCulture) + " dB" + muteStatus,
-            VolumeType.Linear => volumeInfo.Value.ToString("0") + muteStatus,
-            _ => throw new ArgumentException($"Unknown volume type '{volumeInfo.Type}'."),
-        };
+            case VolumeType.Db:
+                return volumeInfo.Value.ToString("0.0", CultureInfo.InvariantCulture) + " dB" + muteStatus;
+            case VolumeType.Linear:
+            case VolumeType.UpDown:
+                return volumeInfo.Value.ToString("0") + muteStatus;
+            default:
+                throw new ArgumentException($"Unknown volume type '{volumeInfo.Type}'.");
+        }
     }
 
     public static string FormatAsTrackTime(this TimeSpan time)

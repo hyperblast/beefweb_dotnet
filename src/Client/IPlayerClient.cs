@@ -131,6 +131,16 @@ public interface IPlayerClient
     ValueTask SetVolume(double volume, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Adjust volume in one step.
+    /// </summary>
+    /// <param name="direction">
+    /// Determines change direction: 1 for volume increase, -1 for volume decrease.
+    /// </param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request task.</returns>
+    ValueTask VolumeStep(int direction, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Sets player option.
     /// </summary>
     /// <param name="request">Set option request.</param>

@@ -10,9 +10,14 @@ namespace Beefweb.Client;
 public sealed class SetPlayerStateRequest
 {
     /// <summary>
-    /// New volume.
+    /// New volume value.
     /// </summary>
     public double? Volume { get; set; }
+
+    /// <summary>
+    /// Adjust volume in one step. 1 for volume increase, -1 for volume decrease.
+    /// </summary>
+    public int? VolumeStep { get; set; }
 
     /// <summary>
     /// New mute state.
