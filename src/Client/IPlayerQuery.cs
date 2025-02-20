@@ -47,6 +47,12 @@ public interface IPlayerQuery
     IPlayerQuery IncludePlayQueue(IReadOnlyList<string>? columns = null);
 
     /// <summary>
+    /// Configures query to include outputs configuration.
+    /// </summary>
+    /// <returns>Configured query.</returns>
+    IPlayerQuery IncludeOutputs();
+
+    /// <summary>
     /// Executes this query and returns player information.
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>

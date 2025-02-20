@@ -14,6 +14,7 @@ internal sealed class PlayerQuery : IPlayerQuery
     private bool _includePlayQueue;
     private bool _includePlaylists;
     private bool _includePlaylistItems;
+    private bool _includeOutputs;
     private bool _hasPlaylistItemsParameters;
     private IReadOnlyList<string>? _activeItemColumns;
     private IReadOnlyList<string>? _playQueueColumns;
@@ -60,6 +61,12 @@ internal sealed class PlayerQuery : IPlayerQuery
     {
         _includePlayQueue = true;
         _playQueueColumns = columns;
+        return this;
+    }
+
+    public IPlayerQuery IncludeOutputs()
+    {
+        _includeOutputs = true;
         return this;
     }
 
@@ -121,6 +128,11 @@ internal sealed class PlayerQuery : IPlayerQuery
                 query["plrange"] = _playlistItemRange;
                 query["plcolumns"] = _playlistItemColumns;
             }
+        }
+
+        if (_includeOutputs)
+        {
+            query["outputs"] = true;
         }
 
         if (query.Count == 0)

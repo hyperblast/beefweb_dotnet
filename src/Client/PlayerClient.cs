@@ -394,6 +394,20 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async ValueTask<OutputsInfo> GetOutputs(CancellationToken cancellationToken = default)
+    {
+        var result = await _handler.Get<PlayerQueryResult>("api/outputs", null, cancellationToken).ConfigureAwait(false);
+        return result.Outputs ?? throw PropertyIsNull("outputs");
+    }
+
+    /// <inheritdoc />
+    public async ValueTask SetOutputDevice(string? typeId, string deviceId,
+        CancellationToken cancellationToken = default)
+    {
+        await _handler.Post("api/outputs/active", new { typeId, deviceId }, cancellationToken).ConfigureAwait(false);
+    }
+
     // File browser API
 
     /// <inheritdoc />

@@ -66,6 +66,11 @@ public static class ValueFormatter
         };
     }
 
+    public static string FormatDeviceName(this OutputDeviceInfo device)
+    {
+        return device.Name.Replace("\n", " ");
+    }
+
     public static string FormatAsTrackTime(this TimeSpan time)
     {
         return time.Ticks switch
