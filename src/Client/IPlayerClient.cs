@@ -379,6 +379,22 @@ public interface IPlayerClient
     /// <returns>Request task.</returns>
     ValueTask SortPlaylistRandomly(PlaylistRef playlist, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Gets information about output devices.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request task.</returns>
+    ValueTask<OutputsInfo> GetOutputs(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Sets output device.
+    /// </summary>
+    /// <param name="typeId">Output type id. If this value is null, current output type is not changed.</param>
+    /// <param name="deviceId">Output device id.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request task.</returns>
+    ValueTask SetOutputDevice(string? typeId, string deviceId, CancellationToken cancellationToken = default);
+
     // File browser API
 
     /// <summary>

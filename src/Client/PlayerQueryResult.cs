@@ -27,4 +27,9 @@ public sealed class PlayerQueryResult
     /// Play queue contents.
     /// </summary>
     public IList<PlayQueueItemInfo>? PlayQueue { get; set; }
+
+    /// <summary>
+    /// Outputs configuration.
+    /// </summary>
+    public OutputsInfo? Outputs { get; set; }
 }
