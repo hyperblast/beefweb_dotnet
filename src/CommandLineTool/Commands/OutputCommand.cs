@@ -87,20 +87,13 @@ public class OutputCommand(IClientProvider clientProvider, IConsole console, ITa
 
     private async ValueTask SetOutputDevice(OutputsInfo outputs, CancellationToken ct)
     {
-        OutputTypeInfo type;
-
-        if (TypeId != null)
-        {
-            type = outputs.Types.FirstOrDefault(c => string.Equals(c.Id, TypeId, StringComparison.OrdinalIgnoreCase))
-                   ?? throw new InvalidRequestException($"Unknown output type: {TypeId}.");
-        }
-        else
-        {
-            type = outputs.Types.First(c => c.Id == outputs.Active.TypeId);
-        }
+        var type = TypeId != null
+            ? outputs.Types.FirstOrDefault(c => string.Equals(c.Id, TypeId, StringComparison.OrdinalIgnoreCase))
+              ?? throw new InvalidRequestException($"Unknown output type: {TypeId}.")
+            : outputs.Types.First(c => c.Id == outputs.Active.TypeId);
 
         var device = type.Devices.FirstOrDefault(c => string.Equals(c.Id, DeviceId, StringComparison.OrdinalIgnoreCase))
-                     ?? throw new InvalidRequestException($"Unknown output device: ${DeviceId}.");
+                     ?? throw new InvalidRequestException($"Unknown output device: {DeviceId}.");
 
         await Client.SetOutputDevice(type.Id, device.Id, ct);
     }
