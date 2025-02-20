@@ -48,7 +48,7 @@ public class OutputCommand(IClientProvider clientProvider, IConsole console, ITa
     {
         foreach (var type in outputs.Types)
         {
-            var isCurrenType = type.Id == outputs.Active.TypeId;
+            var isCurrentType = type.Id == outputs.Active.TypeId;
             var rows = Enumerable.Empty<string[]>();
 
             if (outputs.SupportsMultipleOutputTypes)
@@ -60,7 +60,7 @@ public class OutputCommand(IClientProvider clientProvider, IConsole console, ITa
             }
 
             rows = rows.Concat(type.Devices.Select(d => (string[]) [
-                isCurrenType && d.Id == outputs.Active.DeviceId ? "*" : " ",
+                isCurrentType && d.Id == outputs.Active.DeviceId ? "*" : " ",
                 d.Id,
                 d.FormatDeviceName()
             ]));
