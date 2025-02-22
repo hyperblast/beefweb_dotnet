@@ -135,6 +135,12 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     }
 
     /// <inheritdoc />
+    public async ValueTask PlayOrPause(CancellationToken cancellationToken = default)
+    {
+        await _handler.Post("api/player/play-pause", null, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
     public async ValueTask SetPlayerState(
         SetPlayerStateRequest request, CancellationToken cancellationToken = default)
     {
