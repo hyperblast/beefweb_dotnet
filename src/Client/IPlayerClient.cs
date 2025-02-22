@@ -92,7 +92,7 @@ public interface IPlayerClient
     ValueTask Pause(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Toggles between <see cref="PlaybackState.Playing"/> and <see cref="PlaybackState.Paused"/>.
+    /// Toggles player state between <see cref="PlaybackState.Playing"/> and <see cref="PlaybackState.Paused"/>.
     /// Does nothing if <see cref="PlaybackState.Stopped"/>.
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>
@@ -100,7 +100,7 @@ public interface IPlayerClient
     ValueTask TogglePause(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Toggles between <see cref="PlaybackState.Playing"/> and <see cref="PlaybackState.Paused"/>.
+    /// Toggles player state between <see cref="PlaybackState.Playing"/> and <see cref="PlaybackState.Paused"/>.
     /// Starts playback if <see cref="PlaybackState.Stopped"/>.
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>
