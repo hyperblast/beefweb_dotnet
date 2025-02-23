@@ -22,7 +22,8 @@ public enum VolumeType
 
     /// <summary>
     /// Similar to <see cref="Linear"/>,
-    /// but only <see cref="SetPlayerStateRequest.VolumeStep"/> is allowed to change volume.
+    /// but only <see cref="IPlayerClient.VolumeUp"/> and <see cref="IPlayerClient.VolumeDown"/>
+    /// methods are allowed to change volume.
     /// </summary>
     UpDown,
 }

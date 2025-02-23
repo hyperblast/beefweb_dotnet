@@ -164,16 +164,28 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     }
 
     /// <inheritdoc />
-    public async ValueTask SetVolume(double volume, CancellationToken cancellationToken = default)
+    public async ValueTask SetVolumeAbsolute(double volume, CancellationToken cancellationToken = default)
     {
         await SetPlayerState(new SetPlayerStateRequest { Volume = volume }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async ValueTask VolumeStep(int direction, CancellationToken cancellationToken = default)
+    public async ValueTask SetVolumeRelative(double volume, CancellationToken cancellationToken = default)
     {
-        await SetPlayerState(new SetPlayerStateRequest { VolumeStep = direction }, cancellationToken)
+        await SetPlayerState(new SetPlayerStateRequest { RelativeVolume = volume }, cancellationToken)
             .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async ValueTask VolumeUp(CancellationToken cancellationToken = default)
+    {
+        await _handler.Post("api/player/volume/up", null, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async ValueTask VolumeDown(CancellationToken cancellationToken = default)
+    {
+        await _handler.Post("api/player/volume/down", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />

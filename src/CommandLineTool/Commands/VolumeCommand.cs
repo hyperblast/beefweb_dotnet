@@ -33,13 +33,13 @@ public class VolumeCommand(IClientProvider clientProvider, IConsole console) : S
 
         if (Up)
         {
-            await Client.VolumeStep(1, ct);
+            await Client.VolumeUp(ct);
             return;
         }
 
         if (Down)
         {
-            await Client.VolumeStep(-1, ct);
+            await Client.VolumeDown(ct);
             return;
         }
 
@@ -62,7 +62,7 @@ public class VolumeCommand(IClientProvider clientProvider, IConsole console) : S
             _ => throw new InvalidOperationException("Unknown volume type " + volumeInfo.Type),
         };
 
-        await Client.SetVolume(newVolume, ct);
+        await Client.SetVolumeAbsolute(newVolume, ct);
     }
 
     private static double CalculateVolumeLinear(VolumeInfo volumeInfo, VolumeChange volumeChange, bool isRelative)

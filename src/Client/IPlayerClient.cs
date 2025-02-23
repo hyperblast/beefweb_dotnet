@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -132,22 +131,34 @@ public interface IPlayerClient
     ValueTask SetMuted(BoolSwitch isMuted, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Sets volume.
+    /// Sets volume to absolute value.
     /// </summary>
     /// <param name="volume">New volume value.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Request task.</returns>
-    ValueTask SetVolume(double volume, CancellationToken cancellationToken = default);
+    ValueTask SetVolumeAbsolute(double volume, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Adjust volume in one step.
+    /// Sets volume relative to current value.
     /// </summary>
-    /// <param name="direction">
-    /// Determines change direction: 1 for volume increase, -1 for volume decrease.
-    /// </param>
+    /// <param name="volume">New volume value.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Request task.</returns>
-    ValueTask VolumeStep(int direction, CancellationToken cancellationToken = default);
+    ValueTask SetVolumeRelative(double volume, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Increases volume.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request task.</returns>
+    ValueTask VolumeUp(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Decreases volume.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request task.</returns>
+    ValueTask VolumeDown(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Sets player option.
