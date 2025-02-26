@@ -29,6 +29,9 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
     [Option(T.Playlist, Description = "Display playlist information")]
     public bool Playlist { get; set; }
 
+    [Option("-m|--permissions", Description = "Display permissions")]
+    public bool Permissions { get; set; }
+
     [Option("-r|--version", Description = "Display version information")]
     public bool Version { get; set; }
 
@@ -48,7 +51,7 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
         var baseIndex = IndicesFrom0 ? 0 : 1;
         var properties = new List<string[]>();
 
-        if (Playback || All || !(Playlist || Volume || Options || Version))
+        if (Playback || All || !(Playlist || Volume || Options || Permissions || Version))
         {
             var isStopped = state.PlaybackState == PlaybackState.Stopped;
             var track = isStopped ? "none" : activeItem.Columns[0];
@@ -93,6 +96,23 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
             properties.Add(["Options:"]);
             properties.AddRange(state.Options.Select(o => (string[])
                 ["", o.Name.CapitalizeFirstChar(), o.FormatValue(IndicesFrom0)]));
+        }
+
+        if (Permissions || All)
+        {
+            AddEmptyLine();
+            properties.Add(["Permissions:"]);
+
+            if (state.Permissions == null)
+            {
+                properties.Add(["", "No available"]);
+            }
+            else
+            {
+                properties.Add(["", "Change playlists", state.Permissions.ChangePlaylists.ToString()]);
+                properties.Add(["", "Change output device", state.Permissions.ChangeOutput.ToString()]);
+                properties.Add(["", "Change client configuration", state.Permissions.ChangeClientConfig.ToString()]);
+            }
         }
 
         if (Version || All)

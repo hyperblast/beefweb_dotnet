@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Beefweb.Client;
 
@@ -47,6 +46,15 @@ public sealed class PlayerState
     /// Information about playback volume.
     /// </summary>
     public VolumeInfo Volume { get; set; } = null!;
+
+    /// <summary>
+    /// Current permissions.
+    /// </summary>
+    /// <remarks>
+    /// This property is available since Beefweb v0.10
+    /// For earlier value is null.
+    /// </remarks>
+    public ApiPermissions? Permissions { get; set; }
 
     /// <summary>
     /// Gets option with specified <paramref name="id"/>.

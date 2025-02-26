@@ -17,6 +17,9 @@ public sealed class SetPlayerStateRequest
     /// <summary>
     /// New relative volume value.
     /// </summary>
+    /// <remarks>
+    /// This property is available since Beefweb v0.10
+    /// </remarks>
     public double? RelativeVolume { get; set; }
 
     /// <summary>
