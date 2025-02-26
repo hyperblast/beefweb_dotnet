@@ -51,8 +51,8 @@ public sealed class PlayerState
     /// Current permissions.
     /// </summary>
     /// <remarks>
-    /// This property is available since Beefweb v0.10
-    /// For earlier value is null.
+    /// API is available since Beefweb v0.10
+    /// For earlier versions value is null.
     /// </remarks>
     public ApiPermissions? Permissions { get; set; }
 

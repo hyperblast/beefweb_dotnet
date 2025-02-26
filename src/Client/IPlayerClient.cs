@@ -105,7 +105,7 @@ public interface IPlayerClient
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Request task.</returns>
     /// <remarks>
-    /// This method is available since Beefweb v0.10
+    /// API is available since Beefweb v0.10
     /// </remarks>
     ValueTask PlayOrPause(CancellationToken cancellationToken = default);
 
@@ -148,7 +148,7 @@ public interface IPlayerClient
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Request task.</returns>
     /// <remarks>
-    /// This method is available since Beefweb v0.10
+    /// API is available since Beefweb v0.10
     /// </remarks>
     ValueTask SetVolumeRelative(double volume, CancellationToken cancellationToken = default);
 
@@ -158,7 +158,7 @@ public interface IPlayerClient
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Request task.</returns>
     /// <remarks>
-    /// This method is available since Beefweb v0.10
+    /// API is available since Beefweb v0.10
     /// </remarks>
     ValueTask VolumeUp(CancellationToken cancellationToken = default);
 
@@ -168,7 +168,7 @@ public interface IPlayerClient
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Request task.</returns>
     /// <remarks>
-    /// This method is available since Beefweb v0.10
+    /// API is available since Beefweb v0.10
     /// </remarks>
     ValueTask VolumeDown(CancellationToken cancellationToken = default);
 
@@ -417,7 +417,7 @@ public interface IPlayerClient
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Request task.</returns>
     /// <remarks>
-    /// This method is available since Beefweb v0.10
+    /// API is available since Beefweb v0.10
     /// </remarks>
     ValueTask<OutputsInfo> GetOutputs(CancellationToken cancellationToken = default);
 
@@ -429,7 +429,7 @@ public interface IPlayerClient
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Request task.</returns>
     /// <remarks>
-    /// This method is available since Beefweb v0.10
+    /// API is available since Beefweb v0.10
     /// </remarks>
     ValueTask SetOutputDevice(string? typeId, string deviceId, CancellationToken cancellationToken = default);
 
