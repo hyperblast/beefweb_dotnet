@@ -23,11 +23,6 @@ public sealed class SetPlayerStateRequest
     public double? RelativeVolume { get; set; }
 
     /// <summary>
-    /// Adjust volume in one step: 1 for volume increase, -1 for volume decrease.
-    /// </summary>
-    public int? VolumeStep { get; set; }
-
-    /// <summary>
     /// New mute state.
     /// </summary>
     public BoolSwitch? IsMuted { get; set; }
