@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -23,13 +24,15 @@ internal sealed class RequestHandler : IRequestHandler
     internal static readonly JsonSerializerOptions DefaultSerializerOptions = CreateSerializerOptions();
 
     private readonly HttpClient _client;
-    private readonly ILineReaderFactory _readerFactory;
     private readonly Uri _baseUri;
+    private readonly AuthenticationHeaderValue? _authHeader;
+    private readonly ILineReaderFactory _readerFactory;
 
-    public RequestHandler(Uri baseUri, HttpClient client, ILineReaderFactory readerFactory)
+    public RequestHandler(HttpClient client, Uri baseUri, ApiCredentials? credentials, ILineReaderFactory readerFactory)
     {
-        _baseUri = UriFormatter.AddTrailingSlash(baseUri);
         _client = client;
+        _baseUri = UriFormatter.AddTrailingSlash(baseUri);
+        _authHeader = GetAuthHeader(credentials);
         _readerFactory = readerFactory;
     }
 
@@ -63,6 +66,7 @@ internal sealed class RequestHandler : IRequestHandler
         var requestUri = UriFormatter.Format(_baseUri, url, queryParams);
         using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(ContentTypes.Json));
+        request.Headers.Authorization = _authHeader;
 
         using var response = await _client
             .SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken)
@@ -80,6 +84,7 @@ internal sealed class RequestHandler : IRequestHandler
     {
         var requestUri = UriFormatter.Format(_baseUri, url, queryParams);
         using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+        request.Headers.Authorization = _authHeader;
 
         var response = await _client
             .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
@@ -110,6 +115,7 @@ internal sealed class RequestHandler : IRequestHandler
         var requestUri = UriFormatter.Format(_baseUri, url, queryParams);
         using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(ContentTypes.EventStream));
+        request.Headers.Authorization = _authHeader;
 
         using var response = await _client
             .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
@@ -141,6 +147,7 @@ internal sealed class RequestHandler : IRequestHandler
     {
         var requestUri = UriFormatter.Format(_baseUri, url);
         using var request = new HttpRequestMessage(HttpMethod.Post, requestUri);
+        request.Headers.Authorization = _authHeader;
 
         if (returnType != null)
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(ContentTypes.Json));
@@ -213,6 +220,15 @@ internal sealed class RequestHandler : IRequestHandler
             response.ReasonPhrase,
             errorResponse?.Error?.Message,
             errorResponse?.Error?.Parameter);
+    }
+
+    private static AuthenticationHeaderValue? GetAuthHeader(ApiCredentials? credentials)
+    {
+        if (credentials == null || credentials.IsEmpty)
+            return null;
+
+        var parameter = Convert.ToBase64String(Encoding.UTF8.GetBytes(credentials.User + ":" + credentials.Password));
+        return new AuthenticationHeaderValue("Basic", parameter);
     }
 
     private static PlayerClientException InvalidResponse()

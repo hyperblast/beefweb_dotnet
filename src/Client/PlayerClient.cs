@@ -24,25 +24,39 @@ public sealed class PlayerClient : IPlayerClient, IDisposable
     /// <summary>
     /// Creates new instance for specified <paramref name="baseUri"/>.
     /// </summary>
-    /// <param name="baseUri">Base uri. This value should not include '/api' in path</param>
+    /// <param name="baseUri">Base URI. This value should not include '/api' in path</param>
+    /// <param name="credentials">API credentials.</param>
     /// <param name="clientConfigOptions">Options for serializing client configuration.</param>
-    public PlayerClient(Uri baseUri, JsonSerializerOptions? clientConfigOptions = null)
-        : this(baseUri, new HttpClient(), disposeClient: true, clientConfigOptions)
+    public PlayerClient(
+        Uri baseUri,
+        ApiCredentials? credentials = null,
+        JsonSerializerOptions? clientConfigOptions = null)
+        : this(new HttpClient(), baseUri, credentials, clientConfigOptions, disposeClient: true)
     {
     }
 
     /// <summary>
     /// Creates new instance for specified <paramref name="baseUri"/> and <paramref name="client"/>.
     /// </summary>
-    /// <param name="baseUri">Base uri. This value should not include '/api' in path.</param>
     /// <param name="client"><see cref="HttpClient"/> to use.</param>
-    /// <param name="disposeClient">If true <paramref name="client"/> will be disposed with this instance.</param>
+    /// <param name="baseUri">Base URI. This value should not include '/api' in path.</param>
+    /// <param name="credentials">API credentials</param>
     /// <param name="clientConfigOptions">Options for serializing client configuration.</param>
+    /// <param name="disposeClient">If true <paramref name="client"/> will be disposed with this instance.</param>
     public PlayerClient(
-        Uri baseUri, HttpClient client, bool disposeClient = true, JsonSerializerOptions? clientConfigOptions = null)
+        HttpClient client,
+        Uri baseUri,
+        ApiCredentials? credentials = null,
+        JsonSerializerOptions? clientConfigOptions = null,
+        bool disposeClient = true)
         : this(
-            new RequestHandler(baseUri, client, new LineReaderFactory(new GrowableBufferFactory())),
-            disposeClient ? client : null)
+            new RequestHandler(
+                client,
+                baseUri,
+                credentials ?? ApiCredentials.FromUri(baseUri),
+                new LineReaderFactory(new GrowableBufferFactory())),
+            disposeClient ? client : null,
+            clientConfigOptions)
     {
     }
 
