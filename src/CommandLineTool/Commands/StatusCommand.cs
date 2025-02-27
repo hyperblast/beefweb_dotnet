@@ -102,17 +102,9 @@ public class StatusCommand(IClientProvider clientProvider, ITabularWriter writer
         {
             AddEmptyLine();
             properties.Add(["Permissions:"]);
-
-            if (state.Permissions == null)
-            {
-                properties.Add(["", "No available"]);
-            }
-            else
-            {
-                properties.Add(["", "Change playlists", state.Permissions.ChangePlaylists.ToString()]);
-                properties.Add(["", "Change output device", state.Permissions.ChangeOutput.ToString()]);
-                properties.Add(["", "Change client configuration", state.Permissions.ChangeClientConfig.ToString()]);
-            }
+            properties.Add(["", "Change playlists", state.Permissions.ChangePlaylists.ToString()]);
+            properties.Add(["", "Change output device", state.Permissions.ChangeOutput.ToString()]);
+            properties.Add(["", "Change client configuration", state.Permissions.ChangeClientConfig.ToString()]);
         }
 
         if (Version || All)
