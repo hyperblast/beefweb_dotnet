@@ -25,6 +25,9 @@ public record ApiCredentials(string User, string Password)
             return null;
 
         var parts = uri.UserInfo.Split(':', 2);
-        return new ApiCredentials(parts[0], parts.Length > 1 ? parts[1] : string.Empty);
+
+        return new ApiCredentials(
+            Uri.UnescapeDataString(parts[0]),
+            parts.Length > 1 ? Uri.UnescapeDataString(parts[1]) : string.Empty);
     }
 }
