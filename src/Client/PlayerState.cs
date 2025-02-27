@@ -8,6 +8,8 @@ namespace Beefweb.Client;
 /// </summary>
 public sealed class PlayerState
 {
+    private ApiPermissions? _permissions;
+
     /// <summary>
     /// Information about current player.
     /// </summary>
@@ -48,13 +50,25 @@ public sealed class PlayerState
     public VolumeInfo Volume { get; set; } = null!;
 
     /// <summary>
-    /// Current permissions.
+    /// Current API permissions.
     /// </summary>
     /// <remarks>
     /// API is available since Beefweb v0.10
-    /// For earlier versions value is null.
+    /// For earlier versions value contains <see cref="ApiPermissions"/> object with all permissions enabled.
     /// </remarks>
-    public ApiPermissions? Permissions { get; set; }
+    public ApiPermissions Permissions
+    {
+        get
+        {
+            return _permissions ??= new ApiPermissions
+            {
+                ChangePlaylists = true,
+                ChangeOutput = true,
+                ChangeClientConfig = true,
+            };
+        }
+        set => _permissions = value;
+    }
 
     /// <summary>
     /// Gets option with specified <paramref name="id"/>.
