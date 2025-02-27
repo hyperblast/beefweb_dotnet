@@ -21,7 +21,7 @@ public class ApiCredentialsTests
         var uri = builder.Uri;
         var credentials = ApiCredentials.FromUri(uri);
         credentials.Should().NotBeNull();
-        credentials!.User.Should().Be(userName);
+        credentials!.UserName.Should().Be(userName);
         credentials.Password.Should().Be(password);
     }
 }

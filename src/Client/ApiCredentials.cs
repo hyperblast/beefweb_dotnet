@@ -5,14 +5,14 @@ namespace Beefweb.Client;
 /// <summary>
 /// Credentials for accessing API.
 /// </summary>
-/// <param name="User">User name.</param>
+/// <param name="UserName">User name.</param>
 /// <param name="Password">Password.</param>
-public record ApiCredentials(string User, string Password)
+public record ApiCredentials(string UserName, string Password)
 {
     /// <summary>
-    /// If true, both <see cref="User"/> and <see cref="Password"/> are empty.
+    /// If true, both <see cref="UserName"/> and <see cref="Password"/> are empty.
     /// </summary>
-    public bool IsEmpty => User.Length == 0 && Password.Length == 0;
+    public bool IsEmpty => UserName.Length == 0 && Password.Length == 0;
 
     /// <summary>
     /// Constructs <see cref="ApiCredentials"/> based on <see cref="Uri.UserInfo"/>.

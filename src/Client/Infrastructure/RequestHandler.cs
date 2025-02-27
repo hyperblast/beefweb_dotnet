@@ -227,7 +227,9 @@ internal sealed class RequestHandler : IRequestHandler
         if (credentials == null || credentials.IsEmpty)
             return null;
 
-        var parameter = Convert.ToBase64String(Encoding.UTF8.GetBytes(credentials.User + ":" + credentials.Password));
+        var parameter = Convert.ToBase64String(
+            Encoding.UTF8.GetBytes(credentials.UserName + ":" + credentials.Password));
+
         return new AuthenticationHeaderValue("Basic", parameter);
     }
 
