@@ -1,4 +1,7 @@
-# Changes in v0.3 (not released)
+# Changes in v0.4 (not released)
+
+
+# Changes in v0.3 (released 2025-02-28)
 - Add support for UpDown volume type and new volume commands
 - Add support for output device configuration
 - Add support for PlayOrPause command
