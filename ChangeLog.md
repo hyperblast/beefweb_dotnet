@@ -1,5 +1,5 @@
 # Changes in v0.4 (not released)
-
+- Fixed event stream cancellation
 
 # Changes in v0.3 (released 2025-02-28)
 - Add support for UpDown volume type and new volume commands
