@@ -1,2 +1,2 @@
 version=0.4
-final=0
+final=1

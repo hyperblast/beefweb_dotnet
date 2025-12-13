@@ -1,4 +1,4 @@
-# Changes in v0.4 (not released)
+# Changes in v0.4 (released 2025-12-13)
 - Fixed event stream cancellation
 
 # Changes in v0.3 (released 2025-02-28)
