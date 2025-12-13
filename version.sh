@@ -1,2 +1,2 @@
-version=0.4
-final=1
+version=0.5
+final=0
